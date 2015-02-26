@@ -1,0 +1,34 @@
+{
+  "name": "pdf-ui",
+  "description": "User interface for visualizing PDF structure",
+  "keywords" : ["pdf", "user", "interface"],
+  "version": "0.1.0",
+  "homepage": "https://github.com/chbrown/pdf-ui",
+  "repository": "git://github.com/chbrown/pdf-ui.git",
+  "author": "Christopher Brown <io@henrian.com> (http://henrian.com)",
+  "license": "MIT",
+  "bin": {
+    "pdf-ui": "bin/pdf-ui"
+  },
+  "scripts": {
+    "start": "node bin/pdf-ui"
+  },
+  "dependencies": {
+    "async": "*",
+    "formidable": "*",
+    "http-enhanced": "*",
+    "loge": "*",
+    "regex-router": "*",
+    "send": "*",
+    "yargs": "*"
+  },
+  "devDependencies": {
+    "mocha": "*"
+  },
+  "staticPattern": "static/lib/{file}",
+  "staticDependencies": {
+    "angular": "*",
+    "misc-js": "git://github.com/chbrown/misc-js.git",
+    "ng-storage": "*"
+  }
+}
