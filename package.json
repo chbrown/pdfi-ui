@@ -28,7 +28,9 @@
   "staticPattern": "static/lib/{file}",
   "staticDependencies": {
     "angular": "*",
+    "lodash": "*",
     "misc-js": "git://github.com/chbrown/misc-js.git",
-    "ng-storage": "*"
+    "ng-storage": "*",
+    "react": "*"
   }
 }
