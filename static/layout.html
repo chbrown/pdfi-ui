@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<head>
+  <meta charset="utf-8">
+  <title>PDF UI</title>
+  <base href="/">
+  <link rel="icon" href="static/favicon.ico" type="image/x-icon">
+  <link href="static/site.css" rel="stylesheet" type="text/css">
+  <script src="static/lib.max.js"></script>
+  <script src="static/lib/react.min.js"></script>
+  <script src="static/components.js"></script>
+  <script src="static/app.js"></script>
+</head>
+<body ng-app="app">
+  <flash></flash>
+
+  <nav fixedflow>
+    <div ng-controller="uploadCtrl">
+      <span><b>Selected file:</b></span>
+      <select ng-options="file.name as file.name for file in files"
+        ng-model="$storage.selected_name"></select>
+      <span><b>Add file:</b></span>
+      <input type="file" on-upload="uploadFile($file, $event)">
+    </div>
+  </nav>
+
+  <div ng-controller="structureCtrl" style="margin: 0 10px">
+    <h2><code>{{file.name}}</code></h2>
+    <small>{{file.size | number}} bytes</small>
+
+    <h3>Trailer</h3>
+    <div pdf-object="file.trailer" load-object="loadObject(reference)"></div>
+
+    <h3>Pages</h3>
+    <div ng-repeat="page in pages" class="page">
+      <h4>Page {{$index}}</h4>
+      <div pdf-object="page" load-object="loadObject(reference)"></div>
+    </div>
+
+    <h3>Cross References</h3>
+    <div style="font-size: 70%">
+      <span ng-repeat="cross_reference in file.cross_references">
+        <a class="reference" title="offset={{cross_reference.offset}}" ng-click="loadObject(cross_reference)">
+          {{cross_reference.object_number}}:{{cross_reference.generation_number}}
+        </a>
+      </span>
+    </div>
+
+    <h3>Breadcrumbs</h3>
+    <div>
+      <a ng-repeat="reference in $storage.breadcrumbs track by $index"
+        class="breadcrumb" ng-class="{selected: reference.object_number == selected_reference.object_number}" ng-click="loadObject(reference)">
+        {{reference.object_number}} &rarr;
+      </a>
+    </div>
+
+    <h3>Object</h3>
+    <div>
+      <div pdf-object="selected_object" load-object="loadObject(reference)"></div>
+    </div>
+
+  </div>
+</body>

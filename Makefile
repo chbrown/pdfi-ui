@@ -1,4 +1,4 @@
-all: static/lib.min.js static/lib.max.js static/site.css
+all: static/lib.min.js static/lib.max.js static/site.css static/components.js
 
 %.css: %.less
 	lessc $+ | cleancss --keep-line-breaks --skip-advanced -o $@
