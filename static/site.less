@@ -56,49 +56,46 @@ a {
   text-decoration: underline;
 }
 
-.breadcrumb {
-  display: inline-block;
-  padding: 2px 5px;
-  margin: 2px 5px;
-  border: 1px solid #AAA;
-  &.selected {
+.breadcrumbs > span {
+  &.selected a {
     background-color: #CCC;
+  }
+  &:after {
+    content: "→";
+  }
+  &:last-child:after {
+    content: "";
   }
 }
 .page {
   display: inline-block;
-  border: 1px solid blue;
+  border: 1px solid #B86;
   margin: 0 5px 5px 0;
   padding: 2px;
   vertical-align: top;
 }
 
 // nested pdf-objects
+.object, .array, .name, .reference, .number, .string {
+  vertical-align: top;
+}
 .object {
   padding-left: 5px;
-  & > div { // key-val pair
-    vertical-align: top;
-  }
-}
-.array {
-  &:before {
-    content: '[';
-  }
-  &:after {
-    content: ']';
-  }
 }
 // atomic pdf-objects
-.reference, .number, .string {
+.name, .reference, .number, .string {
   display: inline-block;
   margin: .2ex .1em;
   padding: .3ex .2em .1ex .2em;
+}
+.name {
+  font-weight: bold;
 }
 .reference {
   border: 1px solid #88F;
 }
 .number {
-  border: 1px solid #DDD;
+  border: 1px solid #E81;
 }
 .string {
   font-family: monospace;

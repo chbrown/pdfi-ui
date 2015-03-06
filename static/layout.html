@@ -28,34 +28,32 @@
     <small>{{file.size | number}} bytes</small>
 
     <h3>Trailer</h3>
-    <div pdf-object="file.trailer" load-object="loadObject(reference)"></div>
+    <PDFObject object="file.trailer"></PDFObject>
 
     <h3>Pages</h3>
     <div ng-repeat="page in pages" class="page">
       <h4>Page {{$index}}</h4>
-      <div pdf-object="page" load-object="loadObject(reference)"></div>
+      <PDFObject object="page"></PDFObject>
     </div>
 
     <h3>Cross References</h3>
     <div style="font-size: 70%">
       <span ng-repeat="cross_reference in file.cross_references">
-        <a class="reference" title="offset={{cross_reference.offset}}" ng-click="loadObject(cross_reference)">
-          {{cross_reference.object_number}}:{{cross_reference.generation_number}}
-        </a>
+        <PDFObject object="cross_reference"></PDFObject>
       </span>
     </div>
 
     <h3>Breadcrumbs</h3>
-    <div>
-      <a ng-repeat="reference in $storage.breadcrumbs track by $index"
-        class="breadcrumb" ng-class="{selected: reference.object_number == selected_reference.object_number}" ng-click="loadObject(reference)">
-        {{reference.object_number}} &rarr;
-      </a>
+    <div class="breadcrumbs">
+      <span ng-repeat="reference in $storage.breadcrumbs track by $index"
+        ng-class="{selected: reference.object_number == selected_reference.object_number}">
+        <PDFObject object="reference"></PDFObject>
+      </span>
     </div>
 
     <h3>Object</h3>
-    <div>
-      <div pdf-object="selected_object" load-object="loadObject(reference)"></div>
+    <div style="margin: 5ex 0">
+      <PDFObject object="selected_object"></PDFObject>
     </div>
 
   </div>

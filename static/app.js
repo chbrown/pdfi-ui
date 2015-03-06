@@ -72,30 +72,23 @@ app.service('Page', function($resource) {
 //   });
 // });
 
-app.directive('pdfObject', function() {
+
+
+app.directive('pdfobject', function() {
   return {
-    restrict: 'A',
+    restrict: 'E',
     scope: {
-      pdfObject: '=',
-      loadObject: '&',
+      object: '=',
     },
     link: function(scope, el, attrs) {
-      var ctrl = {
-        loadObject: function(object) {
-          scope.$apply(function() {
-            scope.loadObject({reference: object});
-          });
-        }
-      };
       var container = el[0];
-      scope.$watch('pdfObject', function(newVal) {
-        var props = {ctrl: ctrl, object: angular.copy(newVal)};
-        if (scope.react_component === undefined) {
-          scope.react_component = React.render(React.createElement(components.PDFObject, props), container);
-        }
-        else {
-          scope.react_component.setProps(props);
-        }
+
+      var emit = scope.$emit.bind(scope);
+      var props = {emit: emit};
+      var react_component = React.render(React.createElement(components.PDFObject, props), container);
+
+      scope.$watch('object', function(object) {
+        react_component.setProps({object: angular.copy(object)});
       });
     }
   };
@@ -126,17 +119,8 @@ app.controller('uploadCtrl', function($scope, $http, $localStorage, $flash, File
 app.controller('structureCtrl', function($scope, $localStorage, $http, File, Page) {
   $scope.$storage = $localStorage.$default({breadcrumbs: []});
 
-  $scope.addBreadcrumb = function(reference) {
-    var breadcrumbs = $scope.$storage.breadcrumbs;
-    var exists = _.find(breadcrumbs, reference);
-    if (!exists) {
-      breadcrumbs.push(reference);
-      $scope.$storage.breadcrumbs = breadcrumbs.slice(-10);
-    }
-  };
-
-  $scope.loadObject = function(reference) {
-    // log('loadObject', reference);
+  $scope.$on('loadObject', function(event, reference) {
+    // $scope.loadObject(reference);
     // scope.object = FileObject.get({name: scope.name, number: scope.objectNumber});
     $scope.addBreadcrumb(reference);
     $scope.selected_reference = reference;
@@ -146,6 +130,15 @@ app.controller('structureCtrl', function($scope, $localStorage, $http, File, Pag
     }, function(err) {
       log('error fetching object', err);
     });
+  });
+
+  $scope.addBreadcrumb = function(reference) {
+    var breadcrumbs = $scope.$storage.breadcrumbs;
+    var exists = _.find(breadcrumbs, reference);
+    if (!exists) {
+      breadcrumbs.push(reference);
+      $scope.$storage.breadcrumbs = breadcrumbs.slice(-10);
+    }
   };
 
   $scope.$watch('$storage.selected_name', function(newVal, oldVal) {

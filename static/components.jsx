@@ -3,12 +3,11 @@
 var PDFObject = React.createClass({
   propTypes: {
     object: React.PropTypes.any,
-    ctrl: React.PropTypes.object,
+    emit: React.PropTypes.func.isRequired,
   },
   render: function() {
-    // special handling comes first
     var object = this.props.object;
-    var ctrl = this.props.ctrl;
+    var emit = this.props.emit;
     if (object === undefined) {
       return <i>undefined</i>;
     }
@@ -16,19 +15,18 @@ var PDFObject = React.createClass({
       return <i>null</i>;
     }
     else if (object.object_number !== undefined && object.generation_number !== undefined) {
-      return <a className="reference" onClick={this.loadObject}>{object.object_number}:{object.generation_number}</a>;
+      return <a className="reference" onClick={this.emitLoadObject}>{object.object_number}:{object.generation_number}</a>;
     }
-    // generics arrays, objects, numbers, strings...
     else if (Array.isArray(object)) {
       var array_children = object.map(function(child) {
-        return <PDFObject object={child} ctrl={ctrl} />;
+        return <PDFObject object={child} emit={emit} />;
       });
-      return <span className="array">{array_children}</span>;
+      return <span className="array">[{array_children}]</span>;
     }
     else if (typeof object === 'object') {
       var object_children = Object.keys(object).map(function(key) {
         var child = object[key];
-        return <div><b>{key}</b><PDFObject object={child} ctrl={ctrl} /></div>;
+        return <div><span className="name">{key}:</span><PDFObject object={child} emit={emit} /></div>;
       });
       return <div className="object">{object_children}</div>;
     }
@@ -38,8 +36,8 @@ var PDFObject = React.createClass({
     // catch-all
     return <span className="string">{object}</span>;
   },
-  loadObject: function() {
-    this.props.ctrl.loadObject(this.props.object);
+  emitLoadObject: function() {
+    this.props.emit('loadObject', this.props.object);
   },
 });
 
