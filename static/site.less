@@ -76,6 +76,9 @@ a {
 // nested pdf-objects
 .object {
   padding-left: 5px;
+  & > div { // key-val pair
+    vertical-align: top;
+  }
 }
 .array {
   &:before {
