@@ -4,15 +4,16 @@ all: static/lib.min.js static/lib.max.js static/site.css static/components.js
 	lessc $+ | cleancss --keep-line-breaks --skip-advanced -o $@
 
 %.js: %.jsx
-	jsx <$< >$@
+	node_modules/.bin/jsx <$< >$@
 
 %.js: %.ts
-	tsc -m commonjs -t ES5 $<
+	node_modules/.bin/tsc -m commonjs -t ES5 $<
 
 static/lib/%.min.js: | static/lib/%.js
 	ng-annotate -a $| | closure-compiler --language_in ECMASCRIPT5 --warning_level QUIET > $@
 
-SCRIPTS = lodash angular angular-resource ngStorage angular-plugins
+ANGULAR = angular angular-resource ngStorage angular-ui-router
+SCRIPTS = $(ANGULAR)
 static/lib.min.js: $(SCRIPTS:%=static/lib/%.min.js)
 	closure-compiler --language_in ECMASCRIPT5 --warning_level QUIET --js $+ > $@
 static/lib.max.js: $(SCRIPTS:%=static/lib/%.js)
