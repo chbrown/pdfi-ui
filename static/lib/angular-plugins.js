@@ -436,7 +436,11 @@ angular.module('misc-js/angular-plugins', [])
     compile: function(el, attrs) {
       var fn = $parse(attrs.onUpload);
       return function(scope, element, attr) {
-        el.on('change', function(event) {
+        // the element we listen to inside the link function should not be the
+        // element from the compile function signature; that one may match up
+        // with the linked one, but maybe not, if this element does not occur
+        // directly in the DOM, e.g., if it's inside a ng-repeat or ng-if.
+        element.on('change', function(event) {
           scope.$apply(function() {
             var context = {$event: event};
             if (attrs.multiple) {
