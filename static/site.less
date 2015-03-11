@@ -40,6 +40,8 @@ nav {
   left: 0;
   right: 0;
 
+  z-index: 1000;
+
   background-color: #DDD;
   border-bottom: 1px solid #BBB;
 
@@ -67,12 +69,9 @@ a {
     content: "";
   }
 }
-.page {
-  display: inline-block;
-  border: 1px solid #B86;
-  margin: 0 5px 5px 0;
-  padding: 2px;
-  vertical-align: top;
+
+div, section, nav, main, textarea, input, span {
+  box-sizing: border-box;
 }
 
 // nested pdf-objects
@@ -100,4 +99,5 @@ a {
 .string {
   font-family: monospace;
   white-space: pre-wrap;
+  word-break: break-all;
 }

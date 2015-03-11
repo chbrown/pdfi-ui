@@ -2,11 +2,52 @@
 var app = angular.module('app', [
   'ngResource',
   'ngStorage',
+  'ui.router',
   'misc-js/angular-plugins',
 ]);
 
 var log = console.log.bind(console);
 Error.stackTraceLimit = 50;
+
+app.config(function($stateProvider, $urlRouterProvider, $locationProvider) {
+  $urlRouterProvider.otherwise(function($injector, $location) {
+    console.log('otherwise coming from: %s', $location.url());
+    return '/pdfs';
+  });
+
+  $stateProvider
+  .state('pdfs', {
+    url: '/pdfs',
+    templateUrl: '/static/ng/pdfs.html',
+
+  })
+  .state('pdfs.show', {
+    url: '/:name',
+    templateUrl: '/static/ng/pdf.html',
+  })
+  .state('pdfs.show.object', {
+    url: '/:number',
+    templateUrl: '/static/ng/object.html',
+    // controller: 'objectCtrl',
+  });
+
+  $locationProvider.html5Mode(true);
+});
+
+function clean(object) {
+  if (object === null || object === undefined) {
+    return object;
+  }
+
+  if (typeof object.toJSON === 'function') {
+    object = object.toJSON();
+  }
+  else {
+    object = angular.copy(object);
+  }
+
+  return object;
+}
 
 function uploadFile(url, file, callback) {
   var xhr = new XMLHttpRequest();
@@ -65,14 +106,12 @@ app.service('Page', function($resource) {
   });
 });
 
-// app.service('FileObject', function($resource) {
-//   return $resource('/files/:name/objects/:number', {
-//     name: '@name',
-//     number: '@number',
-//   });
-// });
-
-
+app.service('FileObject', function($resource) {
+  return $resource('/files/:name/objects/:number', {
+    name: '@name',
+    number: '@number',
+  });
+});
 
 app.directive('pdfobject', function() {
   return {
@@ -82,27 +121,29 @@ app.directive('pdfobject', function() {
     },
     link: function(scope, el, attrs) {
       var container = el[0];
-
       var emit = scope.$emit.bind(scope);
-      var props = {emit: emit};
-      var react_component = React.render(React.createElement(components.PDFObject, props), container);
 
       scope.$watch('object', function(object) {
-        react_component.setProps({object: angular.copy(object)});
-      });
+        object = clean(object);
+        React.render(React.createElement(components.PDFObject, {emit: emit, object: object}), container);
+      }, true);
     }
   };
 });
 
-app.controller('uploadCtrl', function($scope, $http, $localStorage, $flash, File) {
+app.controller('uploadCtrl', function($scope, $state, $localStorage, $flash, File) {
   $scope.files = File.query(function(value, responseHeaders) {
     // this is dumb. apparently when rendering the select, angular doesn't check
     // for matches against an existing ng-model value?
     // it seems that angular.js 1.4 will fix this; see http://jsfiddle.net/z3wpa0ff/
-    $scope.$storage = $localStorage;
+    $scope.selected_name = $state.params.name;
   }, function(httpResponse) {
     $flash('Error loading files: ' + httpResponse.toString());
   });
+
+  $scope.select = function(selected_name) {
+    $state.go('pdfs.show', {name: selected_name});
+  };
 
   $scope.uploadFile = function(dom_file, ev) {
     var file = File.upload(dom_file);
@@ -116,39 +157,29 @@ app.controller('uploadCtrl', function($scope, $http, $localStorage, $flash, File
   };
 });
 
-app.controller('structureCtrl', function($scope, $localStorage, $http, File, Page) {
+app.controller('structureCtrl', function($scope, $state, $localStorage, $http, File, Page) {
   $scope.$storage = $localStorage.$default({breadcrumbs: []});
 
   $scope.$on('loadObject', function(event, reference) {
-    // $scope.loadObject(reference);
-    // scope.object = FileObject.get({name: scope.name, number: scope.objectNumber});
-    $scope.addBreadcrumb(reference);
-    $scope.selected_reference = reference;
-    var object_url = '/files/' + $scope.file.name + '/objects/' + reference.object_number;
-    $http.get(object_url).then(function(res) {
-      $scope.selected_object = res.data;
-    }, function(err) {
-      log('error fetching object', err);
-    });
+    // $scope.addBreadcrumb(reference);
+    $state.go('pdfs.show.object', {number: reference.object_number});
   });
 
-  $scope.addBreadcrumb = function(reference) {
-    var breadcrumbs = $scope.$storage.breadcrumbs;
-    var exists = _.find(breadcrumbs, reference);
-    if (!exists) {
-      breadcrumbs.push(reference);
-      $scope.$storage.breadcrumbs = breadcrumbs.slice(-10);
-    }
-  };
+  // $scope.$storage.breadcrumbs.length = 0;
+  // $scope.addBreadcrumb = function(reference) {
+  //   var breadcrumbs = $scope.$storage.breadcrumbs;
+  //   var exists = _.find(breadcrumbs, reference);
+  //   if (!exists) {
+  //     breadcrumbs.push(reference);
+  //     $scope.$storage.breadcrumbs = breadcrumbs.slice(-10);
+  //   }
+  // };
 
-  $scope.$watch('$storage.selected_name', function(newVal, oldVal) {
-    $scope.file = File.get({name: newVal});
-    $scope.pages = Page.query({name: newVal});
-    if (newVal != oldVal) {
-      $scope.$storage.breadcrumbs.length = 0;
-    }
-    // function() {
-      // $scope.loadObject($scope.file.trailer.Root);
-    // });
-  });
+  $scope.file = File.get({name: $state.params.name});
+  $scope.pages = Page.query({name: $state.params.name});
+});
+
+app.controller('objectCtrl', function($scope, $state, FileObject) {
+  $scope.object_number = $state.params.number;
+  $scope.object = FileObject.get({name: $state.params.name, number: $state.params.number});
 });

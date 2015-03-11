@@ -17,19 +17,26 @@
     "async": "*",
     "formidable": "*",
     "http-enhanced": "*",
+    "lodash": "*",
     "loge": "*",
     "regex-router": "*",
     "send": "*",
     "yargs": "*"
   },
   "devDependencies": {
-    "mocha": "*"
+    "mocha": "*",
+    "react-tools": "*",
+    "typescript": "*"
   },
   "staticPattern": "static/lib/{file}",
   "staticDependencies": {
     "angular": "*",
+    "angular-ui-router": "*",
     "lodash": "*",
-    "misc-js": "git://github.com/chbrown/misc-js.git",
+    "misc-js": {
+      "url": "git://github.com/chbrown/misc-js.git",
+      "filter": ["angular-plugins.js", "angular-plugins.min.js", "textarea.js"]
+    },
     "ng-storage": "*",
     "react": "*"
   }

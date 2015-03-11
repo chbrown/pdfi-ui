@@ -6,8 +6,8 @@ var R = new Router(function(req, res) {
   res.status(404).die('No resource at: ' + req.url);
 });
 
-R.get(/^\/$/, function(req, res, m) {
-  req.url = '/static/layout.html';
+R.get(/^\/($|pdfs)/, function(req, res, m) {
+  req.url = '/static/ng/layout.html';
   R.route(req, res);
 });
 

@@ -4,17 +4,17 @@ table td,table th{font-size:100%;text-align:left}
 body{background-color:#FDFDFD}
 .flash{position:fixed;left:0;right:0;text-align:center;pointer-events:none;z-index:1000}
 .flash span{display:inline-block;background-color:rgba(0,0,0,.66);color:#fff;padding:2px 8px;margin:3px 6px;border-radius:3px}
-nav{top:0;left:0;right:0;background-color:#DDD;border-bottom:1px solid #BBB;padding:5px;box-sizing:border-box}
+nav{top:0;left:0;right:0;z-index:1000;background-color:#DDD;border-bottom:1px solid #BBB;padding:5px;box-sizing:border-box}
 h1,h2,h3,h4,h5,h6{margin:1ex 0}
 a{cursor:pointer;text-decoration:underline}
 .breadcrumbs>span.selected a{background-color:#CCC}
 .breadcrumbs>span:after{content:"→"}
 .breadcrumbs>span:last-child:after{content:""}
-.page{display:inline-block;border:1px solid #B86;margin:0 5px 5px 0;padding:2px;vertical-align:top}
+div,input,main,nav,section,span,textarea{box-sizing:border-box}
 .array,.name,.number,.object,.reference,.string{vertical-align:top}
 .object{padding-left:5px}
 .name,.number,.reference,.string{display:inline-block;margin:.2ex .1em;padding:.3ex .2em .1ex .2em}
 .name{font-weight:700}
 .reference{border:1px solid #88F}
 .number{border:1px solid #E81}
-.string{font-family:monospace;white-space:pre-wrap}
+.string{font-family:monospace;white-space:pre-wrap;word-break:break-all}
