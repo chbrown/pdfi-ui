@@ -1,3 +1,4 @@
+var _ = require('lodash');
 var async = require('async');
 var path = require('path');
 var fs = require('fs');
@@ -106,7 +107,7 @@ R.get(/^\/files\/([^\/]+)$/, function(req, res, m) {
   res.json({
     name: name,
     size: pdf.size,
-    trailer: pdf.trailer,
+    trailer: _.omit(pdf.trailer, 'ID'), // who needs the ID?
     cross_references: pdf.cross_references,
   });
 });
@@ -142,14 +143,21 @@ R.get(/^\/files\/([^\/]+)\/objects\/(\d+)(\?.+|$)/, function(req, res, m) {
   var urlObj = url.parse(req.url, true);
   var generation_number = urlObj.query.generation_number || 0;
 
-  var object = pdf.findObject({
-    object_number: parseInt(object_number, 10),
-    generation_number: parseInt(generation_number, 10),
-  });
+  var object;
+  try {
+    object = pdf.findObject({
+      object_number: parseInt(object_number, 10),
+      generation_number: parseInt(generation_number, 10),
+    });
+  }
+  catch (exc) {
+    return res.die(exc);
+  }
+
 
   if (Buffer.isBuffer(object.buffer) && object.dictionary && object.dictionary.Length !== undefined) {
     // it's a stream, but bytes aren't very useful, so render them as a string instead
-    object.string = object.buffer.toString('ascii');
+    object.string = object.buffer.toString('ascii').replace(/(\r\n|\r)/g, '\n');
     delete object.buffer;
   }
 
