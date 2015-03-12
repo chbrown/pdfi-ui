@@ -97,12 +97,13 @@ function loadPDF(name) {
 */
 R.get(/^\/files\/([^\/]+)$/, function(req, res, m) {
   var name = decodeURIComponent(m[1]);
-  var pdf = loadPDF(name);
-
-  // var Info = pdf.findObject(trailer.Info);
-  // var Root = pdf.findObject(trailer.Root);
-  // var RootPages = pdf.findObject(Root.Pages);
-  // var pages = <pdfdom.ArrayObject>Pages['Kids'];
+  var pdf;
+  try {
+    pdf = loadPDF(name);
+  }
+  catch (error) {
+    return res.die(error);
+  }
 
   res.json({
     name: name,
@@ -117,7 +118,13 @@ R.get(/^\/files\/([^\/]+)$/, function(req, res, m) {
 */
 R.get(/^\/files\/([^\/]+)\/pages$/, function(req, res, m) {
   var name = decodeURIComponent(m[1]);
-  var pdf = loadPDF(name);
+  var pdf;
+  try {
+    pdf = loadPDF(name);
+  }
+  catch (error) {
+    return res.die(error);
+  }
 
   res.json(pdf.pages);
 });
@@ -137,7 +144,6 @@ R.get(/^\/files\/([^\/]+)\/objects$/, function(req, res, m) {
 */
 R.get(/^\/files\/([^\/]+)\/objects\/(\d+)(\?.+|$)/, function(req, res, m) {
   var name = decodeURIComponent(m[1]);
-  var pdf = loadPDF(name);
   var object_number = m[2];
 
   var urlObj = url.parse(req.url, true);
@@ -145,15 +151,15 @@ R.get(/^\/files\/([^\/]+)\/objects\/(\d+)(\?.+|$)/, function(req, res, m) {
 
   var object;
   try {
+    var pdf = loadPDF(name);
     object = pdf.findObject({
       object_number: parseInt(object_number, 10),
       generation_number: parseInt(generation_number, 10),
     });
   }
-  catch (exc) {
-    return res.die(exc);
+  catch (error) {
+    return res.die(error);
   }
-
 
   if (Buffer.isBuffer(object.buffer) && object.dictionary && object.dictionary.Length !== undefined) {
     // it's a stream, but bytes aren't very useful, so render them as a string instead
