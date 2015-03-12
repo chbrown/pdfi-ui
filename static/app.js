@@ -11,24 +11,24 @@ Error.stackTraceLimit = 50;
 
 app.config(function($stateProvider, $urlRouterProvider, $locationProvider) {
   $urlRouterProvider.otherwise(function($injector, $location) {
-    console.log('otherwise coming from: %s', $location.url());
+    log('otherwise: coming from "%s"', $location.url());
     return '/pdfs';
   });
 
   $stateProvider
   .state('pdfs', {
     url: '/pdfs',
-    templateUrl: '/static/ng/pdfs.html',
-
+    templateUrl: '/static/ng/navigator.html',
   })
   .state('pdfs.show', {
-    url: '/:name',
+    url: '/{name:[^/]+\.pdf}',
     templateUrl: '/static/ng/pdf.html',
+    controller: 'pdfCtrl',
   })
   .state('pdfs.show.object', {
-    url: '/:number',
+    url: '/{number:int}',
     templateUrl: '/static/ng/object.html',
-    // controller: 'objectCtrl',
+    controller: 'objectCtrl',
   });
 
   $locationProvider.html5Mode(true);
@@ -75,7 +75,7 @@ function uploadFile(url, file, callback) {
   xhr.send(form);
 }
 
-app.service('File', function($resource, $q) {
+app.service('File', function($resource, $q, $http) {
   var File = $resource('/files/:name', {
     name: '@name',
   }, {
@@ -95,7 +95,15 @@ app.service('File', function($resource, $q) {
     });
     return file;
   };
-  // File.prototype.objects;
+  /**
+  We don't want to use a $resource like FileObject, because some objects
+  are natively arrays, and some are objects, and Angular doesn't like that,
+  not one bit.
+  */
+  File.prototype.getObject = function(number) {
+    var object_url = '/files/' + this.name + '/objects/' + number;
+    return $http.get(object_url);
+  };
   return File;
 });
 
@@ -103,13 +111,6 @@ app.service('Page', function($resource) {
   return $resource('/files/:name/pages/:index', {
     name: '@name',
     index: '@index',
-  });
-});
-
-app.service('FileObject', function($resource) {
-  return $resource('/files/:name/objects/:number', {
-    name: '@name',
-    number: '@number',
   });
 });
 
@@ -131,25 +132,12 @@ app.directive('pdfobject', function() {
   };
 });
 
-app.controller('uploadCtrl', function($scope, $state, $localStorage, $flash, File) {
-  $scope.files = File.query(function(value, responseHeaders) {
-    // this is dumb. apparently when rendering the select, angular doesn't check
-    // for matches against an existing ng-model value?
-    // it seems that angular.js 1.4 will fix this; see http://jsfiddle.net/z3wpa0ff/
-    $scope.selected_name = $state.params.name;
-  }, function(httpResponse) {
-    $flash('Error loading files: ' + httpResponse.toString());
-  });
-
-  $scope.select = function(selected_name) {
-    $state.go('pdfs.show', {name: selected_name});
-  };
-
+app.controller('uploadCtrl', function($scope, $state, $flash, File) {
   $scope.uploadFile = function(dom_file, ev) {
     var file = File.upload(dom_file);
     var promise = file.$promise.then(function() {
-      $scope.$storage.selected_name = file.name;
-        return 'Uploaded file';
+      $state.go('pdfs.show', {name: file.name});
+      return 'Uploaded file';
     }, function(err) {
       return 'File error: ' + err.toString();
     });
@@ -157,29 +145,37 @@ app.controller('uploadCtrl', function($scope, $state, $localStorage, $flash, Fil
   };
 });
 
-app.controller('structureCtrl', function($scope, $state, $localStorage, $http, File, Page) {
-  $scope.$storage = $localStorage.$default({breadcrumbs: []});
-
-  $scope.$on('loadObject', function(event, reference) {
-    // $scope.addBreadcrumb(reference);
-    $state.go('pdfs.show.object', {number: reference.object_number});
+app.controller('selectorCtrl', function($scope, $state, $flash, File) {
+  $scope.files = File.query(function(value, responseHeaders) {
+    // this is dumb. apparently when rendering the select, angular doesn't check
+    // for matches against an existing ng-model value?
+    // it seems that angular.js 1.4 will fix this; see http://jsfiddle.net/z3wpa0ff/
+    $scope.selected_file = {name: $state.params.name};
+  }, function(httpResponse) {
+    $flash('Error loading files: ' + httpResponse.toString());
   });
 
-  // $scope.$storage.breadcrumbs.length = 0;
-  // $scope.addBreadcrumb = function(reference) {
-  //   var breadcrumbs = $scope.$storage.breadcrumbs;
-  //   var exists = _.find(breadcrumbs, reference);
-  //   if (!exists) {
-  //     breadcrumbs.push(reference);
-  //     $scope.$storage.breadcrumbs = breadcrumbs.slice(-10);
-  //   }
-  // };
+  $scope.select = function(selected_name) {
+    $state.go('pdfs.show', {name: selected_name});
+  };
+});
+
+app.controller('pdfCtrl', function($scope, $state, $http, File, Page) {
+  $scope.$on('loadObject', function(event, reference) {
+    $state.go('pdfs.show.object', {number: reference.object_number});
+  });
 
   $scope.file = File.get({name: $state.params.name});
   $scope.pages = Page.query({name: $state.params.name});
 });
 
-app.controller('objectCtrl', function($scope, $state, FileObject) {
+app.controller('objectCtrl', function($scope, $state, File) {
   $scope.object_number = $state.params.number;
-  $scope.object = FileObject.get({name: $state.params.name, number: $state.params.number});
+
+  $scope.file = new File({name: $state.params.name});
+  $scope.file.getObject($state.params.number).then(function(res) {
+    $scope.object = res.data; // angular.copy(res.data);
+  }, function(err) {
+    log('error fetching object', err);
+  });
 });

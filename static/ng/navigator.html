@@ -1,11 +1,13 @@
 <nav fixedflow>
-  <div ng-controller="uploadCtrl">
+  <span ng-controller="selectorCtrl">
     <span><b>Load PDF:</b></span>
-    <select ng-options="file.name as file.name for file in files" ng-model="selected_name" ng-change="select(selected_name)">
+    <select ng-options="file.name as file.name for file in files" ng-model="selected_file.name" ng-change="select(selected_file.name)">
       <option value="">-- none selected --</option>
     </select>
+  </span>
+  <span ng-controller="uploadCtrl">
     <span><b>Add PDF:</b></span>
     <input type="file" on-upload="uploadFile($file, $event)">
-  </div>
+  </span>
 </nav>
 <ui-view></ui-view>
