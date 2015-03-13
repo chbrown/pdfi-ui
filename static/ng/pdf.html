@@ -5,12 +5,12 @@
       <small>{{file.size | number}} bytes</small>
 
       <h3>Trailer</h3>
-      <PDFObject object="file.trailer"></PDFObject>
+      <PDFObject file="file" object="file.trailer"></PDFObject>
     </div>
 
     <div ng-repeat="page in pages" style="padding: 5px; border-top: 1px solid #B86;">
-      <h4>Page {{$index}}</h4>
-      <PDFObject object="page"></PDFObject>
+      <h4><a ui-sref="pdfs.show.page({index: $index})">Page {{$index + 1}}</a></h4>
+      <PDFObject file="file" object="page"></PDFObject>
     </div>
   </div>
   <div style="margin: 0 0 20px 200px">

@@ -101,32 +101,30 @@ app.service('File', function($resource, $q, $http) {
   not one bit.
   */
   File.prototype.getObject = function(number) {
-    var object_url = '/files/' + this.name + '/objects/' + number;
-    return $http.get(object_url);
+    return $http.get('/files/' + this.name + '/objects/' + number);
+  };
+  File.prototype.getPages = function() {
+    return $http.get('/files/' + this.name + '/pages');
+  };
+  File.prototype.getPage = function(index) {
+    return $http.get('/files/' + this.name + '/pages/' + index);
   };
   return File;
-});
-
-app.service('Page', function($resource) {
-  return $resource('/files/:name/pages/:index', {
-    name: '@name',
-    index: '@index',
-  });
 });
 
 app.directive('pdfobject', function() {
   return {
     restrict: 'E',
     scope: {
+      file: '=',
       object: '=',
     },
     link: function(scope, el, attrs) {
       var container = el[0];
-      var emit = scope.$emit.bind(scope);
 
       scope.$watch('object', function(object) {
         object = clean(object);
-        React.render(React.createElement(components.PDFObject, {emit: emit, object: object}), container);
+        React.render(React.createElement(components.PDFObject, {file: scope.file, object: object}), container);
       }, true);
     }
   };
