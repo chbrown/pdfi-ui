@@ -19,6 +19,7 @@
     "http-enhanced": "*",
     "lodash": "*",
     "loge": "*",
+    "pdf": "*",
     "regex-router": "*",
     "send": "*",
     "yargs": "*"

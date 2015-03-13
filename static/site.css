@@ -18,3 +18,5 @@ div,input,main,nav,section,span,textarea{box-sizing:border-box}
 .reference{border:1px solid #88F}
 .number{border:1px solid #E81}
 .string{font-family:monospace;white-space:pre-wrap;word-break:break-all}
+.page-canvas{border:2px solid rgba(100,50,200,.9);position:relative}
+.page-canvas div{border:1px solid rgba(200,100,100,.5);position:absolute;white-space:pre}

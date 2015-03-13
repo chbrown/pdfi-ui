@@ -9,6 +9,19 @@ var app = angular.module('app', [
 var log = console.log.bind(console);
 Error.stackTraceLimit = 50;
 
+app.filter('keys', function() {
+  return function(value) {
+    if (value === undefined || value === null) return [];
+    return Object.keys(value);
+  };
+});
+
+app.filter('px', function() {
+  return function(number) {
+    return number.toFixed(2) + 'px';
+  };
+});
+
 app.config(function($stateProvider, $urlRouterProvider, $locationProvider) {
   $urlRouterProvider.otherwise(function($injector, $location) {
     log('otherwise: coming from "%s"', $location.url());
@@ -26,9 +39,14 @@ app.config(function($stateProvider, $urlRouterProvider, $locationProvider) {
     controller: 'pdfCtrl',
   })
   .state('pdfs.show.object', {
-    url: '/{number:int}',
+    url: '/objects/{number:int}',
     templateUrl: '/static/ng/object.html',
     controller: 'objectCtrl',
+  })
+  .state('pdfs.show.page', {
+    url: '/pages/{index:int}',
+    templateUrl: '/static/ng/page.html',
+    controller: 'pageCtrl',
   });
 
   $locationProvider.html5Mode(true);
@@ -158,22 +176,29 @@ app.controller('selectorCtrl', function($scope, $state, $flash, File) {
   };
 });
 
-app.controller('pdfCtrl', function($scope, $state, $http, File, Page) {
-  $scope.$on('loadObject', function(event, reference) {
-    $state.go('pdfs.show.object', {number: reference.object_number});
+app.controller('pdfCtrl', function($scope, $state, File) {
+  $scope.file = new File({name: $state.params.name});
+  $scope.file.getPages().then(function(res) {
+    $scope.pages = res.data;
   });
 
-  $scope.file = File.get({name: $state.params.name});
-  $scope.pages = Page.query({name: $state.params.name});
+  $scope.file.$get();
 });
 
-app.controller('objectCtrl', function($scope, $state, File) {
+app.controller('objectCtrl', function($scope, $state) {
   $scope.object_number = $state.params.number;
-
-  $scope.file = new File({name: $state.params.name});
   $scope.file.getObject($state.params.number).then(function(res) {
-    $scope.object = res.data; // angular.copy(res.data);
+    $scope.object = res.data;
   }, function(err) {
     log('error fetching object', err);
+  });
+});
+
+app.controller('pageCtrl', function($scope, $state) {
+  $scope.page_number = $state.params.index;
+  $scope.file.getPage($state.params.index).then(function(res) {
+    $scope.page = res.data;
+  }, function(err) {
+    log('error fetching page', err);
   });
 });

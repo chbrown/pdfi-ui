@@ -1,0 +1,20 @@
+<h3>Page {{page_number + 1}}</h3>
+<ul>
+  <li>Type: {{page.Type}}</li>
+  <li>MediaBox: {{page.MediaBox}}</li>
+  <li>Contents: {{page.Contents}}</li>
+  <li>XObject names: {{page.XObject | keys}}</li>
+</ul>
+
+<h3>Layout</h3>
+<div>
+  <label ng-repeat="object in page.objects" class="checkbox">
+    <input type="checkbox" ng-init="object.visible = true" ng-model="object.visible"> Show object {{$index}}
+  </label>
+</div>
+<div class="page-canvas" ng-style="{width: (page.MediaBox[2] | px), height: (page.MediaBox[3] | px)}">
+  <section ng-repeat="object in page.objects" ng-show="object.visible">
+    <div ng-repeat="span in object.spans" ng-bind="span.text"
+      ng-style="{left: (span.position.x | px), top: (span.position.y | px), 'font-size': (span.size | px)}"></div>
+  </section>
+</div>

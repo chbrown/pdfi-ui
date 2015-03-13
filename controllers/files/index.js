@@ -37,7 +37,7 @@ R.get(/^\/files$/, function(req, res) {
       });
     }, function(err, files) {
       if (err) return res.die(err);
-      res.ngjson(files);
+      res.json(files);
     });
   });
 });
@@ -114,7 +114,6 @@ R.get(/^\/files\/([^\/]+)$/, function(req, res, m) {
 });
 
 /** GET /files/:name/pages
-
 */
 R.get(/^\/files\/([^\/]+)\/pages$/, function(req, res, m) {
   var name = decodeURIComponent(m[1]);
@@ -129,6 +128,22 @@ R.get(/^\/files\/([^\/]+)\/pages$/, function(req, res, m) {
   res.json(pdf.pages);
 });
 
+/** GET /files/:name/pages/:index
+*/
+R.get(/^\/files\/([^\/]+)\/pages\/(\d+)$/, function(req, res, m) {
+  var name = decodeURIComponent(m[1]);
+  var pdf;
+  try {
+    pdf = loadPDF(name);
+  }
+  catch (error) {
+    return res.die(error);
+  }
+
+  var index = parseInt(m[2], 10);
+  var page = pdf.getPage(index);
+  res.json(page);
+});
 
 /** GET /files/:name/objects
 
@@ -161,14 +176,8 @@ R.get(/^\/files\/([^\/]+)\/objects\/(\d+)(\?.+|$)/, function(req, res, m) {
     return res.die(error);
   }
 
-  if (Buffer.isBuffer(object.buffer) && object.dictionary && object.dictionary.Length !== undefined) {
-    // it's a stream, but bytes aren't very useful, so render them as a string instead
-    object.string = object.buffer.toString('ascii').replace(/(\r\n|\r)/g, '\n');
-    delete object.buffer;
-  }
-
   // it could be an array
-  res.ngjson(object);
+  res.json(object);
 });
 
 module.exports = R.route.bind(R);
