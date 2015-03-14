@@ -58,6 +58,22 @@ a {
   text-decoration: underline;
 }
 
+.thumbnails {
+  position: fixed;
+  top: 29px;
+  left: 0;
+  bottom: 0;
+  width: 200px;
+  overflow-y: scroll;
+  z-index: 100;
+  font-size: 90%;
+  background-color: #FAFAFA;
+
+  & > div {
+    padding: 5px;
+  }
+}
+
 .breadcrumbs > span {
   &.selected a {
     background-color: #CCC;
@@ -105,9 +121,6 @@ div, section, nav, main, textarea, input, span {
 .page-canvas {
   border: 2px solid rgba(100, 50, 200, 0.9);
   position: relative;
-  section {
-    // border: 2px solid rgba(100, 50, 200, 0.9);
-  }
   div {
     border: 1px solid rgba(200, 100, 100, 0.5);
     position: absolute;
