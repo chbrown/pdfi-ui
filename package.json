@@ -17,6 +17,7 @@
     "async": "*",
     "formidable": "*",
     "http-enhanced": "*",
+    "lexing": "*",
     "lodash": "*",
     "loge": "*",
     "pdf": "*",

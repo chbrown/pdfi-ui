@@ -3,12 +3,14 @@ var async = require('async');
 var path = require('path');
 var fs = require('fs');
 var url = require('url');
+var lexing = require('lexing');
 var formidable = require('formidable');
 
 var logger = require('loge');
 var Router = require('regex-router');
 
 var pdf = require('pdf');
+var StackOperationParser = require('pdf/parsers/StackOperationParser');
 
 var files_dirpath = process.env.UPLOADS;
 
@@ -174,6 +176,27 @@ R.get(/^\/files\/([^\/]+)\/objects\/(\d+)(\?.+|$)/, function(req, res, m) {
   }
   catch (error) {
     return res.die(error);
+  }
+
+  if (object.dictionary && object.buffer) {
+    var string_iterable = lexing.StringIterator.fromBuffer(object.buffer);
+    var stack_operation_iterator = new StackOperationParser().map(string_iterable);
+
+    object.tokens = [];
+    try {
+      while (1) {
+        var token = stack_operation_iterator.next();
+        if (token.name === 'EOF') {
+          break;
+        }
+        var token_object = {};
+        token_object[token.name] = token.value;
+        object.tokens.push(token_object);
+      }
+    }
+    catch (error) {
+      logger.error('StackOperationParser exception: %s', error.message);
+    }
   }
 
   // it could be an array
