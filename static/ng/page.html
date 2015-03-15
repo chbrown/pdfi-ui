@@ -7,7 +7,6 @@
 </ul>
 
 <h3>Layout</h3>
-<div class="page-canvas" ng-style="{width: (page.MediaBox[2] | px), height: (page.MediaBox[3] | px)}">
-  <div ng-repeat="span in page.spans" ng-bind="span.text"
-    ng-style="{left: (span.position.x | px), top: (span.position.y | px), 'font-size': (span.size | px)}"></div>
+<div ng-if="page">
+  <PDFPage page="page"></PDFPage>
 </div>

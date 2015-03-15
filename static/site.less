@@ -118,12 +118,16 @@ div, section, nav, main, textarea, input, span {
   word-break: break-all;
 }
 
-.page-canvas {
+.page {
   border: 2px solid rgba(100, 50, 200, 0.9);
   position: relative;
   div {
     border: 1px solid rgba(200, 100, 100, 0.5);
     position: absolute;
     white-space: pre;
+    // if we don't want to handle the Y-mirroring in the DOM layout,
+    // this transform and the one below accomplishes much the same thing:
+    // transform: matrix(1.0, 0.0, 0.0, -1.0, 0.0, 0.0);
   }
+  // transform: matrix(1.0, 0.0, 0.0, -1.0, 0.0, 0.0);
 }

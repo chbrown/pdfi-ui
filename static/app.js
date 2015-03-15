@@ -49,7 +49,11 @@ app.config(function($stateProvider, $urlRouterProvider, $locationProvider) {
     controller: 'pageCtrl',
   });
 
-  $locationProvider.html5Mode(true);
+  // rewriteLinks is nice because it lets us load new nested ui-views without
+  // reloading the whole page, but it also listens for all click events at the
+  // page level and intercepts and handles them before they can be canceled
+  // elsewhere.
+  $locationProvider.html5Mode({enabled: true, rewriteLinks: true});
 });
 
 function clean(object) {
@@ -133,17 +137,31 @@ app.service('File', function($resource, $q, $http) {
 app.directive('pdfobject', function() {
   return {
     restrict: 'E',
-    scope: {
-      file: '=',
-      object: '=',
-    },
+    scope: {file: '=', object: '='},
     link: function(scope, el, attrs) {
-      var container = el[0];
-
       scope.$watch('object', function(object) {
-        object = clean(object);
-        React.render(React.createElement(components.PDFObject, {file: scope.file, object: object}), container);
+        React.render(React.createElement(components.PDFObject, {file: scope.file, object: clean(object)}), el[0]);
       }, true);
+    }
+  };
+});
+
+app.directive('pdfpage', function() {
+  return {
+    restrict: 'E',
+    scope: {file: '=', page: '='},
+    link: function(scope, el, attrs) {
+      React.render(React.createElement(components.PDFPage, scope), el[0]);
+    }
+  };
+});
+
+app.directive('pdfobjectreference', function() {
+  return {
+    restrict: 'E',
+    scope: {file: '=', objectNumber: '=', generationNumber: '='},
+    link: function(scope, el, attrs) {
+      React.render(React.createElement(components.PDFObjectReference, scope), el[0]);
     }
   };
 });
@@ -187,6 +205,7 @@ app.controller('pdfCtrl', function($scope, $state, File) {
 
 app.controller('objectCtrl', function($scope, $state) {
   $scope.object_number = $state.params.number;
+
   $scope.file.getObject($state.params.number).then(function(res) {
     $scope.object = res.data;
   }, function(err) {
