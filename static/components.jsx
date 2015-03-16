@@ -92,6 +92,9 @@ var PDFObject = React.createClass({
     else if (typeof object === 'number') {
       return <span className="number">{object}</span>;
     }
+    else if (typeof object === 'boolean') {
+      return <span className="boolean">{object}</span>;
+    }
     // catch-all
     return <span className="string">{object}</span>;
   },
