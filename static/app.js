@@ -47,6 +47,11 @@ app.config(function($stateProvider, $urlRouterProvider, $locationProvider) {
     url: '/pages/{page_number:int}',
     templateUrl: '/static/ng/page.html',
     controller: 'pageCtrl',
+  })
+  .state('pdfs.show.page_contents', {
+    url: '/pages/{page_number:int}/contents',
+    templateUrl: '/static/ng/contents.html',
+    controller: 'pageContentsCtrl',
   });
 
   // rewriteLinks is nice because it lets us load new nested ui-views without
@@ -130,6 +135,9 @@ app.service('File', function($resource, $q, $http) {
   };
   File.prototype.getPage = function(page_number) {
     return $http.get('/files/' + this.name + '/pages/' + page_number);
+  };
+  File.prototype.getPageContents = function(page_number) {
+    return $http.get('/files/' + this.name + '/pages/' + page_number + '/contents');
   };
   return File;
 });
@@ -220,6 +228,16 @@ app.controller('pageCtrl', function($scope, $state, $localStorage) {
   $scope.page_number = $state.params.page_number;
 
   $scope.file.getPage($state.params.page_number).then(function(res) {
+    $scope.page = res.data;
+  }, function(err) {
+    log('error fetching page', err);
+  });
+});
+
+app.controller('pageContentsCtrl', function($scope, $state) {
+  $scope.page_number = $state.params.page_number;
+
+  $scope.file.getPageContents($state.params.page_number).then(function(res) {
     $scope.page = res.data;
   }, function(err) {
     log('error fetching page', err);

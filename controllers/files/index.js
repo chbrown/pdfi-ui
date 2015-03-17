@@ -101,8 +101,28 @@ function loadPDF(uri_name, res, callback) {
   }
 }
 
-/** GET /files/:name
+function parseStackOperations(string) {
+  var string_iterable = new lexing.StringIterator(string);
+  var stack_operation_iterator = new StackOperationParser().map(string_iterable);
+  var tokens = [];
+  try {
+    while (1) {
+      var token = stack_operation_iterator.next();
+      if (token.name === 'EOF') {
+        break;
+      }
+      var token_object = {};
+      token_object[token.name] = token.value;
+      tokens.push(token_object);
+    }
+  }
+  catch (error) {
+    logger.error('StackOperationParser exception: %s', error.message);
+  }
+  return tokens;
+}
 
+/** GET /files/:name
 */
 R.get(/^\/files\/([^\/]+)$/, function(req, res, m) {
   var name = decodeURIComponent(m[1]);
@@ -147,6 +167,24 @@ R.get(/^\/files\/([^\/]+)\/pages\/(\d+)$/, function(req, res, m) {
   });
 });
 
+/** GET /files/:name/pages/:page_number/contents
+*/
+R.get(/^\/files\/([^\/]+)\/pages\/(\d+)\/contents$/, function(req, res, m) {
+  loadPDF(m[1], res, function(pdf) {
+    var page_number = parseInt(m[2], 10);
+
+    // subtract one to change indexing from 1-based to 0-based
+    var page = pdf.pages[page_number - 1];
+    var Contents = page.joinContents('\n', 'ascii'); // a string
+    // var tokens = parseStackOperations(Contents.buffer);
+
+    res.json({
+      Contents: Contents,
+      // tokens: tokens,
+    });
+  });
+});
+
 /** GET /files/:name/objects */
 R.get(/^\/files\/([^\/]+)\/objects$/, function(req, res, m) {
   res.die('Not yet implemented');
@@ -169,27 +207,7 @@ R.get(/^\/files\/([^\/]+)\/objects\/(\d+)(\?.+|$)/, function(req, res, m) {
     if (pdf_models.ContentStream.isContentStream(object)) {
       var stream = new pdf_models.ContentStream(pdf, object);
       object.buffer = stream.buffer;
-
-      var string_iterable = lexing.StringIterator.fromBuffer(object.buffer);
-      var stack_operation_iterator = new StackOperationParser().map(string_iterable);
-
-      var tokens = [];
-      try {
-        while (1) {
-          var token = stack_operation_iterator.next();
-          if (token.name === 'EOF') {
-            break;
-          }
-          var token_object = {};
-          token_object[token.name] = token.value;
-          tokens.push(token_object);
-        }
-      }
-      catch (error) {
-        logger.error('StackOperationParser exception: %s', error.message);
-      }
-
-      object.tokens = tokens;
+      // object.tokens = parseStackOperations(object.buffer);
     }
 
     if (pdf_models.Encoding.isEncoding(object)) {
