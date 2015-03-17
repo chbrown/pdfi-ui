@@ -149,9 +149,11 @@ app.directive('pdfobject', function() {
 app.directive('pdfpage', function() {
   return {
     restrict: 'E',
-    scope: {file: '=', page: '='},
+    scope: {page: '=', scale: '='},
     link: function(scope, el, attrs) {
-      React.render(React.createElement(components.PDFPage, scope), el[0]);
+      scope.$watchGroup(['page', 'scale'], function() {
+        React.render(React.createElement(components.PDFPage, scope), el[0]);
+      }, true);
     }
   };
 });
@@ -214,7 +216,7 @@ app.controller('objectCtrl', function($scope, $state) {
 });
 
 app.controller('pageCtrl', function($scope, $state, $localStorage) {
-  $scope.$storage = $localStorage;
+  $scope.$storage = $localStorage.$default({outline: false, scale: 1.0});
   $scope.page_number = $state.params.page_number;
 
   $scope.file.getPage($state.params.page_number).then(function(res) {
