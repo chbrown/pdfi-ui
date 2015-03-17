@@ -44,7 +44,7 @@ app.config(function($stateProvider, $urlRouterProvider, $locationProvider) {
     controller: 'objectCtrl',
   })
   .state('pdfs.show.page', {
-    url: '/pages/{index:int}',
+    url: '/pages/{page_number:int}',
     templateUrl: '/static/ng/page.html',
     controller: 'pageCtrl',
   });
@@ -128,8 +128,8 @@ app.service('File', function($resource, $q, $http) {
   File.prototype.getPages = function() {
     return $http.get('/files/' + this.name + '/pages');
   };
-  File.prototype.getPage = function(index) {
-    return $http.get('/files/' + this.name + '/pages/' + index);
+  File.prototype.getPage = function(page_number) {
+    return $http.get('/files/' + this.name + '/pages/' + page_number);
   };
   return File;
 });
@@ -213,9 +213,11 @@ app.controller('objectCtrl', function($scope, $state) {
   });
 });
 
-app.controller('pageCtrl', function($scope, $state) {
-  $scope.page_number = $state.params.index;
-  $scope.file.getPage($state.params.index).then(function(res) {
+app.controller('pageCtrl', function($scope, $state, $localStorage) {
+  $scope.$storage = $localStorage;
+  $scope.page_number = $state.params.page_number;
+
+  $scope.file.getPage($state.params.page_number).then(function(res) {
     $scope.page = res.data;
   }, function(err) {
     log('error fetching page', err);

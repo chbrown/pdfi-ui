@@ -1,12 +1,9 @@
-<h3>Page {{page_number + 1}}</h3>
-<ul>
-  <li>Type: {{page.Type}}</li>
-  <li>MediaBox: {{page.MediaBox}}</li>
-  <li>Contents: {{page.Contents}}</li>
-  <li>XObject names: {{page.XObject | keys}}</li>
-</ul>
+<h3>Page {{page_number}}</h3>
+<div>MediaBox: {{page.MediaBox}}</div>
 
-<h3>Layout</h3>
-<div ng-if="page">
+<div ng-if="page" ng-class="{outline: $storage.outline}">
+  <label>
+    <input type="checkbox" ng-model="$storage.outline"> Show outlines
+  </label>
   <PDFPage page="page"></PDFPage>
 </div>

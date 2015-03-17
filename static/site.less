@@ -74,43 +74,31 @@ a {
   }
 }
 
-.breadcrumbs > span {
-  &.selected a {
-    background-color: #CCC;
-  }
-  &:after {
-    content: "→";
-  }
-  &:last-child:after {
-    content: "";
-  }
-}
-
 div, section, nav, main, textarea, input, span {
   box-sizing: border-box;
 }
 
-// nested pdf-objects
+// complex pdf-objects
 .object, .array, .name, .reference, .number, .string {
   vertical-align: top;
 }
 .object {
-  padding-left: 5px;
+  margin: .2ex .1em;
 }
 // atomic pdf-objects
-.name, .reference, .number, .string {
+.name, .number, .reference, .string {
   display: inline-block;
   margin: .2ex .1em;
-  padding: .3ex .2em .1ex .2em;
+  padding: .3ex .2em 0 .2em;
 }
 .name {
   font-weight: bold;
 }
 .reference {
-  border: 1px solid #88F;
+  outline: 1px solid #88F;
 }
 .number {
-  border: 1px solid #E81;
+  outline: 1px solid #E81;
 }
 .string {
   font-family: monospace;
@@ -119,15 +107,24 @@ div, section, nav, main, textarea, input, span {
 }
 
 .page {
-  border: 2px solid rgba(100, 50, 200, 0.9);
   position: relative;
-  div {
-    border: 1px solid rgba(200, 100, 100, 0.5);
-    position: absolute;
-    white-space: pre;
-    // if we don't want to handle the Y-mirroring in the DOM layout,
-    // this transform and the one below accomplishes much the same thing:
-    // transform: matrix(1.0, 0.0, 0.0, -1.0, 0.0, 0.0);
+}
+.span {
+  position: absolute;
+  white-space: pre;
+}
+.outline {
+  .page {
+    outline: 1px solid rgba(100, 50, 200, 0.9);
   }
-  // transform: matrix(1.0, 0.0, 0.0, -1.0, 0.0, 0.0);
+  .span {
+    outline: 1px solid rgba(200, 100, 100, 0.5);
+    &:before {
+      content: "";
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      background-color: rgba(100, 25, 25, 0.8);
+    }
+  }
 }
