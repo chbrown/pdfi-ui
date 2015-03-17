@@ -118,8 +118,12 @@ var PDFPage = React.createClass({
     var page_height = page.MediaBox[3];
     var spans = page.spans.map(function(span) {
       var transformed_position = mirrorY(span.position, page_height);
-      var spanStyle = {left: transformed_position.x, top: transformed_position.y, fontSize: span.size};
-      return <div style={spanStyle}>{span.text}</div>;
+      var spanStyle = {
+        left: transformed_position.x,
+        top: transformed_position.y,
+        fontSize: span.fontSize,
+      };
+      return <div className="span" style={spanStyle} title={"font: " + span.fontName}>{span.text}</div>;
     });
     var pageStyle = {width: page_width, height: page_height};
     return <div className="page" style={pageStyle}>{spans}</div>;
