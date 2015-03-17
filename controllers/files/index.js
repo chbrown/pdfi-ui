@@ -10,6 +10,7 @@ var logger = require('loge');
 var Router = require('regex-router');
 
 var pdf = require('pdf');
+var pdf_models = require('pdf/models');
 var StackOperationParser = require('pdf/parsers/StackOperationParser');
 
 var files_dirpath = process.env.UPLOADS;
@@ -86,12 +87,18 @@ R.post(/^\/files$/, function(req, res, m) {
 });
 
 var pdf_cache = {};
-function loadPDF(name) {
-  if (!pdf_cache[name]) {
-    var filepath = path.join(files_dirpath, name);
-    pdf_cache[name] = pdf.PDF.open(filepath);
+function loadPDF(uri_name, res, callback) {
+  var name = decodeURIComponent(uri_name);
+  try {
+    if (!(name in pdf_cache)) {
+      var filepath = path.join(files_dirpath, name);
+      pdf_cache[name] = pdf.PDF.open(filepath);
+    }
+    callback(pdf_cache[name]);
   }
-  return pdf_cache[name];
+  catch (error) {
+    return res.die(error);
+  }
 }
 
 /** GET /files/:name
@@ -99,57 +106,48 @@ function loadPDF(name) {
 */
 R.get(/^\/files\/([^\/]+)$/, function(req, res, m) {
   var name = decodeURIComponent(m[1]);
-  var pdf;
-  try {
-    pdf = loadPDF(name);
-  }
-  catch (error) {
-    return res.die(error);
-  }
-
-  res.json({
-    name: name,
-    size: pdf.size,
-    trailer: _.omit(pdf.trailer, 'ID'), // who needs the ID?
-    cross_references: pdf.cross_references,
+  loadPDF(m[1], res, function(pdf) {
+    res.json({
+      // Angular model updating wants the name here too:
+      name: name,
+      size: pdf.size,
+      trailer: _.omit(pdf.trailer._object, 'ID'), // who needs the ID?
+      cross_references: pdf.cross_references,
+    });
   });
 });
 
 /** GET /files/:name/pages
 */
 R.get(/^\/files\/([^\/]+)\/pages$/, function(req, res, m) {
-  var name = decodeURIComponent(m[1]);
-  var pdf;
-  try {
-    pdf = loadPDF(name);
-  }
-  catch (error) {
-    return res.die(error);
-  }
-
-  res.json(pdf.pages);
+  loadPDF(m[1], res, function(pdf) {
+    var raw_pages = pdf.pages.map(function(page) {
+      return page._object;
+    });
+    res.json(raw_pages);
+  });
 });
 
-/** GET /files/:name/pages/:index
+/** GET /files/:name/pages/:page_number
+
+In the user interface, page numbers are 1-based. In the pdf representation,
+they are 0-based.
 */
 R.get(/^\/files\/([^\/]+)\/pages\/(\d+)$/, function(req, res, m) {
-  var name = decodeURIComponent(m[1]);
-  var pdf;
-  try {
-    pdf = loadPDF(name);
-  }
-  catch (error) {
-    return res.die(error);
-  }
+  loadPDF(m[1], res, function(pdf) {
+    var page_number = parseInt(m[2], 10);
 
-  var index = parseInt(m[2], 10);
-  var page = pdf.getPage(index);
-  res.json(page);
+    // subtract one to change indexing from 1-based to 0-based
+    var page = pdf.pages[page_number - 1];
+
+    res.json({
+      MediaBox: page.MediaBox,
+      spans: page.render(),
+    });
+  });
 });
 
-/** GET /files/:name/objects
-
-*/
+/** GET /files/:name/objects */
 R.get(/^\/files\/([^\/]+)\/objects$/, function(req, res, m) {
   res.die('Not yet implemented');
 });
@@ -160,47 +158,47 @@ R.get(/^\/files\/([^\/]+)\/objects$/, function(req, res, m) {
 
 */
 R.get(/^\/files\/([^\/]+)\/objects\/(\d+)(\?.+|$)/, function(req, res, m) {
-  var name = decodeURIComponent(m[1]);
-  var object_number = m[2];
+  loadPDF(m[1], res, function(pdf) {
+    var urlObj = url.parse(req.url, true);
 
-  var urlObj = url.parse(req.url, true);
-  var generation_number = urlObj.query.generation_number || 0;
+    var object_number = parseInt(m[2], 10);
+    var generation_number = parseInt(urlObj.query.generation_number || 0, 10);
 
-  var object;
-  try {
-    var pdf = loadPDF(name);
-    object = pdf.findObject({
-      object_number: parseInt(object_number, 10),
-      generation_number: parseInt(generation_number, 10),
-    });
-  }
-  catch (error) {
-    return res.die(error);
-  }
+    var object = pdf.getObject(object_number, generation_number);
 
-  if (object.dictionary && object.buffer) {
-    var string_iterable = lexing.StringIterator.fromBuffer(object.buffer);
-    var stack_operation_iterator = new StackOperationParser().map(string_iterable);
+    if (pdf_models.ContentStream.isContentStream(object)) {
+      var stream = new pdf_models.ContentStream(pdf, object);
+      object.buffer = stream.buffer;
 
-    object.tokens = [];
-    try {
-      while (1) {
-        var token = stack_operation_iterator.next();
-        if (token.name === 'EOF') {
-          break;
+      var string_iterable = lexing.StringIterator.fromBuffer(object.buffer);
+      var stack_operation_iterator = new StackOperationParser().map(string_iterable);
+
+      var tokens = [];
+      try {
+        while (1) {
+          var token = stack_operation_iterator.next();
+          if (token.name === 'EOF') {
+            break;
+          }
+          var token_object = {};
+          token_object[token.name] = token.value;
+          tokens.push(token_object);
         }
-        var token_object = {};
-        token_object[token.name] = token.value;
-        object.tokens.push(token_object);
       }
-    }
-    catch (error) {
-      logger.error('StackOperationParser exception: %s', error.message);
-    }
-  }
+      catch (error) {
+        logger.error('StackOperationParser exception: %s', error.message);
+      }
 
-  // it could be an array
-  res.json(object);
+      object.tokens = tokens;
+    }
+
+    if (pdf_models.Encoding.isEncoding(object)) {
+      var encoding = new pdf_models.Encoding(pdf, object);
+      object.Mapping = encoding.Mapping;
+    }
+
+    res.json(object);
+  });
 });
 
 module.exports = R.route.bind(R);

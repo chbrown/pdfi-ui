@@ -1,34 +1,71 @@
 var http = require('http-enhanced');
 var logger = require('loge');
 
-function replacer(key, value) {
-  // a buffer isn't very useful in JSON, so render it as a string instead.
-  // logger.info('key, value', key, value, Buffer.isBuffer(value));
-  // huh. apparently Buffer#toJSON() gets called before we get a hold of the
-  // Buffer.
-  // if (Buffer.isBuffer(value)) {
-  //   return value.toString('utf8');
-  // }
-  // TODO: recurse the object to be stringified _before_ calling JSON.stringify
-  if (value && value.type === 'Buffer') {
-    return new Buffer(value.data).toString('utf8');
+function simplify(value, seen, depth) {
+  if (value === undefined) {
+    return value;
   }
+  else if (value === null) {
+    return value;
+  }
+  else if (Array.isArray(value)) {
+    if (seen.indexOf(value) > -1) {
+      return '[Circular Array]';
+    }
+    if (depth > 5) {
+      return '...';
+    }
+    var array = value.map(function(child) {
+      return simplify(child, seen, depth + 1);
+    });
+    seen.push(array);
+    return array;
+  }
+  else if (Buffer.isBuffer(value)) {
+    return value.toString('utf8');
+  }
+  else if (typeof value === 'object') {
+    if (seen.indexOf(value) > -1) {
+      return '[Circular Object]';
+    }
+    if (depth > 5) {
+      return '...';
+    }
+    if (typeof value.toJSON === 'function') {
+      value = value.toJSON();
+    }
+    var object = {};
+    for (var key in value) {
+      if (value.hasOwnProperty(key)) {
+        object[key] = simplify(value[key], seen, depth + 1);
+      }
+    }
+    seen.push(object);
+    return object;
+  }
+  // catch-all
   return value;
-}
-
-function stringify(value) {
-  try {
-    return JSON.stringify(value, replacer);
-  } catch (error) {
-    logger.error('Encountered error stringifying JSON: %s', error.stack);
-    return JSON.stringify({error: error.toString()});
-  }
 }
 
 http.ServerResponse.prototype.json = function(value) {
   this.setHeader('Content-Type', 'application/json');
-  this.end(stringify(value));
+  try {
+    var simplified_value = simplify(value, [], 0);
+    var data = JSON.stringify(simplified_value);
+    this.end(data);
+  } catch (error) {
+    logger.error('Encountered error stringifying JSON: %s', error.stack);
+    this.die(error);
+  }
   return this;
+};
+
+http.ServerResponse.prototype.die = function(error) {
+  if (this.statusCode == 200) {
+    this.statusCode = 500;
+  }
+  var message = error ? error.stack : 'Failure';
+  return this.text(message);
 };
 
 var controllers = require('./controllers');
