@@ -8,6 +8,14 @@ function simplify(value, seen, depth) {
   else if (value === null) {
     return value;
   }
+  // Buffer comes before toJSON check because we don't like the built-in
+  // Buffer#toJSON output.
+  else if (Buffer.isBuffer(value)) {
+    return value.toString('utf8');
+  }
+  else if (typeof value.toJSON === 'function') {
+    return simplify(value.toJSON(), seen, depth);
+  }
   else if (Array.isArray(value)) {
     if (seen.indexOf(value) > -1) {
       return '[Circular Array]';
@@ -21,18 +29,12 @@ function simplify(value, seen, depth) {
     seen.push(array);
     return array;
   }
-  else if (Buffer.isBuffer(value)) {
-    return value.toString('utf8');
-  }
   else if (typeof value === 'object') {
     if (seen.indexOf(value) > -1) {
       return '[Circular Object]';
     }
     if (depth > 5) {
       return '...';
-    }
-    if (typeof value.toJSON === 'function') {
-      value = value.toJSON();
     }
     var object = {};
     for (var key in value) {
@@ -71,7 +73,6 @@ http.ServerResponse.prototype.die = function(error) {
 var controllers = require('./controllers');
 
 var server = module.exports = http.createServer(function(req, res) {
-  logger.debug('%s %s', req.method, req.url);
   controllers(req, res);
 })
 .on('listening', function() {
