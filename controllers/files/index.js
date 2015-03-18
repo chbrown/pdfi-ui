@@ -13,6 +13,8 @@ var pdf = require('pdf');
 var pdf_models = require('pdf/models');
 var StackOperationParser = require('pdf/parsers/StackOperationParser');
 
+pdf.logger.level = logger.level;
+
 var files_dirpath = process.env.UPLOADS;
 
 var R = new Router(function(req, res) {
@@ -159,10 +161,11 @@ R.get(/^\/files\/([^\/]+)\/pages\/(\d+)$/, function(req, res, m) {
 
     // subtract one to change indexing from 1-based to 0-based
     var page = pdf.pages[page_number - 1];
+    var canvas = page.renderCanvas();
 
     res.json({
       MediaBox: page.MediaBox,
-      spans: page.render(),
+      canvas: canvas,
     });
   });
 });
@@ -212,11 +215,27 @@ R.get(/^\/files\/([^\/]+)\/objects\/(\d+)(\?.+|$)/, function(req, res, m) {
 
     if (pdf_models.Encoding.isEncoding(object)) {
       var encoding = new pdf_models.Encoding(pdf, object);
-      object.Mapping = encoding.Mapping;
+      // convert string[] to sparse {[index: string]: string} object
+      // (for easier debugging inspection)
+      object.Mapping = _.extend({}, encoding.Mapping);
+    }
+
+    if (pdf_models.Font.isFont(object)) {
+      var font = new pdf_models.Font(pdf, object);
+      try {
+        object.Mapping = _.extend({}, font.getCharCodeMapping());
+      }
+      catch (exc) {
+        logger.error('getCharCodeMapping error: %s', exc.stack);
+      }
     }
 
     res.json(object);
   });
 });
 
-module.exports = R.route.bind(R);
+
+module.exports = function(req, res) {
+  logger.debug('%s %s', req.method, req.url);
+  R.route(req, res);
+};
