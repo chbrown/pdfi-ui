@@ -9,6 +9,22 @@ var app = angular.module('app', [
 var log = console.log.bind(console);
 Error.stackTraceLimit = 50;
 
+app.factory('httpFlashInterceptor', function($q, $flash) {
+  return {
+   responseError: function(rejection) {
+      log('httpInterceptor#responseError', rejection);
+      var http_request = rejection.config.method + ' ' + rejection.config.url;
+      var message = http_request + ' error: ' + rejection.data;
+      $flash(message, 15000);
+      return $q.reject(rejection);
+    }
+  };
+});
+
+app.config(function($httpProvider) {
+  $httpProvider.interceptors.push('httpFlashInterceptor');
+});
+
 app.filter('keys', function() {
   return function(value) {
     if (value === undefined || value === null) return [];
@@ -16,11 +32,23 @@ app.filter('keys', function() {
   };
 });
 
-app.filter('px', function() {
-  return function(number) {
-    return number.toFixed(2) + 'px';
+function px(number) {
+  return number.toFixed(2) + 'px';
+}
+
+app.filter('px', function() { return px; });
+
+function rectStyle(rect) {
+  if (rect === null) return rect;
+  return {
+    left: px(rect[0]),
+    top: px(rect[1]),
+    width: px(rect[2] - rect[0]),
+    height: px(rect[3] - rect[1]),
   };
-});
+}
+
+app.filter('rectStyle', function() { return rectStyle; });
 
 app.config(function($stateProvider, $urlRouterProvider, $locationProvider) {
   $urlRouterProvider.otherwise(function($injector, $location) {
@@ -157,11 +185,9 @@ app.directive('pdfobject', function() {
 app.directive('pdfpage', function() {
   return {
     restrict: 'E',
-    scope: {page: '=', scale: '='},
+    scope: {page: '='},
     link: function(scope, el, attrs) {
-      scope.$watchGroup(['page', 'scale'], function() {
-        React.render(React.createElement(components.PDFPage, scope), el[0]);
-      }, true);
+      React.render(React.createElement(components.PDFPage, scope), el[0]);
     }
   };
 });
@@ -182,8 +208,6 @@ app.controller('uploadCtrl', function($scope, $state, $flash, File) {
     var promise = file.$promise.then(function() {
       $state.go('pdfs.show', {name: file.name});
       return 'Uploaded file';
-    }, function(err) {
-      return 'File error: ' + err.toString();
     });
     $flash(promise);
   };
@@ -218,8 +242,6 @@ app.controller('objectCtrl', function($scope, $state) {
 
   $scope.file.getObject($state.params.number).then(function(res) {
     $scope.object = res.data;
-  }, function(err) {
-    log('error fetching object', err);
   });
 });
 
@@ -229,8 +251,6 @@ app.controller('pageCtrl', function($scope, $state, $localStorage) {
 
   $scope.file.getPage($state.params.page_number).then(function(res) {
     $scope.page = res.data;
-  }, function(err) {
-    log('error fetching page', err);
   });
 });
 
@@ -239,7 +259,5 @@ app.controller('pageContentsCtrl', function($scope, $state) {
 
   $scope.file.getPageContents($state.params.page_number).then(function(res) {
     $scope.page = res.data;
-  }, function(err) {
-    log('error fetching page', err);
   });
 });

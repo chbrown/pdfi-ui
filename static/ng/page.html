@@ -1,12 +1,39 @@
 <h3>Page {{page_number}}</h3>
-<div>MediaBox: {{page.MediaBox}}</div>
 
-<div ng-if="page" ng-class="{outline: $storage.outline}">
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>X<sub>min</sub></th>
+      <th>Y<sub>min</sub></th>
+      <th>X<sub>max</sub></th>
+      <th>Y<sub>max</sub></th>
+    </tr>
+  </thead>
+  <tbody ng-init="box_names = ['MediaBox', 'bounds', 'header', 'footer']">
+    <tr ng-repeat="box_name in box_names">
+      <td><b>{{box_name}}</b></td>
+      <td ng-repeat="coord in page.canvas[box_name] track by $index">{{coord | number}}</td>
+    </tr>
+  </tbody>
+</table>
+
+<div style="margin: 10px 0">
   <label>
     <input type="checkbox" ng-model="$storage.outline"> Show outlines
   </label>
-  <label>
-    Scale <input type="range" min="0.1" max="2.0" step="0.1" ng-model="$storage.scale"> ({{$storage.scale * 100 | number:0}}%)
-  </label>
-  <PDFPage page="page" scale="$storage.scale"></PDFPage>
+</div>
+<div style="margin: 10px 0">
+  <div>Scale ({{$storage.scale * 100 | number:0}}%)</div>
+  <input type="range" min="0.1" max="2.0" step="0.1" ng-model="$storage.scale" style="width: 200px">
+</div>
+
+<div ng-if="page" ng-class="{outline: $storage.outline}">
+  <div class="page" ng-style="{transformOrigin: '0% 0%', transform: 'scale(' + $storage.scale + ')'}">
+    <div class="MediaBox" ng-style="page.MediaBox | rectStyle"></div>
+    <div class="bounds" ng-if="page.canvas.bounds" ng-style="page.canvas.bounds | rectStyle"></div>
+    <div class="header" ng-if="page.canvas.header" ng-style="page.canvas.header | rectStyle"></div>
+    <div class="footer" ng-if="page.canvas.footer" ng-style="page.canvas.footer | rectStyle"></div>
+    <PDFPage page="page.canvas"></PDFPage>
+  </div>
 </div>
