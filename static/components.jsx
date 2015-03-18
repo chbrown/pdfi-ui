@@ -100,40 +100,23 @@ var PDFObject = React.createClass({
   },
 });
 
-function mirrorY(point, total_height) {
-  // mirror the page across a central horizontal line
-  return {
-    x: point.x,
-    y: total_height - point.y,
-  };
-}
-
 var PDFPage = React.createClass({
   propTypes: {
     page: React.PropTypes.object.isRequired,
-    scale: React.PropTypes.string.isRequired,
   },
   render: function() {
     var page = this.props.page;
-    var page_width = page.MediaBox[2];
-    var page_height = page.MediaBox[3];
-
     var spans = page.spans.map(function(span) {
-      var transformed_position = mirrorY(span.position, page_height);
       var spanStyle = {
-        left: transformed_position.x,
-        top: transformed_position.y,
+        left: span.box[0],
+        top: span.box[1],
+        width: span.box[2] - span.box[0],
+        height: span.box[3] - span.box[1],
         fontSize: span.fontSize,
       };
-      return <div className="span" style={spanStyle} title={"font: " + span.fontName}>{span.text}</div>;
+      return <div className="text" style={spanStyle} title={"fontName=" + span.fontName}>{span.text}</div>;
     });
-
-    var pageStyle = {
-      width: page_width,
-      height: page_height,
-      transform: 'scale(' + this.props.scale + ')',
-    };
-    return <div className="page" style={pageStyle}>{spans}</div>;
+    return <section>{spans}</section>;
   },
 });
 
