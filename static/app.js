@@ -41,10 +41,10 @@ app.filter('px', function() { return px; });
 function rectStyle(rect) {
   if (rect === null) return rect;
   return {
-    left: px(rect[0]),
-    top: px(rect[1]),
-    width: px(rect[2] - rect[0]),
-    height: px(rect[3] - rect[1]),
+    left: px(rect.minX),
+    top: px(rect.minY),
+    width: px(rect.maxX - rect.minX),
+    height: px(rect.maxY - rect.minY),
   };
 }
 
@@ -70,6 +70,11 @@ app.config(function($stateProvider, $urlRouterProvider, $locationProvider) {
     url: '/objects/{number:int}',
     templateUrl: '/static/ng/object.html',
     controller: 'objectCtrl',
+  })
+  .state('pdfs.show.object_extra', {
+    url: '/objects/{number:int}/extra',
+    templateUrl: '/static/ng/object_extra.html',
+    controller: 'objectExtraCtrl',
   })
   .state('pdfs.show.page', {
     url: '/pages/{page_number:int}',
@@ -158,6 +163,9 @@ app.service('File', function($resource, $q, $http) {
   File.prototype.getObject = function(number) {
     return $http.get('/files/' + this.name + '/objects/' + number);
   };
+  File.prototype.getObjectExtra = function(number) {
+    return $http.get('/files/' + this.name + '/objects/' + number + '/extra');
+  };
   File.prototype.getPages = function() {
     return $http.get('/files/' + this.name + '/pages');
   };
@@ -242,6 +250,14 @@ app.controller('objectCtrl', function($scope, $state) {
 
   $scope.file.getObject($state.params.number).then(function(res) {
     $scope.object = res.data;
+  });
+});
+
+app.controller('objectExtraCtrl', function($scope, $state) {
+  $scope.object_number = $state.params.number;
+
+  $scope.file.getObjectExtra($state.params.number).then(function(res) {
+    _.extend($scope, res.data);
   });
 });
 

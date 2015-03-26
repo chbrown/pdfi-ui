@@ -21,7 +21,7 @@ body {
   left: 0;
   right: 0;
   text-align: center;
-  pointer-events: none; // allows click through to elements underneath
+  pointer-events: none; // "none" allows click through to elements underneath
 
   z-index: 10000;
 
@@ -34,6 +34,7 @@ body {
     border-radius: 3px;
     white-space: pre-wrap;
     text-align: left;
+    pointer-events: auto; // allow selecting the text of the flash message
   }
 }
 
@@ -109,7 +110,7 @@ div, section, nav, main, textarea, input, span {
 }
 
 .page {
-  position: relative;
+  position: absolute;
   div {
     position: absolute;
   }
@@ -118,19 +119,44 @@ div, section, nav, main, textarea, input, span {
   }
 }
 .outline {
-  .MediaBox {
+  .page {
     outline: 1px solid rgba(100, 50, 50, 0.9); // brown
   }
-  .bounds {
-    outline: 1px solid rgba(25, 150, 10, 0.9); // green
-  }
+  // section bounding boxes:
   .header {
     outline: 1px solid rgba(125, 10, 150, 0.9); // purple
   }
   .footer {
     outline: 1px solid rgba(50, 200, 200, 0.9); // cyan
   }
+  .col1, .col2 {
+    outline: 1px solid rgba(50, 200, 200, 0.9); // cyan
+  }
+  .outside {
+    outline: 1px solid rgba(25, 150, 10, 0.9); // green
+  }
+  // each text span
   .text {
-    outline: 1px solid rgba(200, 100, 100, 0.5);
+    outline: 1px solid rgba(200, 100, 100, 0.5); // pink
+  }
+
+  .section {
+    .paragraph {
+      outline: 1px solid rgba(100, 20, 20, 0.5);
+    }
+    .line {
+      outline: 1px solid rgba(200, 100, 100, 0.5);
+    }
+  }
+}
+
+.section {
+  .paragraph {
+    margin: 2ex 0;
+  }
+  .line {
+    font-family: monospace;
+    white-space: pre-wrap;
+    word-break: break-all;
   }
 }

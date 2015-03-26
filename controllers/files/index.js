@@ -9,11 +9,11 @@ var formidable = require('formidable');
 var logger = require('loge');
 var Router = require('regex-router');
 
-var pdf = require('pdf');
+var pdflib = require('pdf');
 var pdf_models = require('pdf/models');
 var StackOperationParser = require('pdf/parsers/StackOperationParser');
 
-pdf.logger.level = logger.level;
+pdflib.logger.level = logger.level;
 
 var files_dirpath = process.env.UPLOADS;
 
@@ -94,7 +94,7 @@ function loadPDF(uri_name, res, callback) {
   try {
     if (!(name in pdf_cache)) {
       var filepath = path.join(files_dirpath, name);
-      pdf_cache[name] = pdf.PDF.open(filepath);
+      pdf_cache[name] = pdflib.PDF.open(filepath);
     }
     callback(pdf_cache[name]);
   }
@@ -178,8 +178,8 @@ R.get(/^\/files\/([^\/]+)\/pages\/(\d+)\/contents$/, function(req, res, m) {
 
     // subtract one to change indexing from 1-based to 0-based
     var page = pdf.pages[page_number - 1];
-    var Contents = page.joinContents('\n', 'ascii'); // a string
-    // var tokens = parseStackOperations(Contents.buffer);
+    var Contents = page.joinContents('\n'); // returns a string
+    // var tokens = parseStackOperations(Contents);
 
     res.json({
       Contents: Contents,
@@ -193,47 +193,72 @@ R.get(/^\/files\/([^\/]+)\/objects$/, function(req, res, m) {
   res.die('Not yet implemented');
 });
 
-/** GET /files/:name/objects/:object_id
-
-  ?generation: number
-
+/** GET /files/:name/objects/:object_id?generation:number=0
 */
 R.get(/^\/files\/([^\/]+)\/objects\/(\d+)(\?.+|$)/, function(req, res, m) {
+  var urlObj = url.parse(req.url, true);
   loadPDF(m[1], res, function(pdf) {
-    var urlObj = url.parse(req.url, true);
-
     var object_number = parseInt(m[2], 10);
-    var generation_number = parseInt(urlObj.query.generation_number || 0, 10);
+    var generation_number = parseInt(urlObj.query.generation || 0, 10);
 
     var object = pdf.getObject(object_number, generation_number);
 
     if (pdf_models.ContentStream.isContentStream(object)) {
-      var stream = new pdf_models.ContentStream(pdf, object);
-      object.buffer = stream.buffer;
-      // object.tokens = parseStackOperations(object.buffer);
-    }
-
-    if (pdf_models.Encoding.isEncoding(object)) {
-      var encoding = new pdf_models.Encoding(pdf, object);
-      // convert string[] to sparse {[index: string]: string} object
-      // (for easier debugging inspection)
-      object.Mapping = _.extend({}, encoding.Mapping);
-    }
-
-    if (pdf_models.Font.isFont(object)) {
-      var font = new pdf_models.Font(pdf, object);
-      try {
-        object.Mapping = _.extend({}, font.getCharCodeMapping());
-      }
-      catch (exc) {
-        logger.error('getCharCodeMapping error: %s', exc.stack);
-      }
+      var content_stream = new pdf_models.ContentStream(pdf, object);
+      var decoded_object = _.clone(object);
+      decoded_object.buffer = content_stream.buffer;
+      return res.json(decoded_object);
     }
 
     res.json(object);
   });
 });
 
+/** GET /files/:name/objects/:object_id/extra?generation:number=0
+*/
+R.get(/^\/files\/([^\/]+)\/objects\/(\d+)\/extra(\?.+|$)/, function(req, res, m) {
+  var urlObj = url.parse(req.url, true);
+  loadPDF(m[1], res, function(pdf) {
+    var object_number = parseInt(m[2], 10);
+    var generation_number = parseInt(urlObj.query.generation || 0, 10);
+
+    // getObject returns the cached object from the pdf lib -- don't modify it!
+    var object = pdf.getObject(object_number, generation_number);
+
+    if (pdf_models.ContentStream.isContentStream(object)) {
+      var content_stream = new pdf_models.ContentStream(pdf, object);
+
+      var decoded_object = _.clone(object);
+      decoded_object.buffer = content_stream.buffer;
+
+      if (content_stream.dictionary.Type == 'XObject' && content_stream.dictionary.Subtype == 'Form') {
+        var canvas = new pdflib.drawing.Canvas(content_stream.dictionary.BBox);
+        var stream_string = content_stream.buffer.toString('binary');
+        var stream_string_iterable = new lexing.StringIterator(stream_string);
+        try {
+          canvas.render(stream_string_iterable, content_stream.Resources);
+        }
+        catch (exception) {
+          return res.json({object: decoded_object, error: exception.stack});
+        }
+        // object.tokens = parseStackOperations(object.buffer);
+        return res.json({object: decoded_object.dictionary, canvas: canvas, buffer: decoded_object.buffer});
+      }
+
+      return res.json({object: decoded_object});
+    }
+    else if (pdf_models.Font.isFont(object)) {
+      var font = new pdf_models.Font(pdf, object);
+      return res.json({object: object, Mapping: font.getCharCodeMapping()});
+    }
+    else if (pdf_models.Encoding.isEncoding(object)) {
+      var encoding = new pdf_models.Encoding(pdf, object);
+      return res.json({object: object, Mapping: encoding.Mapping});
+    }
+
+    res.json(object);
+  });
+});
 
 module.exports = function(req, res) {
   logger.debug('%s %s', req.method, req.url);

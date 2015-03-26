@@ -1,0 +1,34 @@
+<h2>Object {{object_number}}:0 Extra</h2>
+
+<div ng-if="file && object">
+  <PDFObject file="file" object="object"></PDFObject>
+</div>
+
+<section ng-if="Mapping">
+  <h3>Mapping</h3>
+  <table class="mapping">
+    <tr ng-repeat="val in Mapping track by $index">
+      <th>{{$index}}</th><td>{{val || 'null'}}</td>
+    </tr>
+  </table>
+</section>
+
+<section ng-if="canvas">
+  <h3>Canvas</h3>
+  <section style="position: relative">
+    <div class="page" ng-style="canvas.pageBox | rectStyle">
+      <PDFPage page="canvas"></PDFPage>
+    </div>
+    <div ng-style="{width: '100%', height: (canvas.pageBox[3] - canvas.pageBox[1] | px)}"></div>
+  </section>
+</section>
+
+<section ng-if="error">
+  <h3>Error</h3>
+  <pre>{{error}}</pre>
+</section>
+
+<section ng-if="buffer">
+  <h3>Content Stream Buffer</h3>
+  <span class="string">{{buffer}}</span>
+</section>

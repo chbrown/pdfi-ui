@@ -100,28 +100,54 @@ var PDFObject = React.createClass({displayName: "PDFObject",
   },
 });
 
+var TextSpan = React.createClass({displayName: "TextSpan",
+  propTypes: {
+    // this matches the properties in shapes.TextSpan (and thus, its JSON representation)
+    string: React.PropTypes.string.isRequired,
+    minX: React.PropTypes.number.isRequired,
+    minY: React.PropTypes.number.isRequired,
+    maxX: React.PropTypes.number.isRequired,
+    maxY: React.PropTypes.number.isRequired,
+    fontSize: React.PropTypes.number.isRequired,
+    details: React.PropTypes.object,
+  },
+  render: function() {
+    var style = {
+      left: this.props.minX.toFixed(3),
+      top: this.props.minY.toFixed(3),
+      width: (this.props.maxX - this.props.minX).toFixed(3),
+      height: (this.props.maxY - this.props.minY).toFixed(3),
+      fontSize: this.props.fontSize.toFixed(3),
+    };
+    var title = JSON.stringify(this.props.details);
+    return React.createElement("div", {className: "text", style: style, title: title}, this.props.string);
+  },
+});
+
+var PDFCanvas = React.createClass({displayName: "PDFCanvas",
+  propTypes: {
+    spans: React.PropTypes.array.isRequired,
+  },
+  render: function() {
+    var spans = this.props.spans.map(function(span) {
+      return React.createElement(TextSpan, React.__spread({},  span));
+    });
+    return React.createElement("section", null, spans);
+  },
+});
+
 var PDFPage = React.createClass({displayName: "PDFPage",
   propTypes: {
     page: React.PropTypes.object.isRequired,
   },
   render: function() {
-    var page = this.props.page;
-    var spans = page.spans.map(function(span) {
-      var spanStyle = {
-        left: span.box[0],
-        top: span.box[1],
-        width: span.box[2] - span.box[0],
-        height: span.box[3] - span.box[1],
-        fontSize: span.fontSize,
-      };
-      return React.createElement("div", {className: "text", style: spanStyle, title: "fontName=" + span.fontName}, span.text);
-    });
-    return React.createElement("section", null, spans);
+    return React.createElement(PDFCanvas, {spans: this.props.page.spans});
   },
 });
 
 var components = {
   PDFObject: PDFObject,
   PDFObjectReference: PDFObjectReference,
+  PDFCanvas: PDFCanvas,
   PDFPage: PDFPage,
 };

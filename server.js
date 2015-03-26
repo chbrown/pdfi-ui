@@ -1,58 +1,19 @@
 var http = require('http-enhanced');
 var logger = require('loge');
+var visible = require('visible');
 
-function simplify(value, seen, depth) {
-  if (value === undefined) {
-    return value;
-  }
-  else if (value === null) {
-    return value;
-  }
-  // Buffer comes before toJSON check because we don't like the built-in
-  // Buffer#toJSON output.
-  else if (Buffer.isBuffer(value)) {
-    return value.toString('utf8');
-  }
-  else if (typeof value.toJSON === 'function') {
-    return simplify(value.toJSON(), seen, depth);
-  }
-  else if (Array.isArray(value)) {
-    if (seen.indexOf(value) > -1) {
-      return '[Circular Array]';
-    }
-    if (depth > 5) {
-      return '...';
-    }
-    var array = value.map(function(child) {
-      return simplify(child, seen, depth + 1);
-    });
-    seen.push(array);
-    return array;
-  }
-  else if (typeof value === 'object') {
-    if (seen.indexOf(value) > -1) {
-      return '[Circular Object]';
-    }
-    if (depth > 5) {
-      return '...';
-    }
-    var object = {};
-    for (var key in value) {
-      if (value.hasOwnProperty(key)) {
-        object[key] = simplify(value[key], seen, depth + 1);
-      }
-    }
-    seen.push(object);
-    return object;
-  }
-  // catch-all
-  return value;
-}
+var escaper = new visible.Escaper({
+  escapeSlash: true,
+  // literalVisibles: false,
+  // useEscapes: true,
+  literalEOL: true,
+  literalSpace: true,
+});
 
 http.ServerResponse.prototype.json = function(value) {
   this.setHeader('Content-Type', 'application/json');
   try {
-    var simplified_value = simplify(value, [], 0);
+    var simplified_value = escaper.simplify(value);
     var data = JSON.stringify(simplified_value);
     this.end(data);
   } catch (error) {
