@@ -13,26 +13,20 @@
     <input type="range" min="0.1" max="4.0" step="0.1" ng-model="$storage.scale" style="width: 400px">
   </div>
 
-  <div ng-style="{transformOrigin: '0% 0%', transform: 'scale(' + $storage.scale + ')'}">
+  <div ng-style="{transform: 'scale(' + $storage.scale + ')'}" class="transform-root">
     <div class="page" ng-style="page.canvas.outerBounds | rectStyle">
-      <div ng-repeat="section in page.canvas.sections" ng-class="section.name" ng-style="section.outerBounds | rectStyle"></div>
-      <PDFPage page="page.canvas"></PDFPage>
+      <!-- <div ng-repeat="section in page.canvas.sections" ng-class="section.name" ng-style="section.outerBounds | rectStyle"></div> -->
+      <component name="PDFPageCtrl" model="page.canvas"></component>
     </div>
   </div>
   <!-- CSS Transform does not affect document flow, so we add a spacer -->
   <div ng-style="{width: '100px', height: ((page.canvas.outerBounds.maxY - page.canvas.outerBounds.minY) * $storage.scale | px)}"></div>
 
-  <h3>Sections</h3>
+  <h3>Page Sections</h3>
   <div ng-repeat="section in page.canvas.sections" class="section">
     <h4>{{section.name}}</h4>
-    <div>
-      [
-        {{section.outerBounds.minX | number}},
-        {{section.outerBounds.minY | number}},
-        {{section.outerBounds.maxX | number}},
-        {{section.outerBounds.maxY | number}}
-      ]
-    </div>
+    <!-- <small>{{section.outerBounds | rectString}}</small> -->
+    <p>{{section.elements.length}} elements</p>
     <ol>
       <li ng-repeat="line in section.lines track by $index">
         <span class="line">{{line.string}}</span>

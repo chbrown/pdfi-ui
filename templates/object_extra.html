@@ -1,14 +1,14 @@
 <h2>Object {{object_number}}:0 Extra</h2>
 
 <div ng-if="file && object">
-  <PDFObject file="file" object="object"></PDFObject>
+  <component name="PDFObjectCtrl" model="{file: file, object: object}"></component>
 </div>
 
 <section ng-if="Mapping">
   <h3>Mapping</h3>
   <table class="mapping">
-    <tr ng-repeat="val in Mapping track by $index">
-      <th>{{$index}}</th><td>{{val || 'null'}}</td>
+    <tr ng-repeat="(key, val) in Mapping track by $index">
+      <th>{{key}}</th><td>{{val || 'null'}}</td>
     </tr>
   </table>
 </section>
@@ -17,7 +17,7 @@
   <h3>Canvas</h3>
   <section style="position: relative">
     <div class="page" ng-style="canvas.pageBox | rectStyle">
-      <PDFPage page="canvas"></PDFPage>
+      <component name="PDFPageCtrl" model="canvas"></component>
     </div>
     <div ng-style="{width: '100%', height: (canvas.pageBox[3] - canvas.pageBox[1] | px)}"></div>
   </section>

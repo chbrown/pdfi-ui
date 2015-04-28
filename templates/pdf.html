@@ -4,15 +4,17 @@
       <h3><code>{{file.name}}</code></h3>
       <small>File size: {{file.size | number}} bytes</small>
 
+      <h4><a ui-sref="pdfs.show.document">Document</a></h4>
+
       <h3>Trailer</h3>
       <!-- the controller responds with a raw trailer object -->
-      <PDFObject file="file" object="file.trailer"></PDFObject>
+      <component name="PDFObjectCtrl" model="{file: file, object: file.trailer}"></component>
     </div>
 
     <!-- the controller responds with raw PDF page objects -->
     <div ng-repeat="page in pages" style="border-top: 1px solid #B86;">
       <h4><a ui-sref="pdfs.show.page({page_number: $index + 1})">Page {{$index + 1}}</a></h4>
-      <PDFObject file="file" object="page"></PDFObject>
+      <component name="PDFObjectCtrl" model="{file: file, object: page}"></component>
     </div>
   </div>
   <div style="margin-left: 200px">
