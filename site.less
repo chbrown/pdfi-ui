@@ -109,6 +109,12 @@ div, section, nav, main, textarea, input, span {
   word-break: break-all;
 }
 
+.transform-root {
+  transform-origin: 0% 0%;
+  // we need `display: inline-block` to avoid transform requiring too much width
+  display: inline-block;
+}
+
 .page {
   position: absolute;
   div {
@@ -152,7 +158,8 @@ div, section, nav, main, textarea, input, span {
 
 .section {
   .paragraph {
-    margin: 2ex 0;
+    margin: 1ex 0;
+    text-indent: 2em;
   }
   .line {
     font-family: monospace;

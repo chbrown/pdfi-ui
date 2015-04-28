@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<head>
+  <meta charset="utf-8">
+  <title>pdfi user interface</title>
+  <base href="/">
+  <link rel="icon" href="img/favicon.ico" type="image/x-icon">
+  <link href="site.css" rel="stylesheet" type="text/css">
+  <!-- angular libraries -->
+  <script src="lib/angular.min.js"></script>
+  <script src="lib/angular-resource.min.js"></script>
+  <script src="lib/angular-ui-router.min.js"></script>
+  <script src="lib/ngStorage.min.js"></script>
+  <!-- misc-js angular library -->
+  <script src="lib/angular-plugins.js"></script>
+  <!-- browserify bundle -->
+  <script src="bundle.js"></script>
+</head>
+<body ng-app="app">
+  <flash></flash>
+  <ui-view></ui-view>
+</body>

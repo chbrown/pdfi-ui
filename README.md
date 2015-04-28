@@ -1,9 +1,12 @@
-# pdf-ui
+# pdfi-ui
 
 User interface for visualizing PDF structure
 
-    npm install -g pdf-ui
-    pdf-ui
+
+## Development
+
+    tsc -m commonjs -t ES5 -w *.ts
+    watchify app.js -o bundle.js
 
 
 ## License

@@ -17,6 +17,7 @@ div,input,main,nav,section,span,textarea{box-sizing:border-box}
 .reference{outline:1px solid #88F}
 .number{outline:1px solid #E81}
 .string{font-family:monospace;white-space:pre-wrap;word-break:break-all}
+.transform-root{transform-origin:0 0;display:inline-block}
 .page{position:absolute}
 .page div{position:absolute}
 .page .text{white-space:pre}
@@ -28,5 +29,5 @@ div,input,main,nav,section,span,textarea{box-sizing:border-box}
 .outline .text{outline:1px solid rgba(200,100,100,.5)}
 .outline .section .paragraph{outline:1px solid rgba(100,20,20,.5)}
 .outline .section .line{outline:1px solid rgba(200,100,100,.5)}
-.section .paragraph{margin:2ex 0}
+.section .paragraph{margin:1ex 0;text-indent:2em}
 .section .line{font-family:monospace;white-space:pre-wrap;word-break:break-all}

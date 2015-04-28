@@ -9,5 +9,9 @@
     <span><b>Add PDF:</b></span>
     <input type="file" on-upload="uploadFile($file, $event)">
   </span>
+  <span ng-controller="serverCtrl" style="float: right">
+    <span><b>Server:</b></span>
+    <input ng-model="server" style="width: 200px">
+  </span>
 </nav>
 <ui-view></ui-view>
