@@ -5,8 +5,9 @@ User interface for visualizing PDF structure
 
 ## Development
 
-    tsc -m commonjs -t ES5 -w *.ts
-    watchify app.js -o bundle.js
+    trap 'kill $(jobs -p)' EXIT
+    tsc -m commonjs -t ES5 -w *.ts &
+    watchify app.js -o bundle.js -v &
 
 
 ## License
