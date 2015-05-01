@@ -1,14 +1,18 @@
 {
   "name": "pdfi-ui",
   "description": "User interface for visualizing PDF structure",
-  "keywords" : ["pdf", "pdfi", "user", "interface"],
-  "version": "0.1.0",
+  "keywords": [
+    "pdf",
+    "pdfi",
+    "user",
+    "interface"
+  ],
+  "version": "0.1.1",
   "homepage": "https://github.com/chbrown/pdfi-ui",
   "repository": "git://github.com/chbrown/pdfi-ui.git",
   "author": "Christopher Brown <io@henrian.com> (http://henrian.com)",
   "license": "MIT",
-  "dependencies": {
-  },
+  "dependencies": {},
   "devDependencies": {
     "angular": "*",
     "browserify": "*",
@@ -31,7 +35,10 @@
     "lodash": "*",
     "misc-js": {
       "url": "git://github.com/chbrown/misc-js.git",
-      "filter": ["angular-plugins.js", "textarea.js"]
+      "filter": [
+        "angular-plugins.js",
+        "textarea.js"
+      ]
     },
     "ng-storage": "*"
   }
