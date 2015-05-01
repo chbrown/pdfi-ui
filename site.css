@@ -31,3 +31,6 @@ div,input,main,nav,section,span,textarea{box-sizing:border-box}
 .outline .section .line{outline:1px solid rgba(200,100,100,.5)}
 .section .paragraph{margin:1ex 0;text-indent:2em}
 .section .line{font-family:monospace;white-space:pre-wrap;word-break:break-all}
+.keyval-row{border-top:1px solid #AAA}
+.keyval-row span{display:inline-block;padding:0 5px}
+.keyval-row span:first-child{font-weight:700;width:50px}
