@@ -1,9 +1,10 @@
 <h2>Document</h2>
 <table>
-  <tr><th>normalFontSize</th><td>{{document.normalFontSize}}</td></tr>
-  <tr><th>meanFontSize</th><td>{{document.meanFontSize}}</td></tr>
+  <tr><th>normalFontSize</th><td>{{document.normalFontSize | number:3}}</td></tr>
+  <tr><th>meanFontSize</th><td>{{document.meanFontSize | number:3}}</td></tr>
 <table>
 
+<h3>Sections</h3>
 <div ng-repeat="section in document.sections" class="section" style="border-top: 1px solid gray">
   <h4>
     <div ng-repeat="line in section.headerLines">{{line.string}}</div>

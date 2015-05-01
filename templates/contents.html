@@ -1,5 +1,5 @@
-<h3>Page {{page_number}}</h3>
+<h3>Page {{pageNumber}}</h3>
 <h4>Contents</h4>
 <div ng-if="file && page">
-  <component name="PDFObjectCtrl" model="{file: file, object: page}"></component>
+  <component name="PDFObject" file="file" model="page"></component>
 </div>

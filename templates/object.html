@@ -1,4 +1,7 @@
+<a ui-sref="pdf.object.content_stream">As content stream</a>
+<a ui-sref="pdf.object.font">As font</a>
+
 <h3>Object {{object_number}}:0</h3>
 <div ng-if="file && object">
-  <component name="PDFObjectCtrl" model="{file: file, object: object}"></component>
+  <component name="PDFObject" file="file" model="object"></component>
 </div>

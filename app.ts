@@ -7,7 +7,7 @@ import create = require('virtual-dom/create-element');
 import diff = require('virtual-dom/diff');
 import patch = require('virtual-dom/patch');
 
-import {Request} from './request';
+import {Request, NetworkError} from './request';
 import {File} from './models';
 import * as components from './components';
 
@@ -21,10 +21,9 @@ let app = angular.module('app', [
 let log = console.log.bind(console);
 // Error.stackTraceLimit = 50;
 
-app.factory('httpFlashInterceptor', function($q, $flash) {
+app.factory('httpFlashInterceptor', ($q, $flash) => {
   return {
-   responseError: function(rejection) {
-      log('httpInterceptor#responseError', rejection);
+   responseError: rejection => {
       var http_request = rejection.config.method + ' ' + rejection.config.url;
       var message = http_request + ' error: ' + rejection.data;
       $flash(message, 15000);
@@ -33,12 +32,25 @@ app.factory('httpFlashInterceptor', function($q, $flash) {
   };
 });
 
-app.config(function($httpProvider) {
+app.config($httpProvider => {
   $httpProvider.interceptors.push('httpFlashInterceptor');
 });
 
-app.filter('keys', function() {
-  return function(value) {
+app.config($provide => {
+  $provide.decorator('$exceptionHandler', ($delegate, $injector) => {
+    return (exception, cause) => {
+      if (exception instanceof NetworkError) {
+        var $flash = $injector.get('$flash');
+        $flash(exception.message);
+        return;
+      }
+      $delegate(exception, cause);
+    };
+  });
+});
+
+app.filter('keys', () => {
+  return value => {
     if (value === undefined || value === null) return [];
     return Object.keys(value);
   };
@@ -47,7 +59,7 @@ app.filter('keys', function() {
 function px(number) {
   return number.toFixed(2) + 'px';
 }
-app.filter('px', function() { return px; });
+app.filter('px', () => px);
 
 function rectStyle(rect) {
   if (rect === null) return rect;
@@ -58,7 +70,7 @@ function rectStyle(rect) {
     height: px(rect.maxY - rect.minY),
   };
 }
-app.filter('rectStyle', function() { return rectStyle; });
+app.filter('rectStyle', () => rectStyle);
 
 function formatRectangle(rectangle) {
   if (rectangle === null) return rectangle;
@@ -66,46 +78,54 @@ function formatRectangle(rectangle) {
   var size_string = '(' + (rectangle.maxX - rectangle.minX).toFixed(3) + 'x' + (rectangle.maxY - rectangle.minY).toFixed(3) + ')';
   return point_string + ' ' + size_string;
 }
-app.filter('rectString', function() { return formatRectangle; });
+app.filter('rectString', () => formatRectangle);
 
-app.config(function($stateProvider, $urlRouterProvider, $locationProvider) {
-  $urlRouterProvider.otherwise(function($injector, $location) {
+app.config(($stateProvider, $urlRouterProvider, $locationProvider) => {
+  $urlRouterProvider.otherwise(($injector, $location) => {
     log('otherwise: coming from "%s"', $location.url());
-    return '/pdfs';
+    return '/files';
   });
 
   $stateProvider
-  .state('pdfs', {
-    url: '/pdfs',
-    templateUrl: '/templates/navigator.html',
-  })
-  .state('pdfs.show', {
-    url: '/{name:[^/]+\.pdf}',
-    templateUrl: '/templates/pdf.html',
+  .state('pdf', {
+    url: '/files/{name:[^/]+\.pdf}',
+    templateUrl: '/templates/pdf_navigator.html',
     controller: 'pdfCtrl',
   })
-  .state('pdfs.show.document', {
+  .state('pdf.document', {
     url: '/document',
     templateUrl: '/templates/document.html',
     controller: 'documentCtrl',
   })
-  .state('pdfs.show.object', {
-    url: '/objects/{number:int}',
-    templateUrl: '/templates/object.html',
+  // by object
+  .state('pdf.object', {
+    url: '/objects/{objectNumber:int}',
+    template: '<ui-view></ui-view>',
     controller: 'objectCtrl',
+    abstract: true,
   })
-  .state('pdfs.show.object_extra', {
-    url: '/objects/{number:int}/extra',
-    templateUrl: '/templates/object_extra.html',
-    controller: 'objectExtraCtrl',
+  .state('pdf.object.plain', {
+    url: '/',
+    templateUrl: '/templates/object.html',
   })
-  .state('pdfs.show.page', {
-    url: '/pages/{page_number:int}',
+  .state('pdf.object.content_stream', {
+    url: '/content-stream',
+    templateUrl: '/templates/objects/content_stream.html',
+    controller: 'contentStreamCtrl',
+  })
+  .state('pdf.object.font', {
+    url: '/font',
+    templateUrl: '/templates/objects/font.html',
+    controller: 'fontCtrl',
+  })
+  // by page
+  .state('pdf.page', {
+    url: '/pages/{pageNumber:int}',
     templateUrl: '/templates/page.html',
     controller: 'pageCtrl',
   })
-  .state('pdfs.show.page_contents', {
-    url: '/pages/{page_number:int}/contents',
+  .state('pdf.page_contents', {
+    url: '/pages/{pageNumber:int}/contents',
     templateUrl: '/templates/contents.html',
     controller: 'pageContentsCtrl',
   });
@@ -132,31 +152,72 @@ function clean(object) {
   return object;
 }
 
-app.directive('component', () => {
+function mapTree(object: any, func: (object: any) => any): any {
+  object = func(object);
+  if (Array.isArray(object)) {
+    return object.map(child => mapTree(child, func));
+  }
+  else if (object !== undefined && object !== null && typeof object === 'object') {
+    var mapped_object = {};
+    for (var key in object) {
+      if (object.hasOwnProperty(key)) {
+        mapped_object[key] = mapTree(object[key], func);
+      }
+    }
+    return mapped_object;
+  }
+  else {
+    return object;
+  }
+}
+
+app.directive('component', ($state) => {
   return {
     restrict: 'E',
     scope: {
       name: '@',
       model: '=',
+      file: '=',
     },
-    link: function(scope, el) {
-      var ComponentViewCtrl: typeof components.ViewController = components[scope['name']];
-      var view_manager = new components.ViewManager(el[0], model => {
-        var vtree = new ComponentViewCtrl(model).render();
-        return vtree;
-      });
-      scope.$watch('model', function() {
-        console.log('component model changed');
-        view_manager.update(clean(scope['model']));
+    link: (scope, el) => {
+      var name = scope['name'];
+      var renderFunction: (model: any, channel: components.EventChannel) => VirtualNode = components[`render${name}`];
+      var root = new components.Root(el[0], renderFunction);
+      scope.$watch('model', () => {
+        root.update(clean(scope['model']));
       }, true);
+      root.on('objectReferenceClick', (ev: MouseEvent, objectNumber: number) => {
+        // command+alt-click to load the object in-place
+        var model = clean(scope['model']);
+        if (ev.metaKey && ev.altKey) {
+          // get the desired reference
+          scope['file'].getObject(objectNumber, (error, loadedObject) => {
+            scope.$apply(() => {
+              if (error) throw error;
+              scope['model'] = mapTree(model, object => {
+                return (object && object['object_number'] === objectNumber) ? loadedObject : object;
+              });
+            });
+          });
+        }
+        else if (ev.metaKey) {
+          // load in new window
+          var url = $state.href('pdf.object.plain', {objectNumber: objectNumber});
+          window.open(url, '_blank');
+        }
+        else {
+          // load in this window
+          $state.go('pdf.object.plain', {objectNumber: objectNumber});
+        }
+      });
     }
   };
 });
 
 app.controller('uploadCtrl', ($scope, $state, $flash) => {
-  $scope.uploadFile = function(dom_file, ev) {
-    File.upload(dom_file, function(error, file) {
-      $state.go('pdfs.show', {name: file.name});
+  $scope.uploadFile = (dom_file, ev) => {
+    File.upload(dom_file, (error, file) => {
+      $state.go('pdf', {name: file.name});
     });
   };
 });
@@ -180,8 +241,8 @@ app.controller('selectorCtrl', ($scope, $state, $flash) => {
     });
   });
 
-  $scope.select = function(selected_name) {
-    $state.go('pdfs.show.page', {name: selected_name, page_number: 1});
+  $scope.select = selected_name => {
+    $state.go('pdf.page', {name: selected_name, pageNumber: 1});
   };
 });
 
@@ -208,9 +269,9 @@ app.controller('documentCtrl', ($scope) => {
 });
 
 app.controller('objectCtrl', ($scope, $state) => {
-  $scope.object_number = $state.params.number;
+  $scope.object_number = $state.params.objectNumber;
 
-  $scope.file.getObject($state.params.number, (error, object) => {
+  $scope.file.getObject($state.params.objectNumber, (error, object) => {
     $scope.$apply(() => {
       if (error) throw error;
       $scope.object = object;
@@ -218,22 +279,29 @@ app.controller('objectCtrl', ($scope, $state) => {
   });
 });
 
-app.controller('objectExtraCtrl', ($scope, $state) => {
-  $scope.object_number = $state.params.number;
-
-  $scope.file.getObjectExtra($state.params.number, (error, object) => {
+app.controller('contentStreamCtrl', ($scope, $state) => {
+  $scope.file.getContentStream($state.params.objectNumber, (error, result) => {
     $scope.$apply(() => {
       if (error) throw error;
-      _.extend($scope, object);
+      _.extend($scope, result);
+    });
+  });
+});
+
+app.controller('fontCtrl', ($scope, $state) => {
+  $scope.file.getFont($state.params.objectNumber, (error, result) => {
+    $scope.$apply(() => {
+      if (error) throw error;
+      _.extend($scope, result);
     });
   });
 });
 
 app.controller('pageCtrl', ($scope, $state, $localStorage) => {
   $scope.$storage = $localStorage.$default({outline: false, scale: 1.0});
-  $scope.page_number = $state.params.page_number;
+  $scope.pageNumber = $state.params.pageNumber;
 
-  $scope.file.getPage($state.params.page_number, (error, page) => {
+  $scope.file.getPage($state.params.pageNumber, (error, page) => {
     $scope.$apply(() => {
       if (error) throw error;
       $scope.page = page;
@@ -242,9 +310,9 @@ app.controller('pageCtrl', ($scope, $state, $localStorage) => {
 });
 
 app.controller('pageContentsCtrl', ($scope, $state) => {
-  $scope.page_number = $state.params.page_number;
+  $scope.pageNumber = $state.params.pageNumber;
 
-  $scope.file.getPageContents($state.params.page_number, (error, page) => {
+  $scope.file.getPageContents($state.params.pageNumber, (error, page) => {
     $scope.$apply(() => {
       if (error) throw error;
       $scope.page = page;

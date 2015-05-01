@@ -1,4 +1,4 @@
-<h2>Page {{page_number}}</h2>
+<h2>Page {{pageNumber}}</h2>
 <code>MediaBox: {{page.MediaBox}}</code>
 
 <div ng-if="page" ng-class="{outline: $storage.outline}">
@@ -16,7 +16,7 @@
   <div ng-style="{transform: 'scale(' + $storage.scale + ')'}" class="transform-root">
     <div class="page" ng-style="page.canvas.outerBounds | rectStyle">
       <!-- <div ng-repeat="section in page.canvas.sections" ng-class="section.name" ng-style="section.outerBounds | rectStyle"></div> -->
-      <component name="PDFPageCtrl" model="page.canvas"></component>
+      <component name="PDFPage" file="file" model="page.canvas"></component>
     </div>
   </div>
   <!-- CSS Transform does not affect document flow, so we add a spacer -->
