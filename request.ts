@@ -1,6 +1,13 @@
-// type RequestCallback = (error: Error, response?: any) => void;
 interface RequestCallback {
   (error: Error, response?: any): void;
+}
+
+export class NetworkError implements Error {
+  name = 'NetworkError';
+  public message: string;
+  constructor(method: string, url: string) {
+    this.message = `${this.name} with request: ${method} ${url}`;
+  }
 }
 
 /**
@@ -14,13 +21,14 @@ new Request('POST', '/api/reservations').sendData({venue_id: 100}, (err, respons
 export class Request {
   xhr: XMLHttpRequest;
   private callback: RequestCallback;
-  constructor(method: string, url: string, responseType = '') {
+  /**
+  XMLHttpRequest doesn't expose method and url after setting them, so we need
+  to keep track of them in the Request instance for error reporting purposes.
+  */
+  constructor(private method: string, private url: string, responseType = '') {
     this.xhr = new XMLHttpRequest();
     this.xhr.open(method, url);
     this.xhr.responseType = responseType;
-    this.xhr.onerror = (event: ErrorEvent) => {
-      this.callback(new Error(`XHR ErrorEvent: ${event.message}`));
-    };
     this.xhr.onreadystatechange = (event: Event) => {
       var readyState = this.xhr.readyState;
       if (readyState == 2) { // HEADERS_RECEIVED
@@ -29,13 +37,18 @@ export class Request {
           this.xhr.responseType = 'json';
         }
       }
-      else if (readyState == 4) { // DONE (same as xhr.onload)
-        if (this.xhr.status >= 400) {
-          var error = new Error(this.xhr.response);
-          return this.callback(error);
-        }
-        this.callback(null, this.xhr.response);
+    };
+    this.xhr.onerror = (event: Event) => {
+      this.callback(new NetworkError(this.method, this.url));
+    };
+    // onload is better than onreadystatechange() { if (readyState == 4) ... }
+    //   since onload will not be called if there is an error.
+    this.xhr.onload = (event: Event) => {
+      if (this.xhr.status >= 400) {
+        var error = new Error(this.xhr.response);
+        return this.callback(error);
       }
+      this.callback(null, this.xhr.response);
     };
   }
   send(callback: RequestCallback): void {
