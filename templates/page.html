@@ -1,36 +1,46 @@
-<h2>Page {{pageNumber}}</h2>
-<code>MediaBox: {{page.MediaBox}}</code>
+<div>
+  <div>Scale (<output>{{$storage.scale * 100 | number:0}}</output>%)</div>
+  <input type="range" min="0.1" max="4.0" step="0.1" list="ticks" ng-model="$storage.scale" style="width: 400px">
+  <datalist id="ticks">
+    <option ng-repeat="tick in [0.1, 4.1, 0.1] | range">{{tick}}</option>
+  </datalist>
+</div>
+<div>
+  <label>
+    <input type="checkbox" ng-model="$storage.outline"> Show outlines
+  </label>
+</div>
+<div>
+  <label>
+    Minimum Elements: <input type="number" ng-model="$storage.minimumElementsPerLayoutComponent">
+    <span ng-if="excludedElements > 0">{{excludedElements}} elements excluded</span>
+  </label>
+</div>
 
-<div ng-if="page" ng-class="{outline: $storage.outline}">
-  <h3>Layout</h3>
-  <div style="margin: 10px 0">
-    <label>
-      <input type="checkbox" ng-model="$storage.outline"> Show outlines
-    </label>
-  </div>
-  <div style="margin: 10px 0">
-    <div>Scale ({{$storage.scale * 100 | number:0}}%)</div>
-    <input type="range" min="0.1" max="4.0" step="0.1" ng-model="$storage.scale" style="width: 400px">
-  </div>
-
+<div ng-if="page" ng-class="{outline: $storage.outline}" class="canvas">
   <div ng-style="{transform: 'scale(' + $storage.scale + ')'}" class="transform-root">
-    <div class="page" ng-style="page.canvas.outerBounds | rectStyle">
-      <!-- <div ng-repeat="section in page.canvas.sections" ng-class="section.name" ng-style="section.outerBounds | rectStyle"></div> -->
-      <component name="PDFPage" file="file" model="page.canvas"></component>
+    <div class="page" ng-style="page.outerBounds | rectStyle">
+      <div ng-repeat="container in page.layout" ng-if="container.elements.length >= $storage.minimumElementsPerLayoutComponent">
+        <div class="box" ng-style="container | rectStyle">
+          <div class="label" style="background-color: #222; color: white">{{$index}}</div>
+        </div>
+        <component name="PDFCanvas" file="file" model="container.elements"></component>
+      </div>
     </div>
   </div>
   <!-- CSS Transform does not affect document flow, so we add a spacer -->
-  <div ng-style="{width: '100px', height: ((page.canvas.outerBounds.maxY - page.canvas.outerBounds.minY) * $storage.scale | px)}"></div>
+  <div ng-style="{
+    width: ((page.outerBounds.maxX - page.outerBounds.minX) * $storage.scale | px),
+    height: ((page.outerBounds.maxY - page.outerBounds.minY) * $storage.scale | px)}"></div>
 
-  <h3>Page Sections</h3>
-  <div ng-repeat="section in page.canvas.sections" class="section">
-    <h4>{{section.name}}</h4>
-    <!-- <small>{{section.outerBounds | rectString}}</small> -->
-    <p>{{section.elements.length}} elements</p>
-    <ol>
-      <li ng-repeat="line in section.lines track by $index">
-        <span class="line">{{line.string}}</span>
-      </li>
-    </ol>
+  <h3>Layout Components</h3>
+  <div ng-repeat="container in page.layout" ng-if="container.elements.length >= $storage.minimumElementsPerLayoutComponent">
+    <h4>#{{$index}}</h4>
+    <h5>{{container | rectString}}</h5>
+    <h5>{{container.elements.length}} elements</h5>
+    <p>
+      <span ng-repeat="element in container.elements track by $index"
+        ng-style="{'font-size': (element.fontSize | px)}" ng-bind="element.string"></span>
+    </p>
   </div>
 </div>

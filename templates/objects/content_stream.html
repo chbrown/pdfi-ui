@@ -1,6 +1,14 @@
 <h3>Content Stream Operations</h3>
 
-<div ng-repeat="operation in operations" class="keyval-row">
+<div ng-repeat="operation in operations" class="key-row">
   <span>{{operation.operator}}</span>
   <span>{{operation.operands | json:'  '}}</span>
+</div>
+
+<h3>Text Operations</h3>
+
+<div ng-repeat="span in spans" class="key-row">
+  <span>{{span.operator}}</span>
+  <span>{{span.text}}</span>
+  <span>({{span.font}})</span>
 </div>

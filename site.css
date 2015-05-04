@@ -1,15 +1,20 @@
 body{margin:0}
 table{border-spacing:0;border-collapse:collapse}
 table td,table th{font-size:100%;text-align:left}
+h1,h2,h3,h4,h5,h6{margin:1ex 0}
+div,input,main,nav,section,span,textarea{box-sizing:border-box}
+section{margin-top:5px;margin-bottom:5px;padding-top:5px;padding-bottom:5px}
+.vpad{padding-top:10px;padding-bottom:10px}
+.hpad{padding-left:10px;padding-right:10px}
+a{cursor:pointer;text-decoration:underline}
 body{background-color:#FDFDFD}
 .flash{position:fixed;left:0;right:0;text-align:center;pointer-events:none;z-index:10000}
 .flash span{display:inline-block;background-color:rgba(0,0,0,.75);color:#fff;padding:5px 8px;margin:3px 6px;border-radius:3px;white-space:pre-wrap;text-align:left;pointer-events:auto}
-nav{top:0;left:0;right:0;z-index:1000;background-color:#DDD;border-bottom:1px solid #BBB;padding:5px;box-sizing:border-box}
-h1,h2,h3,h4,h5,h6{margin:1ex 0}
-a{cursor:pointer;text-decoration:underline}
-.thumbnails{position:fixed;top:29px;left:0;bottom:0;width:200px;overflow-y:scroll;z-index:100;font-size:90%;background-color:#FAFAFA}
-.thumbnails>div{padding:5px}
-div,input,main,nav,section,span,textarea{box-sizing:border-box}
+nav{position:fixed}
+nav[fixedflow]{top:0;left:0;right:0;z-index:1000;background-color:#DDD;border-bottom:1px solid #BBB;padding:5px}
+nav.thumbnails{top:29px;left:0;bottom:0;z-index:100;background-color:#FAFAFA;width:200px;overflow-y:scroll;font-size:90%}
+nav.thumbnails .page{border-top:1px solid #B86;font-size:90%}
+nav.thumbnails .selected{background-color:#DDD}
 .array,.name,.number,.object,.reference,.string{vertical-align:top}
 .object{margin:.2ex .1em}
 .name,.number,.reference,.string{display:inline-block;margin:.2ex .1em;padding:.3ex .2em 0 .2em}
@@ -18,19 +23,18 @@ div,input,main,nav,section,span,textarea{box-sizing:border-box}
 .number{outline:1px solid #E81}
 .string{font-family:monospace;white-space:pre-wrap;word-break:break-all}
 .transform-root{transform-origin:0 0;display:inline-block}
-.page{position:absolute}
-.page div{position:absolute}
-.page .text{white-space:pre}
-.outline .page{outline:1px solid rgba(100,50,50,.9)}
-.outline .header{outline:1px solid rgba(125,10,150,.9)}
-.outline .footer{outline:1px solid rgba(50,200,200,.9)}
-.outline .col1,.outline .col2{outline:1px solid rgba(50,200,200,.9)}
-.outline .outside{outline:1px solid rgba(25,150,10,.9)}
-.outline .text{outline:1px solid rgba(200,100,100,.5)}
-.outline .section .paragraph{outline:1px solid rgba(100,20,20,.5)}
-.outline .section .line{outline:1px solid rgba(200,100,100,.5)}
+.canvas .page{position:absolute}
+.canvas .page div{position:absolute}
+.canvas .page .text{white-space:pre}
+.canvas .label{display:none}
+.canvas.outline .page{outline:1px solid rgba(100,50,50,.9)}
+.canvas.outline .text{outline:1px solid rgba(200,100,100,.5)}
+.canvas.outline .box{outline:2px solid rgba(0,0,0,.75)}
+.canvas.outline .label{display:inline-block}
+.canvas.outline .section .paragraph{outline:1px solid rgba(100,20,20,.5)}
+.canvas.outline .section .line{outline:1px solid rgba(200,100,100,.5)}
 .section .paragraph{margin:1ex 0;text-indent:2em}
 .section .line{font-family:monospace;white-space:pre-wrap;word-break:break-all}
-.keyval-row{border-top:1px solid #AAA}
-.keyval-row span{display:inline-block;padding:0 5px}
-.keyval-row span:first-child{font-weight:700;width:50px}
+.key-row{border-top:1px solid #AAA}
+.key-row span{padding:0 5px}
+.key-row span:first-child{display:inline-block;font-weight:700;width:50px}

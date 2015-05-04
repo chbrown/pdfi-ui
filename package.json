@@ -19,7 +19,8 @@
     "lodash": "*",
     "mocha": "*",
     "typescript": "*",
-    "virtual-dom": "*"
+    "virtual-dom": "*",
+    "watchify": "*"
   },
   "staticPattern": "lib/{file}",
   "staticDependencies": {

@@ -12,6 +12,33 @@ table {
 }
 // ----------------------
 
+// --- generic compact ---
+h1, h2, h3, h4, h5, h6 {
+  margin: 1ex 0;
+}
+div, section, nav, main, textarea, input, span {
+  box-sizing: border-box;
+}
+section {
+  margin-top: 5px;
+  margin-bottom: 5px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+.vpad {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+.hpad {
+  padding-left: 10px;
+  padding-right: 10px;
+}
+a {
+  cursor: pointer;
+  text-decoration: underline;
+}
+// -----------------------
+
 body {
   background-color: #FDFDFD;
 }
@@ -39,46 +66,41 @@ body {
 }
 
 nav {
-  top: 0;
-  left: 0;
-  right: 0;
-
-  z-index: 1000;
-
-  background-color: #DDD;
-  border-bottom: 1px solid #BBB;
-
-  padding: 5px;
-  box-sizing: border-box;
-}
-
-h1, h2, h3, h4, h5, h6 {
-  margin: 1ex 0;
-}
-
-a {
-  cursor: pointer;
-  text-decoration: underline;
-}
-
-.thumbnails {
   position: fixed;
-  top: 29px;
-  left: 0;
-  bottom: 0;
-  width: 200px;
-  overflow-y: scroll;
-  z-index: 100;
-  font-size: 90%;
-  background-color: #FAFAFA;
 
-  & > div {
+  &[fixedflow] {
+    top: 0;
+    left: 0;
+    right: 0;
+
+    z-index: 1000;
+
+    background-color: #DDD;
+    border-bottom: 1px solid #BBB;
+
     padding: 5px;
   }
-}
 
-div, section, nav, main, textarea, input, span {
-  box-sizing: border-box;
+  &.thumbnails {
+    top: 29px;
+    left: 0;
+    bottom: 0;
+
+    z-index: 100;
+
+    background-color: #FAFAFA;
+    width: 200px;
+    overflow-y: scroll;
+    font-size: 90%;
+
+    .page {
+      border-top: 1px solid #B86;
+      font-size: 90%;
+    }
+    .selected {
+      background-color: #DDD;
+    }
+  }
 }
 
 // complex pdf-objects
@@ -115,43 +137,42 @@ div, section, nav, main, textarea, input, span {
   display: inline-block;
 }
 
-.page {
-  position: absolute;
-  div {
-    position: absolute;
-  }
-  .text {
-    white-space: pre;
-  }
-}
-.outline {
+.canvas {
   .page {
-    outline: 1px solid rgba(100, 50, 50, 0.9); // brown
-  }
-  // section bounding boxes:
-  .header {
-    outline: 1px solid rgba(125, 10, 150, 0.9); // purple
-  }
-  .footer {
-    outline: 1px solid rgba(50, 200, 200, 0.9); // cyan
-  }
-  .col1, .col2 {
-    outline: 1px solid rgba(50, 200, 200, 0.9); // cyan
-  }
-  .outside {
-    outline: 1px solid rgba(25, 150, 10, 0.9); // green
-  }
-  // each text span
-  .text {
-    outline: 1px solid rgba(200, 100, 100, 0.5); // pink
-  }
-
-  .section {
-    .paragraph {
-      outline: 1px solid rgba(100, 20, 20, 0.5);
+    position: absolute;
+    div {
+      position: absolute;
     }
-    .line {
-      outline: 1px solid rgba(200, 100, 100, 0.5);
+    .text {
+      white-space: pre;
+    }
+  }
+  .label {
+    display: none;
+  }
+  &.outline {
+    .page {
+      outline: 1px solid rgba(100, 50, 50, 0.9); // brown
+    }
+    // each text span
+    .text {
+      outline: 1px solid rgba(200, 100, 100, 0.5); // pink
+    }
+    // generic box
+    .box {
+      outline: 2px solid rgba(0, 0, 0, 0.75); // gray
+    }
+    .label {
+      display: inline-block;
+    }
+
+    .section {
+      .paragraph {
+        outline: 1px solid rgba(100, 20, 20, 0.5);
+      }
+      .line {
+        outline: 1px solid rgba(200, 100, 100, 0.5);
+      }
     }
   }
 }
@@ -168,12 +189,12 @@ div, section, nav, main, textarea, input, span {
   }
 }
 
-.keyval-row {
+.key-row {
   border-top: 1px solid #AAA;
   span {
-    display: inline-block;
     padding: 0 5px;
     &:first-child {
+      display: inline-block;
       font-weight: bold;
       width: 50px;
     }

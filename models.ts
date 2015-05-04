@@ -21,28 +21,39 @@ export class File {
     new Request('GET', `${server}/files`).send(callback);
   }
 
+  get url() {
+    return `${server}/files/${this.name}`;
+  }
+
+  get(callback: (error: Error, file?: any) => void) {
+    new Request('GET', this.url).send(callback);
+  }
   getDocument(callback: (error: Error, document?: any) => void) {
-    new Request('GET', `${server}/files/${this.name}/document`).send(callback);
+    new Request('GET', this.url + `/document`).send(callback);
   }
   getObject(objectNumber: number, callback: (error: Error, object?: any) => void) {
-    new Request('GET', `${server}/files/${this.name}/objects/${objectNumber}`).send(callback);
+    new Request('GET', this.url + `/objects/${objectNumber}`).send(callback);
   }
   getObjectExtra(objectNumber: number, callback: (error: Error, object?: any) => void) {
-    new Request('GET', `${server}/files/${this.name}/objects/${objectNumber}/extra`).send(callback);
+    new Request('GET', this.url + `/objects/${objectNumber}/extra`).send(callback);
   }
   getContentStream(objectNumber: number, callback: (error: Error, result?: any) => void) {
-    new Request('GET', `${server}/files/${this.name}/objects/${objectNumber}/content-stream`).send(callback);
+    new Request('GET', this.url + `/objects/${objectNumber}/content-stream`).send(callback);
   }
   getFont(objectNumber: number, callback: (error: Error, result?: any) => void) {
-    new Request('GET', `${server}/files/${this.name}/objects/${objectNumber}/font`).send(callback);
+    new Request('GET', this.url + `/objects/${objectNumber}/font`).send(callback);
   }
   getPages(callback: (error: Error, pages?: any[]) => void) {
-    new Request('GET', `${server}/files/${this.name}/pages`).send(callback);
+    new Request('GET', this.url + `/pages`).send(callback);
   }
   getPage(pageNumber: number, callback: (error: Error, page?: any) => void) {
-    new Request('GET', `${server}/files/${this.name}/pages/${pageNumber}`).send(callback);
+    new Request('GET', this.url + `/pages/${pageNumber}`).send(callback);
   }
   getPageContents(pageNumber: number, callback: (error: Error, contents?: any) => void) {
-    new Request('GET', `${server}/files/${this.name}/pages/${pageNumber}/contents`).send(callback);
+    new Request('GET', this.url + `/pages/${pageNumber}/contents`).send(callback);
+  }
+
+  open(callback: (error: Error, result?: any) => void) {
+    new Request('POST', this.url + `/open`).send(callback);
   }
 }

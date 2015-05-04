@@ -78,6 +78,8 @@ interface TextSpan {
   maxX: number;
   maxY: number;
   fontSize: number;
+  fontBold: boolean;
+  fontItalic: boolean;
   details?: any;
 }
 
@@ -135,14 +137,19 @@ export function renderPDFObject(object: any, channel: EventChannel): VirtualNode
 }
 
 export function renderTextSpan(model: TextSpan, channel: EventChannel): VirtualNode {
+  // if fontSize is less than 6, set it to 6
+  var normalized_fontSize = Math.max(model.fontSize, 6);
   var style = {
     left: model.minX.toFixed(3) + 'px',
     top: model.minY.toFixed(3) + 'px',
     width: (model.maxX - model.minX).toFixed(3) + 'px',
     height: (model.maxY - model.minY).toFixed(3) + 'px',
-    fontSize: model.fontSize.toFixed(3) + 'px',
+    fontSize: normalized_fontSize.toFixed(3) + 'px',
+    fontWeight: model.fontBold ? 'bold' : 'normal',
+    fontStyle: model.fontItalic ? 'italic' : 'normal',
   };
-  var title = JSON.stringify(model.details);
+  // JSON.stringify(model.details)
+  var title = `${model.details} fontSize=${model.fontSize.toFixed(3)}`;
   return h('div.text', {style: style, title: title}, model.string);
 }
 

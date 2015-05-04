@@ -1,13 +1,6 @@
-<h2>Document</h2>
-<table>
-  <tr><th>normalFontSize</th><td>{{document.normalFontSize | number:3}}</td></tr>
-  <tr><th>meanFontSize</th><td>{{document.meanFontSize | number:3}}</td></tr>
-<table>
-
-<h3>Sections</h3>
+<h2>Document Sections</h2>
 <div ng-repeat="section in document.sections" class="section" style="border-top: 1px solid gray">
-  <h4>
-    <div ng-repeat="line in section.headerLines">{{line.string}}</div>
-  </h4>
-  <div ng-repeat="paragraph in section.paragraphs track by $index" class="paragraph">{{paragraph.string}}</div>
+  <h3><i>Section {{$index}}</i></h3>
+  <h4>{{section.header}}</h4>
+  <p ng-repeat="paragraph in section.content track by $index">{{paragraph}}</p>
 </div>

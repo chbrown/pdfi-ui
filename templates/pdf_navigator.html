@@ -14,26 +14,26 @@
     <input ng-model="server" style="width: 200px">
   </span>
 </nav>
-<div style="margin: 0 10px">
-  <div class="thumbnails">
-    <div>
-      <h3><code>{{file.name}}</code></h3>
-      <small>File size: {{file.size | number}} bytes</small>
+<!-- the list of pages in the current pdf -->
+<nav class="thumbnails">
+  <div class="hpad">
+    <h5>File size: {{file.size | number}} bytes</h5>
+    <a ng-click="openOnHost()">Open on host</a>
 
-      <h4><a ui-sref="pdf.document">Document</a></h4>
+    <h4><a ui-sref="pdf.document">Document</a></h4>
 
-      <h3>Trailer</h3>
-      <!-- the controller responds with a raw trailer object -->
-      <component name="PDFObject" file="file" model="file.trailer"></component>
-    </div>
-
-    <!-- the controller responds with raw PDF page objects -->
-    <div ng-repeat="page in pages" style="border-top: 1px solid #B86;">
-      <h4><a ui-sref="pdf.page({pageNumber: $index + 1})">Page {{$index + 1}}</a></h4>
-      <component name="PDFObject" file="file" model="page"></component>
-    </div>
+    <h3>Trailer</h3>
+    <!-- the controller responds with a raw trailer object -->
+    <component name="PDFObject" file="file" model="file.trailer"></component>
   </div>
-  <div style="margin-left: 200px">
-    <ui-view></ui-view>
+
+  <!-- the controller responds with raw PDF page objects -->
+  <div ng-repeat="page in pages" class="hpad page" ui-sref-active="selected">
+    <h4><a ui-sref="pdf.page({pageNumber: $index + 1})">Page {{$index + 1}}</a></h4>
+    <component name="PDFObject" file="file" model="page"></component>
   </div>
+</nav>
+<!-- the current selected page / object -->
+<div style="margin-left: 200px; padding: 10px;">
+  <ui-view></ui-view>
 </div>

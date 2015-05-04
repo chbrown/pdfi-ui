@@ -49,6 +49,12 @@ app.config($provide => {
   });
 });
 
+app.filter('range', () => {
+  return args => {
+    return _.range.apply(_, args);
+  };
+});
+
 app.filter('keys', () => {
   return value => {
     if (value === undefined || value === null) return [];
@@ -62,7 +68,8 @@ function px(number) {
 app.filter('px', () => px);
 
 function rectStyle(rect) {
-  if (rect === null) return rect;
+  if (rect === undefined || rect === null) return rect;
+  if (rect.minX === null || rect.minY === null || rect.maxX === null || rect.maxY === null) return null;
   return {
     left: px(rect.minX),
     top: px(rect.minY),
@@ -72,13 +79,14 @@ function rectStyle(rect) {
 }
 app.filter('rectStyle', () => rectStyle);
 
-function formatRectangle(rectangle) {
-  if (rectangle === null) return rectangle;
-  var point_string = '(' + rectangle.minX.toFixed(3) + ',' + rectangle.minY.toFixed(3) + ')';
-  var size_string = '(' + (rectangle.maxX - rectangle.minX).toFixed(3) + 'x' + (rectangle.maxY - rectangle.minY).toFixed(3) + ')';
-  return point_string + ' ' + size_string;
+function rectString(rect) {
+  if (rect === undefined || rect === null) return rect;
+  if (rect.minX === null || rect.minY === null || rect.maxX === null || rect.maxY === null) return null;
+  var dX = rect.maxX - rect.minX;
+  var dY = rect.maxY - rect.minY;
+  return `(${rect.minX.toFixed(3)},${rect.minY.toFixed(3)}) (${dX.toFixed(3)}x${dY.toFixed(3)})`;
 }
-app.filter('rectString', () => formatRectangle);
+app.filter('rectString', () => rectString);
 
 app.config(($stateProvider, $urlRouterProvider, $locationProvider) => {
   $urlRouterProvider.otherwise(($injector, $location) => {
@@ -233,9 +241,7 @@ app.controller('selectorCtrl', ($scope, $state, $flash) => {
       // this is dumb. apparently when rendering the select, angular doesn't check
       // for matches against an existing ng-model value?
       // it seems that angular.js 1.4 will fix this; see http://jsfiddle.net/z3wpa0ff/
-      if (error) {
-        throw error;
-      }
+      if (error) throw error;
       $scope.files = files;
       $scope.selected_file = {name: $state.params.name};
     });
@@ -246,17 +252,31 @@ app.controller('selectorCtrl', ($scope, $state, $flash) => {
   };
 });
 
-app.controller('pdfCtrl', ($scope, $state) => {
-  $scope.file = new File($state.params.name);
+app.controller('pdfCtrl', ($scope, $state, $flash) => {
+  var file = $scope.file = new File($state.params.name);
+  // $scope.pageNumber = $state.params.pageNumber;
 
-  $scope.file.getPages((error, pages) => {
+  file.getPages((error, pages) => {
     $scope.$apply(() => {
       if (error) throw error;
       $scope.pages = pages;
     });
   });
+  file.get((error, result) => {
+    $scope.$apply(() => {
+      if (error) throw error;
+      _.extend(file, result);
+    });
+  });
 
-  // $scope.file.$get();
+  $scope.openOnHost = function() {
+    file.open((error, result) => {
+      $scope.$apply(() => {
+        if (error) throw error;
+        $flash(result.message);
+      });
+    });
+  };
 });
 
 app.controller('documentCtrl', ($scope) => {
@@ -298,8 +318,21 @@ app.controller('fontCtrl', ($scope, $state) => {
 });
 
 app.controller('pageCtrl', ($scope, $state, $localStorage) => {
-  $scope.$storage = $localStorage.$default({outline: false, scale: 1.0});
+  $scope.$storage = $localStorage.$default({
+    outline: false,
+    scale: 1.0,
+    minimumElementsPerLayoutComponent: 0,
+  });
   $scope.pageNumber = $state.params.pageNumber;
+  // keep the $watch below happy
+  $scope.page = {layout: []};
+
+  $scope.$watch('$storage.minimumElementsPerLayoutComponent', (minimum) => {
+    $scope.excludedElements = $scope.page.layout
+    .filter(container => container.elements.length < minimum)
+    .map(container => container.elements.length)
+    .reduce((a, b) => a + b, 0);
+  });
 
   $scope.file.getPage($state.params.pageNumber, (error, page) => {
     $scope.$apply(() => {
