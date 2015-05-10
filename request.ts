@@ -53,10 +53,22 @@ export class Request {
   }
   send(callback: RequestCallback): void {
     this.callback = callback;
-    this.xhr.send();
+    try {
+      // this might raise an error without even trying the server if we break
+      // some kind of cross-origin request rule.
+      this.xhr.send();
+    }
+    catch (exc) {
+      callback(exc);
+    }
   }
   sendData(data: any, callback: RequestCallback): void {
     this.callback = callback;
-    this.xhr.send(data);
+    try {
+      this.xhr.send(data);
+    }
+    catch (exc) {
+      callback(exc);
+    }
   }
 }
