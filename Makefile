@@ -3,12 +3,12 @@ DTS := lodash/lodash node/node yargs/yargs virtual-dom/virtual-dom \
 	jquery/jquery angularjs/angular angularjs/angular-resource
 
 .PHONY: all type_declarations
-all: site.css img/favicon.ico
+all: site.css img/favicon.ico app.js bundle.js
 
 %.css: %.less
 	lessc $< | cleancss --keep-line-breaks --skip-advanced -o $@
 
-%.js: %.ts type_declarations
+%.js: %.ts type_declarations | node_modules/.bin/tsc
 	node_modules/.bin/tsc -m commonjs -t ES5 $<
 
 img/acrobat-%.png: img/acrobat.png
@@ -24,3 +24,9 @@ type_declarations/DefinitelyTyped/%:
 	curl -s https://raw.githubusercontent.com/chbrown/DefinitelyTyped/master/$* > $@
 
 type_declarations: $(DTS:%=type_declarations/DefinitelyTyped/%.d.ts)
+
+bundle.js: app.js | node_modules/.bin/browserify
+	node_modules/.bin/browserify app.js -o bundle.js -v
+
+node_modules/.bin/browserify node_modules/.bin/tsc:
+	npm install
