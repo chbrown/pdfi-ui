@@ -1,10 +1,14 @@
+# jquery is required for angularjs/angular
+DTS := lodash/lodash node/node yargs/yargs virtual-dom/virtual-dom \
+	jquery/jquery angularjs/angular angularjs/angular-resource
+
+.PHONY: all type_declarations
 all: site.css img/favicon.ico
-.PHONY: type_declarations
 
 %.css: %.less
 	lessc $< | cleancss --keep-line-breaks --skip-advanced -o $@
 
-%.js: %.ts
+%.js: %.ts type_declarations
 	node_modules/.bin/tsc -m commonjs -t ES5 $<
 
 img/acrobat-%.png: img/acrobat.png
@@ -17,9 +21,6 @@ img/favicon.ico: img/acrobat-16.png img/acrobat-32.png
 
 type_declarations/DefinitelyTyped/%:
 	mkdir -p $(@D)
-	curl -s https://raw.githubusercontent.com/borisyankov/DefinitelyTyped/master/$* > $@
+	curl -s https://raw.githubusercontent.com/chbrown/DefinitelyTyped/master/$* > $@
 
-# jquery is required for angularjs/angular.d.ts
-D_TS := lodash/lodash.d.ts node/node.d.ts yargs/yargs.d.ts \
-	jquery/jquery.d.ts angularjs/angular.d.ts angularjs/angular-resource.d.ts
-type_declarations: $(D_TS:%=type_declarations/DefinitelyTyped/%)
+type_declarations: $(DTS:%=type_declarations/DefinitelyTyped/%.d.ts)

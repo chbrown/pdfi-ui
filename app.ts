@@ -1,12 +1,9 @@
 /// <reference path="type_declarations/index.d.ts" />
 import _ = require('lodash');
 
-// can't import non-modules with `import * as xyz from './xyz'` syntax
-import h = require('virtual-dom/h');
-import create = require('virtual-dom/create-element');
-import diff = require('virtual-dom/diff');
-import patch = require('virtual-dom/patch');
+import academia = require('academia');
 
+import {VNode} from 'virtual-dom';
 import {Request, NetworkError} from './request';
 import {File} from './models';
 import * as components from './components';
@@ -88,6 +85,14 @@ function rectString(rect) {
 }
 app.filter('rectString', () => rectString);
 
+function rectTuple(rect) {
+  if (rect === undefined || rect === null) return rect;
+  var tuple = [rect.minX, rect.minY, rect.maxX, rect.maxY];
+  // convert to string?
+  return tuple;
+}
+app.filter('rectTuple', () => rectTuple);
+
 app.config(($stateProvider, $urlRouterProvider, $locationProvider) => {
   $urlRouterProvider.otherwise(($injector, $location) => {
     log('otherwise: coming from "%s"', $location.url());
@@ -104,6 +109,11 @@ app.config(($stateProvider, $urlRouterProvider, $locationProvider) => {
     url: '/document',
     templateUrl: '/templates/document.html',
     controller: 'documentCtrl',
+  })
+  .state('pdf.citations', {
+    url: '/citations',
+    templateUrl: '/templates/citations.html',
+    controller: 'citationsCtrl',
   })
   // by object
   .state('pdf.object', {
@@ -126,10 +136,15 @@ app.config(($stateProvider, $urlRouterProvider, $locationProvider) => {
     templateUrl: '/templates/objects/font.html',
     controller: 'fontCtrl',
   })
+  .state('pdf.object.graphics', {
+    url: '/graphics',
+    templateUrl: '/templates/graphics.html',
+    controller: 'graphicsCtrl',
+  })
   // by page
   .state('pdf.page', {
     url: '/pages/{pageNumber:int}',
-    templateUrl: '/templates/page.html',
+    templateUrl: '/templates/graphics.html',
     controller: 'pageCtrl',
   })
   .state('pdf.page_contents', {
@@ -149,15 +164,10 @@ function clean(object) {
   if (object === null || object === undefined) {
     return object;
   }
-
   if (typeof object.toJSON === 'function') {
-    object = object.toJSON();
+    return object.toJSON();
   }
-  else {
-    object = angular.copy(object);
-  }
-
-  return object;
+  return angular.copy(object);
 }
 
 function mapTree(object: any, func: (object: any) => any): any {
@@ -179,6 +189,16 @@ function mapTree(object: any, func: (object: any) => any): any {
   }
 }
 
+app.directive('authors', () => {
+  return {
+    restrict: 'A',
+    scope: {
+      authors: '=',
+    },
+    templateUrl: '/templates/authors.html',
+  }
+});
+
 app.directive('component', ($state) => {
   return {
     restrict: 'E',
@@ -189,7 +209,7 @@ app.directive('component', ($state) => {
     },
     link: (scope, el) => {
       var name = scope['name'];
-      var renderFunction: (model: any, channel: components.EventChannel) => VirtualNode = components[`render${name}`];
+      var renderFunction: (model: any, channel: components.EventChannel) => VNode = components[`render${name}`];
       var root = new components.Root(el[0], renderFunction);
       scope.$watch('model', () => {
         root.update(clean(scope['model']));
@@ -269,7 +289,7 @@ app.controller('pdfCtrl', ($scope, $state, $flash) => {
     });
   });
 
-  $scope.openOnHost = function() {
+  $scope.openOnHost = () => {
     file.open((error, result) => {
       $scope.$apply(() => {
         if (error) throw error;
@@ -280,11 +300,41 @@ app.controller('pdfCtrl', ($scope, $state, $flash) => {
 });
 
 app.controller('documentCtrl', ($scope) => {
-  $scope.file.getDocument((error, document) => {
+  $scope.file.getDocument((error, paper: academia.types.Paper) => {
     $scope.$apply(() => {
       if (error) throw error;
-      $scope.document = document;
+      $scope.paper = paper;
     });
+  });
+});
+
+app.controller('citationsCtrl', ($scope) => {
+  $scope.file.getDocument((error, paper: academia.types.Paper) => {
+    $scope.$apply(() => {
+      if (error) throw error;
+      $scope.paper = paper;
+    });
+  });
+
+  $scope.$watch('paper', (paper: academia.types.Paper) => {
+    if (paper === undefined) return;
+    var body = paper.sections.filter(section => !section.title.match(/References/))
+      .map(section => section.paragraphs.join('\n'))
+      .join('\n');
+    $scope.body = body.replace(academia.styles.acl.citeRegExp, (group0) => {
+      return `<span class="citation">${group0}</span>`;
+    });
+
+    var referenceStrings = paper.sections.filter(section => !!section.title.match(/References/))
+      .map(section => section.paragraphs)[0] || [];
+
+    // use refactored logic from academia
+    var references = academia.styles.acl.parseReferences(referenceStrings);
+    var cites = academia.styles.acl.parseCites(body);
+    academia.styles.acl.linkCites(cites, references);
+    // link to view
+    $scope.references = references;
+    $scope.citations = cites;
   });
 });
 
@@ -317,6 +367,17 @@ app.controller('fontCtrl', ($scope, $state) => {
   });
 });
 
+app.controller('graphicsCtrl', ($scope, $state, $localStorage) => {
+  $scope.$storage = $localStorage;
+
+  $scope.file.getGraphics($state.params.objectNumber, (error, result) => {
+    $scope.$apply(() => {
+      if (error) throw error;
+      _.extend($scope, result);
+    });
+  });
+});
+
 app.controller('pageCtrl', ($scope, $state, $localStorage) => {
   $scope.$storage = $localStorage.$default({
     outline: false,
@@ -325,10 +386,10 @@ app.controller('pageCtrl', ($scope, $state, $localStorage) => {
   });
   $scope.pageNumber = $state.params.pageNumber;
   // keep the $watch below happy
-  $scope.page = {layout: []};
+  $scope.canvas = {layout: []};
 
   $scope.$watch('$storage.minimumElementsPerLayoutComponent', (minimum) => {
-    $scope.excludedElements = $scope.page.layout
+    $scope.excludedElements = $scope.canvas.layout
     .filter(container => container.elements.length < minimum)
     .map(container => container.elements.length)
     .reduce((a, b) => a + b, 0);
@@ -337,7 +398,7 @@ app.controller('pageCtrl', ($scope, $state, $localStorage) => {
   $scope.file.getPage($state.params.pageNumber, (error, page) => {
     $scope.$apply(() => {
       if (error) throw error;
-      $scope.page = page;
+      $scope.canvas = page;
     });
   });
 });

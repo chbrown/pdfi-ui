@@ -1,14 +1,21 @@
-<h3>Content Stream Operations</h3>
+<section class="hpad">
+  <h3>Content Stream Operations</h3>
 
-<div ng-repeat="operation in operations" class="key-row">
-  <span>{{operation.operator}}</span>
-  <span>{{operation.operands | json:'  '}}</span>
-</div>
+  <div ng-repeat="operation in operations" class="key-row">
+    <span>{{operation.operator}}</span>
+    <span>{{operation.operands | json:'  '}}</span>
+  </div>
+</section>
 
-<h3>Text Operations</h3>
+<section class="hpad">
+  <h3>Text Operations</h3>
 
-<div ng-repeat="span in spans" class="key-row">
-  <span>{{span.operator}}</span>
-  <span>{{span.text}}</span>
-  <span>({{span.font}})</span>
-</div>
+  <div ng-repeat="span in spans" class="key-row">
+    <span>{{span.operator}}</span>
+    <span>{{span.text}}</span>
+    <span style="float: right">
+      <span title="characterByteLength">w={{span.characterByteLength}}</span>
+      <span title="fontName">({{span.fontName}})</span>
+    </span>
+  </div>
+</section>

@@ -12,15 +12,14 @@
   "repository": "git://github.com/chbrown/pdfi-ui.git",
   "author": "Christopher Brown <io@henrian.com> (http://henrian.com)",
   "license": "MIT",
-  "dependencies": {},
-  "devDependencies": {
-    "angular": "*",
-    "browserify": "*",
+  "dependencies": {
     "lodash": "*",
+    "virtual-dom": "*"
+  },
+  "devDependencies": {
+    "browserify": "*",
     "mocha": "*",
-    "typescript": "*",
-    "virtual-dom": "*",
-    "watchify": "*"
+    "typescript": "*"
   },
   "staticPattern": "lib/{file}",
   "staticDependencies": {

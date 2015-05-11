@@ -43,6 +43,9 @@ export class File {
   getFont(objectNumber: number, callback: (error: Error, result?: any) => void) {
     new Request('GET', this.url + `/objects/${objectNumber}/font`).send(callback);
   }
+  getGraphics(objectNumber: number, callback: (error: Error, result?: any) => void) {
+    new Request('GET', this.url + `/objects/${objectNumber}/graphics`).send(callback);
+  }
   getPages(callback: (error: Error, pages?: any[]) => void) {
     new Request('GET', this.url + `/pages`).send(callback);
   }

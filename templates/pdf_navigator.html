@@ -15,12 +15,13 @@
   </span>
 </nav>
 <!-- the list of pages in the current pdf -->
-<nav class="thumbnails">
+<nav class="thumbnails" style="width: 160px">
   <div class="hpad">
     <h5>File size: {{file.size | number}} bytes</h5>
     <a ng-click="openOnHost()">Open on host</a>
 
     <h4><a ui-sref="pdf.document">Document</a></h4>
+    <h4><a ui-sref="pdf.citations">Citations</a></h4>
 
     <h3>Trailer</h3>
     <!-- the controller responds with a raw trailer object -->
@@ -34,6 +35,6 @@
   </div>
 </nav>
 <!-- the current selected page / object -->
-<div style="margin-left: 200px; padding: 10px;">
+<div style="margin-left: 160px">
   <ui-view></ui-view>
 </div>

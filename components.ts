@@ -1,6 +1,8 @@
 /// <reference path="type_declarations/index.d.ts" />
 import {EventEmitter} from 'events';
 
+// can't import non-modules with `import * as xyz from './xyz'` syntax
+import {VNode} from 'virtual-dom';
 import h = require('virtual-dom/h');
 import create = require('virtual-dom/create-element');
 import diff = require('virtual-dom/diff');
@@ -15,17 +17,16 @@ export interface EventChannel {
 export class Root<T> extends EventEmitter {
   // DOM and virtual-dom state
   private element: Element;
-  private vtree: VirtualNode;
+  private vtree: VNode;
   // redraw state
   private _redrawInProgress = false;
   private _redrawPending = false;
   // redraw value
   private value: T = null;
   constructor(private parentElement: Element,
-              private renderFunction: (model: T, channel: EventChannel) => VirtualNode) { super() }
+              private renderFunction: (model: T, channel: EventChannel) => VNode) { super() }
 
   update(value: T) {
-    // console.log('Root#update(%o)', value)
     if (this._redrawInProgress) {
       throw new Error('Update attempted while redrawing')
     }
@@ -40,7 +41,6 @@ export class Root<T> extends EventEmitter {
     }
   }
   private redraw() {
-    // console.log('Root#redraw(%o)', this.value)
     this._redrawInProgress = true;
     this._redrawPending = false;
 
@@ -66,10 +66,6 @@ interface PDFObjectReference {
   generationNumber: number;
 }
 
-// export interface PDFObject {
-//   object: any;
-// }
-
 // this matches the properties in shapes.TextSpan (and thus, its JSON representation)
 interface TextSpan {
   string: string;
@@ -89,17 +85,17 @@ interface PDFPage {
 
 // render functions
 
-export function renderPDFObjectReference(model: PDFObjectReference, channel: EventChannel): VirtualNode {
+export function renderPDFObjectReference(model: PDFObjectReference, channel: EventChannel): VNode {
   return h('a.reference', {
     // href: `#objects/${model.objectNumber}`, // pdfs/${model.file.name}/
-    onclick: ev => {
+    onclick: function(ev) {
       ev.preventDefault();
       channel('objectReferenceClick', event, model.objectNumber);
     },
   }, `${model.objectNumber}:${model.generationNumber}`);
 }
 
-export function renderPDFObject(object: any, channel: EventChannel): VirtualNode {
+export function renderPDFObject(object: any, channel: EventChannel): VNode {
   if (object === undefined) {
     return h('i.undefined', 'undefined');
   }
@@ -136,10 +132,10 @@ export function renderPDFObject(object: any, channel: EventChannel): VirtualNode
   return h('span.string', object.toString());
 }
 
-export function renderTextSpan(model: TextSpan, channel: EventChannel): VirtualNode {
+export function renderTextSpan(model: TextSpan, channel: EventChannel): VNode {
   // if fontSize is less than 6, set it to 6
   var normalized_fontSize = Math.max(model.fontSize, 6);
-  var style = {
+  var style: {[index: string]: string} = {
     left: model.minX.toFixed(3) + 'px',
     top: model.minY.toFixed(3) + 'px',
     width: (model.maxX - model.minX).toFixed(3) + 'px',
@@ -153,11 +149,11 @@ export function renderTextSpan(model: TextSpan, channel: EventChannel): VirtualN
   return h('div.text', {style: style, title: title}, model.string);
 }
 
-export function renderPDFCanvas(model: TextSpan[], channel: EventChannel): VirtualNode {
+export function renderPDFCanvas(model: TextSpan[], channel: EventChannel): VNode {
   var children = model.map(span => renderTextSpan(span, channel));
   return h('section', children);
 }
 
-export function renderPDFPage(model: PDFPage, channel: EventChannel): VirtualNode {
+export function renderPDFPage(model: PDFPage, channel: EventChannel): VNode {
   return renderPDFCanvas(model.spans, channel);
 }

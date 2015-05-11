@@ -89,7 +89,6 @@ nav {
     z-index: 100;
 
     background-color: #FAFAFA;
-    width: 200px;
     overflow-y: scroll;
     font-size: 90%;
 
@@ -123,10 +122,11 @@ nav {
   outline: 1px solid #88F;
 }
 .number {
-  outline: 1px solid #E81;
+  font-family: monospace;
+  // outline: 1px solid #E81;
 }
 .string {
-  font-family: monospace;
+  // font-family: monospace;
   white-space: pre-wrap;
   word-break: break-all;
 }
@@ -137,21 +137,19 @@ nav {
   display: inline-block;
 }
 
-.canvas {
-  .page {
+.canvas-container {
+  position: absolute;
+  div {
     position: absolute;
-    div {
-      position: absolute;
-    }
-    .text {
-      white-space: pre;
-    }
+  }
+  .text {
+    white-space: pre;
   }
   .label {
     display: none;
   }
   &.outline {
-    .page {
+    .graphics {
       outline: 1px solid rgba(100, 50, 50, 0.9); // brown
     }
     // each text span
@@ -177,6 +175,22 @@ nav {
   }
 }
 
+.paper-body {
+  white-space: pre-wrap;
+  .citation {
+    font-weight: bold;
+    color: #00F;
+  }
+}
+.list {
+  & > :after {
+    content: ', ';
+  }
+  & > :last-child:after {
+    content: '';
+  }
+}
+
 .section {
   .paragraph {
     margin: 1ex 0;
@@ -191,12 +205,41 @@ nav {
 
 .key-row {
   border-top: 1px solid #AAA;
-  span {
+  & > span {
     padding: 0 5px;
     &:first-child {
       display: inline-block;
       font-weight: bold;
       width: 50px;
+    }
+  }
+}
+
+table {
+  td {
+    vertical-align: top;
+  }
+
+  &.fill {
+    width: 100%;
+  }
+  &.padded tr {
+    td, th {
+      &:first-child { padding-left: 10px; }
+      &:last-child { padding-right: 10px; }
+    }
+  }
+  &.lined tbody {
+    td {
+      border-top: 1px solid #EEE;
+    }
+  }
+  &.striped tbody {
+    tr:nth-child(odd) {
+      background-color: #FCFCFC;
+    }
+    tr:nth-child(even) {
+      background-color: #FEFEFE;
     }
   }
 }
