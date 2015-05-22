@@ -2,7 +2,6 @@
 DTS := lodash/lodash node/node yargs/yargs virtual-dom/virtual-dom \
 	jquery/jquery angularjs/angular angularjs/angular-resource
 
-.PHONY: all type_declarations
 all: site.css img/favicon.ico app.js bundle.js
 
 %.css: %.less
@@ -28,5 +27,10 @@ type_declarations: $(DTS:%=type_declarations/DefinitelyTyped/%.d.ts)
 bundle.js: app.js | node_modules/.bin/browserify
 	node_modules/.bin/browserify app.js -o bundle.js -v
 
-node_modules/.bin/browserify node_modules/.bin/tsc:
+node_modules/.bin/browserify node_modules/.bin/watchify node_modules/.bin/tsc:
 	npm install
+
+dev: | node_modules/.bin/browserify node_modules/.bin/watchify
+	(node_modules/.bin/tsc -m commonjs -t ES5 -w *.ts & \
+   node_modules/.bin/watchify app.js -o build/bundle.js -v & \
+   wait)

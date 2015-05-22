@@ -19,7 +19,8 @@
   "devDependencies": {
     "browserify": "*",
     "mocha": "*",
-    "typescript": "*"
+    "typescript": "*",
+    "watchify": "*"
   },
   "staticPattern": "lib/{file}",
   "staticDependencies": {
