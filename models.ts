@@ -2,6 +2,8 @@
 import * as _ from 'lodash';
 import {Request} from './request';
 
+import academia = require('academia');
+
 let server = localStorage['server'] || '';
 
 export class File {
@@ -28,7 +30,7 @@ export class File {
   get(callback: (error: Error, file?: any) => void) {
     new Request('GET', this.url).send(callback);
   }
-  getDocument(callback: (error: Error, document?: any) => void) {
+  getDocument(callback: (error: Error, result?: {paper: academia.types.Paper /* among others */}) => void) {
     new Request('GET', this.url + `/document`).send(callback);
   }
   getObject(objectNumber: number, callback: (error: Error, object?: any) => void) {
@@ -39,6 +41,9 @@ export class File {
   }
   getContentStream(objectNumber: number, callback: (error: Error, result?: any) => void) {
     new Request('GET', this.url + `/objects/${objectNumber}/content-stream`).send(callback);
+  }
+  getTextCanvas(objectNumber: number, callback: (error: Error, result?: any) => void) {
+    new Request('GET', this.url + `/objects/${objectNumber}/text-canvas`).send(callback);
   }
   getFont(objectNumber: number, callback: (error: Error, result?: any) => void) {
     new Request('GET', this.url + `/objects/${objectNumber}/font`).send(callback);

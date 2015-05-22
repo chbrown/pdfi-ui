@@ -128,8 +128,13 @@ app.config(($stateProvider, $urlRouterProvider, $locationProvider) => {
   })
   .state('pdf.object.content_stream', {
     url: '/content-stream',
-    templateUrl: '/templates/objects/content_stream.html',
+    templateUrl: '/templates/objects/content-stream.html',
     controller: 'contentStreamCtrl',
+  })
+  .state('pdf.object.text_canvas', {
+    url: '/text-canvas',
+    templateUrl: '/templates/objects/text-canvas.html',
+    controller: 'textCanvasCtrl',
   })
   .state('pdf.object.font', {
     url: '/font',
@@ -299,20 +304,22 @@ app.controller('pdfCtrl', ($scope, $state, $flash) => {
   };
 });
 
-app.controller('documentCtrl', ($scope) => {
-  $scope.file.getDocument((error, paper: academia.types.Paper) => {
+app.controller('documentCtrl', $scope => {
+  var file: File = $scope.file;
+  file.getDocument((error, result) => {
     $scope.$apply(() => {
       if (error) throw error;
-      $scope.paper = paper;
+      _.extend($scope, result);
     });
   });
 });
 
-app.controller('citationsCtrl', ($scope) => {
-  $scope.file.getDocument((error, paper: academia.types.Paper) => {
+app.controller('citationsCtrl', $scope => {
+  var file: File = $scope.file;
+  file.getDocument((error, result) => {
     $scope.$apply(() => {
       if (error) throw error;
-      $scope.paper = paper;
+      _.extend($scope, result);
     });
   });
 
@@ -350,7 +357,18 @@ app.controller('objectCtrl', ($scope, $state) => {
 });
 
 app.controller('contentStreamCtrl', ($scope, $state) => {
-  $scope.file.getContentStream($state.params.objectNumber, (error, result) => {
+  var file: File = $scope.file;
+  file.getContentStream($state.params.objectNumber, (error, result) => {
+    $scope.$apply(() => {
+      if (error) throw error;
+      _.extend($scope, result);
+    });
+  });
+});
+
+app.controller('textCanvasCtrl', ($scope, $state) => {
+  var file: File = $scope.file;
+  file.getTextCanvas($state.params.objectNumber, (error, result) => {
     $scope.$apply(() => {
       if (error) throw error;
       _.extend($scope, result);
@@ -359,7 +377,8 @@ app.controller('contentStreamCtrl', ($scope, $state) => {
 });
 
 app.controller('fontCtrl', ($scope, $state) => {
-  $scope.file.getFont($state.params.objectNumber, (error, result) => {
+  var file: File = $scope.file;
+  file.getFont($state.params.objectNumber, (error, result) => {
     $scope.$apply(() => {
       if (error) throw error;
       _.extend($scope, result);
@@ -370,7 +389,8 @@ app.controller('fontCtrl', ($scope, $state) => {
 app.controller('graphicsCtrl', ($scope, $state, $localStorage) => {
   $scope.$storage = $localStorage;
 
-  $scope.file.getGraphics($state.params.objectNumber, (error, result) => {
+  var file: File = $scope.file;
+  file.getGraphics($state.params.objectNumber, (error, result) => {
     $scope.$apply(() => {
       if (error) throw error;
       _.extend($scope, result);

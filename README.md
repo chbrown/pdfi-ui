@@ -3,13 +3,6 @@
 User interface for visualizing PDF structure
 
 
-## Development
-
-    trap 'kill $(jobs -p)' EXIT
-    node_modules/.bin/tsc -m commonjs -t ES5 -w *.ts &
-    node_modules/.bin/watchify app.js -o bundle.js -v &
-
-
 ## License
 
 Copyright 2015 Christopher Brown. [MIT Licensed](http://opensource.org/licenses/MIT).
