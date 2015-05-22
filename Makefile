@@ -2,7 +2,7 @@
 DTS := lodash/lodash node/node yargs/yargs virtual-dom/virtual-dom \
 	jquery/jquery angularjs/angular angularjs/angular-resource
 
-all: site.css img/favicon.ico app.js bundle.js
+all: site.css img/favicon.ico app.js build/bundle.js
 
 %.css: %.less
 	lessc $< | cleancss --keep-line-breaks --skip-advanced -o $@
@@ -24,8 +24,8 @@ type_declarations/DefinitelyTyped/%:
 
 type_declarations: $(DTS:%=type_declarations/DefinitelyTyped/%.d.ts)
 
-bundle.js: app.js | node_modules/.bin/browserify
-	node_modules/.bin/browserify app.js -o bundle.js -v
+build/bundle.js: app.js | node_modules/.bin/browserify
+	node_modules/.bin/browserify $< -o $@ -v
 
 node_modules/.bin/browserify node_modules/.bin/watchify node_modules/.bin/tsc:
 	npm install
