@@ -9,38 +9,58 @@
   ],
   "version": "0.1.1",
   "homepage": "https://github.com/chbrown/pdfi-ui",
-  "repository": "git://github.com/chbrown/pdfi-ui.git",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/chbrown/pdfi-ui.git"
+  },
   "author": "Christopher Brown <io@henrian.com> (http://henrian.com)",
   "license": "MIT",
+  "private": true,
   "dependencies": {
+    "academia": "*",
+    "arrays": "chbrown/arrays",
+    "flow-copy": "*",
+    "history": "*",
+    "httprequest": "*",
+    "lexing": "*",
     "lodash": "*",
-    "virtual-dom": "*"
+    "notify-ui": "*",
+    "object-assign": "*",
+    "pdfi": "*",
+    "react": "*",
+    "react-dom": "*",
+    "redbox-react": "*",
+    "textarea": "*",
+    "visible": "*"
   },
   "devDependencies": {
-    "browserify": "*",
-    "mocha": "*",
-    "typescript": "*",
-    "watchify": "*"
+    "babel-core": "*",
+    "babel-loader": "*",
+    "babel-plugin-react-transform": "*",
+    "css-loader": "*",
+    "express": "*",
+    "json-loader": "*",
+    "less": "*",
+    "less-loader": "*",
+    "ng-annotate-loader": "*",
+    "react-hot-loader": "*",
+    "react-redux": "*",
+    "react-router": "^1.0.0-rc1",
+    "react-transform-catch-errors": "*",
+    "react-transform-hmr": "*",
+    "redux": "*",
+    "redux-devtools": "*",
+    "redux-router": "latest",
+    "style-loader": "*",
+    "ts-loader": "*",
+    "typescript": "next",
+    "watsh": "*",
+    "webpack": "*",
+    "webpack-dev-middleware": "*",
+    "webpack-dev-server": "*",
+    "webpack-hot-middleware": "*"
   },
-  "staticPattern": "lib/{file}",
-  "staticDependencies": {
-    "angular": {
-      "filter": [
-        "angular.js",
-        "angular.min.js",
-        "angular-resource.js",
-        "angular-resource.min.js"
-      ]
-    },
-    "angular-ui-router": "*",
-    "lodash": "*",
-    "misc-js": {
-      "url": "git://github.com/chbrown/misc-js.git",
-      "filter": [
-        "angular-plugins.js",
-        "textarea.js"
-      ]
-    },
-    "ng-storage": "*"
+  "scripts": {
+    "dev": "PORT=8080 node webpack-dev-server.js"
   }
 }

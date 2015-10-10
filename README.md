@@ -1,6 +1,6 @@
 # pdfi-ui
 
-User interface for visualizing PDF structure
+User interface for visualizing PDF structure.
 
 
 ## License

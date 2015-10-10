@@ -1,67 +1,81 @@
 /// <reference path="type_declarations/index.d.ts" />
-import * as _ from 'lodash';
-import {Request} from './request';
+import {Request} from 'httprequest';
 
-import academia = require('academia');
+const pdfi = require('pdfi');
+import {Buffer as LexingBuffer, Source} from 'lexing';
 
-let server = localStorage['server'] || '';
+// declare var Buffer: {
+//   new (size: number): LexingBuffer;
+// };
 
-export class File {
-  constructor(public name: string) { }
+/**
+From lexing/browser.ts
+*/
+class ArrayBufferSource implements Source {
+  constructor(private arrayBuffer: ArrayBuffer) { }
 
-  static upload(dom_file, callback: (error: Error, file?: File) => void) {
-    var file = new File(dom_file.name);
-    var form = new FormData();
-    form.append('file', dom_file, dom_file.name);
-    new Request('POST', `${server}/files`).sendData(form, (error, data) => {
-      _.extend(file, data);
-      callback(error, file);
-    });
-  }
-
-  static query(callback: (error: Error, files?: File[]) => void) {
-    new Request('GET', `${server}/files`).send(callback);
+  get size(): number {
+    return this.arrayBuffer.byteLength;
   }
 
-  get url() {
-    return `${server}/files/${this.name}`;
+  read(buffer: LexingBuffer, offset: number, length: number, position: number): number {
+    if (length === 0) {
+      return 0;
+    }
+    // ensure that the requested length does not extend past the end of the underlying ArrayBuffer
+    var maximum_length = this.size - position;
+    length = Math.min(length, maximum_length);
+    // console.log(`ArrayBufferSource#read new Uint8Array(ArrayBuffer with size=${this.size}, ${position}, ${length})`);
+    var byteArray = new Uint8Array(this.arrayBuffer, position, length);
+    // copy the bytes over one by one
+    for (var i = 0; i < length; i++) {
+      buffer[offset + i] = byteArray[i];
+    }
+    return length;
   }
 
-  get(callback: (error: Error, file?: any) => void) {
-    new Request('GET', this.url).send(callback);
-  }
-  getDocument(callback: (error: Error, result?: {paper: academia.types.Paper /* among others */}) => void) {
-    new Request('GET', this.url + `/document`).send(callback);
-  }
-  getObject(objectNumber: number, callback: (error: Error, object?: any) => void) {
-    new Request('GET', this.url + `/objects/${objectNumber}`).send(callback);
-  }
-  getObjectExtra(objectNumber: number, callback: (error: Error, object?: any) => void) {
-    new Request('GET', this.url + `/objects/${objectNumber}/extra`).send(callback);
-  }
-  getContentStream(objectNumber: number, callback: (error: Error, result?: any) => void) {
-    new Request('GET', this.url + `/objects/${objectNumber}/content-stream`).send(callback);
-  }
-  getTextCanvas(objectNumber: number, callback: (error: Error, result?: any) => void) {
-    new Request('GET', this.url + `/objects/${objectNumber}/text-canvas`).send(callback);
-  }
-  getFont(objectNumber: number, callback: (error: Error, result?: any) => void) {
-    new Request('GET', this.url + `/objects/${objectNumber}/font`).send(callback);
-  }
-  getGraphics(objectNumber: number, callback: (error: Error, result?: any) => void) {
-    new Request('GET', this.url + `/objects/${objectNumber}/graphics`).send(callback);
-  }
-  getPages(callback: (error: Error, pages?: any[]) => void) {
-    new Request('GET', this.url + `/pages`).send(callback);
-  }
-  getPage(pageNumber: number, callback: (error: Error, page?: any) => void) {
-    new Request('GET', this.url + `/pages/${pageNumber}`).send(callback);
-  }
-  getPageContents(pageNumber: number, callback: (error: Error, contents?: any) => void) {
-    new Request('GET', this.url + `/pages/${pageNumber}/contents`).send(callback);
-  }
-
-  open(callback: (error: Error, result?: any) => void) {
-    new Request('POST', this.url + `/open`).send(callback);
+  /**
+  Same as FileSystemSource#readBuffer
+  */
+  readBuffer(length: number, position: number): LexingBuffer {
+    // console.log(`ArrayBufferSource#readBuffer length=${length} position=${position}`);
+    var buffer = new Buffer(length);
+    var bytesRead = this.read(buffer, 0, length, position);
+    if (bytesRead < length) {
+      buffer = buffer.slice(0, bytesRead);
+    }
+    return buffer;
   }
 }
+
+export function readArrayBufferSync(arrayBuffer: ArrayBuffer,
+                                    options = {type: 'string'}): any {
+  var source: Source = new ArrayBufferSource(arrayBuffer);
+  return pdfi.readSourceSync(source, options);
+}
+
+export function fetchFilenames(callback: (error: Error, filenames?: string[]) => void) {
+  new Request('GET', '/files').send((error: Error, body: string) => {
+    if (error) return callback(error);
+    callback(null, body.split('\n'));
+  });
+}
+
+export function fetchFile(filename: string, callback: (error: Error, arrayBuffer?: ArrayBuffer) => void) {
+  var request = new Request('GET', `/files/${filename}`);
+  request.xhr.responseType = 'arraybuffer';
+  request.send((error: Error, arrayBuffer: ArrayBuffer) => {
+    if (error) return callback(error);
+    callback(null, arrayBuffer);
+  });
+}
+
+// export function uploadFile(dom_file, callback: (error: Error, file?: File) => void) {
+//   var file = new File(dom_file.name);
+//   var form = new FormData();
+//   form.append('file', dom_file, dom_file.name);
+//   new Request('POST', `${server}/files`).sendData(form, (error, data) => {
+//     assign(file, data);
+//     callback(error, file);
+//   });
+// }
