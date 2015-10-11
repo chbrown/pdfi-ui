@@ -12,7 +12,10 @@ import {createHistory} from 'history';
 import FileSelector from './components/FileSelector';
 import PDFNavigator from './components/PDFNavigator';
 import PDFDocument from './components/PDFDocument';
+import PDFObject from './components/PDFObject';
 import PDFPageLayout from './components/PDFPageLayout';
+import PDFCrossReferences from './components/PDFCrossReferences';
+import PDFCitations from './components/PDFCitations';
 
 import './site.less';
 
@@ -76,7 +79,10 @@ ReactDOM.render((
         <Route path="/" component={App}>
           <Route path=":name" component={PDFNavigator}>
             <Route path="document" component={PDFDocument} />
+            <Route path="cross-references" component={PDFCrossReferences} />
+            <Route path="citations" component={PDFCitations} />
             <Route path="page/:page" component={PDFPageLayout} />
+            <Route path="object/:object_number" component={PDFObject} />
           </Route>
           <Route path="*" component={NotFound} />
         </Route>

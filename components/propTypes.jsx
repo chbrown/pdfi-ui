@@ -48,11 +48,17 @@ export const OperationPropTypes = {
   operands: React.PropTypes.any.isRequired,
 };
 
-export const SectionPropTypes = {
+export const PaperSectionPropTypes = {
   title: React.PropTypes.string.isRequired,
   paragraphs: React.PropTypes.arrayOf(React.PropTypes.string).isRequired,
 };
 
 export const PaperPropTypes = {
-  sections: React.PropTypes.arrayOf(React.PropTypes.shape(SectionPropTypes)).isRequired,
+  sections: React.PropTypes.arrayOf(React.PropTypes.shape(PaperSectionPropTypes)).isRequired,
+};
+
+export const ReferencePropTypes = {
+  authors: React.PropTypes.arrayOf(React.PropTypes.shape(AuthorPropTypes)).isRequired,
+  year: React.PropTypes.string.isRequired,
+  title: React.PropTypes.string.isRequired,
 };

@@ -200,13 +200,25 @@ header {
   color: white;
 }
 
-.paper-body {
-  white-space: pre-wrap;
-  .citation {
-    font-weight: bold;
-    color: #00F;
+.paper-section {
+  border-top: 1px solid gray;
+  .paragraph {
+    margin: 1ex 0;
+    text-indent: 2em;
+  }
+  .line {
+    font-family: monospace;
+    white-space: pre-wrap;
+    word-break: break-all;
   }
 }
+
+// white-space: pre-wrap;
+.citation {
+  font-weight: bold;
+  color: #00F;
+}
+// }
 .list {
   & > :after {
     content: ', ';
@@ -226,19 +238,6 @@ header {
   }
   [title="last"] {
     color: darkred;
-  }
-}
-
-.section {
-  border-top: 1px solid gray;
-  .paragraph {
-    margin: 1ex 0;
-    text-indent: 2em;
-  }
-  .line {
-    font-family: monospace;
-    white-space: pre-wrap;
-    word-break: break-all;
   }
 }
 
