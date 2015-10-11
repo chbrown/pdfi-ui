@@ -4,6 +4,8 @@ import {connect} from 'react-redux';
 
 import {fetchFile, readArrayBufferSync} from '../models';
 import PDFObject from './PDFObject';
+import NumberFormat from './NumberFormat';
+import {RectanglePropTypes} from './propTypes';
 
 @connect(state => ({pdf: state.pdf}))
 export default class PDFNavigator extends React.Component {
@@ -15,27 +17,29 @@ export default class PDFNavigator extends React.Component {
     });
   }
   componentDidMount() {
-    console.log('PDFNavigator#componentDidMount()', this.props.params.name);
+    // I wish there were a better way for hooking into path changes and loading
+    // a PDF into the store/context, but this is the best I can think up.
     this.reloadState(this.props.params.name);
   }
   componentWillReceiveProps(nextProps) {
-    console.log('PDFNavigator#componentWillReceiveProps()', nextProps.params.name,
-      nextProps.params.name, this.props.params.name);
     if (nextProps.params.name != this.props.params.name) {
       this.reloadState(nextProps.params.name);
     }
   }
   render() {
-    console.log('PDFNavigator#render()', this.props);
-    // <div ng-repeat="page in pages" class="hpad" ui-sref-active="selected" style="border-top: 1px solid #B86">
-    //   <h4><a ui-sref="pdf.pages.page({pageNumber: $index + 1})">Page {{$index + 1}}</a></h4>
-    //   <component name="PDFObject" file="file" model="page"></component>
-    // </div>
+    var pages = this.props.pdf.pages ? this.props.pdf.pages.map((page, i) => {
+      return (
+        <div key={i} className="hpad page">
+          <h4><Link to={`/${this.props.params.name}/page/${i + 1}`}>Page {i + 1}</Link></h4>
+          <PDFObject object={page} />
+        </div>
+      );
+    }) : [];
     return (
-      <main>
+      <div className="pdf-container">
         <nav className="thumbnails">
           <h3>File name: <code>{this.props.params.name}</code></h3>
-          <h5>File size: {this.props.pdf.size} bytes</h5>
+          <h5>File size: <NumberFormat value={this.props.pdf.size} /> bytes</h5>
 
           <h4><Link to={`/${this.props.params.name}/document`}>Document</Link></h4>
           <h4><Link to={`/${this.props.params.name}/citations`}>Citations</Link></h4>
@@ -43,9 +47,14 @@ export default class PDFNavigator extends React.Component {
 
           <h3>Trailer</h3>
           <PDFObject object={this.props.pdf.trailer} />
+
+          <h3>Pages</h3>
+          {pages}
         </nav>
-        {this.props.pdf.size ? this.props.children : 'Loading...'}
-      </main>
+        <article>
+          {this.props.pdf.size ? this.props.children : 'Loading...'}
+        </article>
+      </div>
     )
   }
 }

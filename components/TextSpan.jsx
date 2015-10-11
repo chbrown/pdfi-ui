@@ -1,5 +1,6 @@
 import React from 'react';
 import {TextSpanPropTypes} from './propTypes';
+import {makeBoundsStyle} from './common';
 
 export default class TextSpan extends React.Component {
   render() {
@@ -7,11 +8,11 @@ export default class TextSpan extends React.Component {
     // if fontSize is less than 6, set it to 6 (kind of a hack)
     var normalized_fontSize = Math.max(textSpan.fontSize, 6);
     var style = makeBoundsStyle(textSpan);
-    style['fontSize'] = normalized_fontSize.toFixed(3) + 'px';
-    style['fontWeight'] = textSpan.fontBold ? 'bold' : 'normal';
-    style['fontStyle'] = textSpan.fontItalic ? 'italic' : 'normal';
+    style.fontSize = normalized_fontSize.toFixed(3) + 'px';
+    style.fontWeight = textSpan.fontBold ? 'bold' : 'normal';
+    style.fontStyle = textSpan.fontItalic ? 'italic' : 'normal';
     var title = `${textSpan.details} fontSize=${textSpan.fontSize.toFixed(3)}`;
-    return <div className="text" style={style} title={title}>{textSpan.string}</div>;
+    return <div className="textSpan" style={style} title={title}>{textSpan.string}</div>;
   }
   static propTypes = TextSpanPropTypes
 }

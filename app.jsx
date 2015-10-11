@@ -7,30 +7,32 @@ import {reduxReactRouter, routerStateReducer, ReduxRouter} from 'redux-router';
 // const createHashHistory = require('history/lib/createHashHistory');
 import {createHistory} from 'history';
 
-import * as arrays from 'arrays';
 // import {NotifyUI} from 'notify-ui';
 
 import FileSelector from './components/FileSelector';
 import PDFNavigator from './components/PDFNavigator';
 import PDFDocument from './components/PDFDocument';
+import PDFPageLayout from './components/PDFPageLayout';
 
 import './site.less';
 
 @connect(state => ({routerState: state.router}))
 class App extends React.Component {
   render() {
-    // <span ng-controller="uploadCtrl">
-    //   <span><b>Add PDF:</b></span>
-    //   <input type="file" on-upload="uploadFile($file, $event)">
-    // </span>
     return (
       <div>
-        <nav className="selector">
-          <span>
-            <b>Load PDF:</b>
-            <FileSelector />
-          </span>
-        </nav>
+        <header>
+          <nav>
+            <span>
+              <b>Load PDF:</b>
+              <FileSelector />
+            </span>
+            <span>
+              <b>Add PDF:</b>
+              <input type="file" disabled />
+            </span>
+          </nav>
+        </header>
         {this.props.children}
       </div>
     );
@@ -74,6 +76,7 @@ ReactDOM.render((
         <Route path="/" component={App}>
           <Route path=":name" component={PDFNavigator}>
             <Route path="document" component={PDFDocument} />
+            <Route path="page/:page" component={PDFPageLayout} />
           </Route>
           <Route path="*" component={NotFound} />
         </Route>

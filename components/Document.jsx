@@ -1,6 +1,8 @@
 import React from 'react';
 import {SectionPropTypes, PaperPropTypes} from './propTypes';
 
+import NumberFormat from './NumberFormat';
+
 class Section extends React.Component {
   render() {
     return (
@@ -16,7 +18,6 @@ class Section extends React.Component {
 export default class Document extends React.Component {
   render() {
     var sections = this.props.paper.sections.map((section, index) => {
-      // style="border-top: 1px solid gray"
       return (
         <div key={index} className="hpad section">
           <h3><i>Section {index}</i></h3>
@@ -27,9 +28,21 @@ export default class Document extends React.Component {
     return (
       <section className="hpad">
         <h2>Document</h2>
-        <ul>
-          <li>fontSize_quartiles (the first and last are the minimum and maximum): {this.props.fontSize_quartiles}</li>
-        </ul>
+        <table>
+          <caption>fontSize_quartiles (the first and last are the minimum and maximum)</caption>
+          <tbody>
+            <tr>
+              <th>0%</th>
+              <th>25%</th>
+              <th>50%</th>
+              <th>75%</th>
+              <th>100%</th>
+            </tr>
+            <tr>
+              {this.props.fontSize_quartiles.map((quartile, i) => <td key={i}><NumberFormat value={quartile} digits={2} /></td>)}
+            </tr>
+          </tbody>
+        </table>
         {sections}
       </section>
     );

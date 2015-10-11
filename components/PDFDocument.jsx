@@ -7,12 +7,7 @@ import Document from './Document';
 
 @connect(state => ({pdf: state.pdf}))
 export default class PDFDocument extends React.Component {
-  componentWillReceiveProps(nextProps) {
-    console.log('PDFDocument#componentWillReceiveProps()', nextProps);
-    // this.reloadState(nextProps.params.name);
-  }
   render() {
-    console.log('PDFDocument#render():', this.props.pdf.size, this.props, this.state);
     var pdf = this.props.pdf;
     var paper = pdf.renderPaper();
 
