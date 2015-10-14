@@ -14,9 +14,8 @@ type_declarations/DefinitelyTyped/%:
 %.js: %.ts type_declarations $(BIN)/tsc
 	$(BIN)/tsc -m commonjs -t ES5 $<
 
-# NODE_ENV=production
-build/bundle.js: webpack.config.js $(BIN)/webpack app.jsx
-	$(BIN)/webpack --config $<
+build/bundle.js: webpack.config.js app.jsx $(BIN)/webpack
+	NODE_ENV=production $(BIN)/webpack --config $<
 
 dev:
 	npm run dev

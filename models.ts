@@ -8,6 +8,10 @@ import {Buffer as LexingBuffer, Source} from 'lexing';
 //   new (size: number): LexingBuffer;
 // };
 
+export interface RemoteFile {
+  name: string;
+}
+
 /**
 From lexing/browser.ts
 */
@@ -54,10 +58,10 @@ export function readArrayBufferSync(arrayBuffer: ArrayBuffer,
   return pdfi.readSourceSync(source, options);
 }
 
-export function fetchFilenames(callback: (error: Error, filenames?: string[]) => void) {
-  new Request('GET', '/files').send((error: Error, body: string) => {
+export function fetchFilenames(callback: (error: Error, files?: RemoteFile[]) => void) {
+  new Request('GET', '/files').send((error: Error, files: RemoteFile[]) => {
     if (error) return callback(error);
-    callback(null, body.split('\n'));
+    callback(null, files);
   });
 }
 

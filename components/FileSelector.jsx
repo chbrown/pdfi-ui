@@ -14,9 +14,8 @@ export default class FileSelector extends React.Component {
     };
   }
   componentDidMount() {
-    fetchFilenames((error, filenames) => {
+    fetchFilenames((error, files) => {
       if (error) throw error;
-      var files = filenames.map(filename => ({name: filename}));
       this.setState({files});
     });
   }

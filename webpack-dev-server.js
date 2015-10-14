@@ -18,12 +18,23 @@ app.use(require('webpack-hot-middleware')(compiler));
 app.use('/templates', express.static('templates'));
 
 app.use('/files', express.static('/Users/chbrown/pdfs'));
+/**
+nginx's `autoindex_format json;` setting renders an array of files like:
+[
+  { "name":"subdir", "type":"directory", "mtime":"Fri, 09 May 2015 21:57:50 GMT" },
+  { "name":"Article_B.pdf", "type":"file", "mtime":"Thu, 12 Apr 2015 12:17:18 GMT", "size":239182 }
+]
+But we only need the "name" fields.
+*/
 function directoryRenderer(path) {
   return function(req, res) {
-    fs.readdir(path, function(err, files) {
+    fs.readdir(path, function(err, filenames) {
       if (err) res.render('error', {error: err});
-      // res.json(files);
-      res.send(files.join('\n'));
+      var files = filenames.map(function(filename) {
+        return {name: filename};
+      });
+
+      res.json(files);
     });
   };
 }
