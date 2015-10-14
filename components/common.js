@@ -9,6 +9,7 @@ function makeBoundsStyle(rectangle) {
     if (rectangle === undefined)
         return undefined;
     return {
+        position: 'absolute',
         left: px(rectangle.minX, 3),
         top: px(rectangle.minY, 3),
         width: px(rectangle.maxX - rectangle.minX, 3),

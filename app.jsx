@@ -6,6 +6,7 @@ import {Provider, connect} from 'react-redux';
 import {reduxReactRouter, routerStateReducer, ReduxRouter} from 'redux-router';
 // const createHashHistory = require('history/lib/createHashHistory');
 import {createHistory} from 'history';
+import objectAssign from 'object-assign';
 
 // import {NotifyUI} from 'notify-ui';
 
@@ -19,11 +20,16 @@ import PDFCitations from './components/PDFCitations';
 
 import './site.less';
 
-@connect(state => ({routerState: state.router}))
+@connect(state => ({viewConfig: state.viewConfig}))
 class App extends React.Component {
   render() {
+    var app_className = [
+      ...(this.props.viewConfig.outlines ? ['viewConfig-outlines'] : []),
+      ...(this.props.viewConfig.labels ? ['viewConfig-labels'] : []),
+    ].join(' ');
+
     return (
-      <div>
+      <div className={app_className}>
         <header>
           <nav>
             <span>
@@ -41,7 +47,8 @@ class App extends React.Component {
     );
   }
   static propTypes = {
-    children: React.PropTypes.node
+    viewConfig: React.PropTypes.object.isRequired,
+    children: React.PropTypes.node,
   }
 }
 
@@ -60,9 +67,33 @@ function pdfReducer(pdf = {}, action) {
   }
 }
 
+const initialViewConfig = {
+  scale: 1.0,
+  outlines: true,
+  labels: true,
+};
+
+var storedViewConfig = {};
+try {
+  storedViewConfig = JSON.parse(localStorage.viewConfig);
+}
+catch (exc) { }
+
+function viewConfigReducer(viewConfig = objectAssign({}, initialViewConfig, storedViewConfig), action) {
+  switch (action.type) {
+  case 'UPDATE_VIEW_CONFIG':
+    var newViewConfig = objectAssign({}, viewConfig, {[action.key]: action.value});
+    localStorage.viewConfig = JSON.stringify(newViewConfig);
+    return newViewConfig;
+  default:
+    return viewConfig;
+  }
+}
+
 const reducer = combineReducers({
   router: routerStateReducer,
   pdf: pdfReducer,
+  viewConfig: viewConfigReducer,
 });
 
 const store = compose(

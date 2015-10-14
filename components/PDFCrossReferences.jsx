@@ -17,7 +17,7 @@ export default class PDFCrossReferences extends React.Component {
           <td>{cross_reference.generation_number}</td>
           <td>{cross_reference.in_use ? 'Yes' : 'No'}</td>
         </tr>
-      )
+      );
     });
     return (
       <section className="hpad">

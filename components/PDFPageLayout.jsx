@@ -3,6 +3,8 @@ import {connect} from 'react-redux';
 const pdfi_graphics = require('pdfi/graphics');
 
 import Layout from './Layout';
+import ViewConfigScale from './ViewConfigScale';
+import ViewConfigCheckbox from './ViewConfigCheckbox';
 
 /**
 PDFPageLayout just reads the pdf out of the store, renders it to a Layout,
@@ -17,7 +19,17 @@ export default class PDFPageLayout extends React.Component {
     var page = pdf.pages[page_index];
     var layout = pdfi_graphics.renderPageLayout(page, false);
 
-    return <Layout {...layout} />;
+    return (
+      <section className="hpad">
+        <h2>Page Layout</h2>
+        <div>
+          <ViewConfigCheckbox name="outlines" label="Draw outlines" />
+          <ViewConfigCheckbox name="labels" label="Draw labels" />
+        </div>
+        <ViewConfigScale />
+        <Layout {...layout} />
+      </section>
+    );
   }
   static propTypes = {
     pdf: React.PropTypes.any.isRequired

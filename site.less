@@ -131,6 +131,7 @@ header {
     bottom: 0;
     width: 240px;
     padding: 0 5px;
+    z-index: 100;
 
     background-color: #FAFAFA;
     height: auto;
@@ -176,28 +177,40 @@ header {
   word-break: break-all;
 }
 
-.layout-container {
-  position: relative;
-}
 .layout {
-  position: absolute;
-  outline: 1px solid rgba(100, 50, 50, 0.9); // brown
+  margin: 10px;
 }
 // each text span
 .textSpan {
-  position: absolute;
   white-space: pre;
-  outline: 1px solid rgba(200, 100, 100, 0.4); // pink
-}
-.box {
-  position: absolute;
-  outline: 2px solid rgba(0, 0, 0, 0.5); // gray
-  background-color: rgba(0, 0, 0, 0.1);
 }
 .label {
-  // visibility: visible;
+  visibility: hidden;
   background-color: rgba(0, 0, 0, 0.75);
   color: white;
+}
+
+// global viewConfig flags
+.viewConfig-outlines {
+  .textSpan {
+    outline: 1px solid rgba(200, 100, 100, 0.4); // pink
+  }
+  .box {
+    outline: 1px solid rgba(100, 50, 50, 0.9); // brown
+  }
+  .box-shaded {
+    outline: 2px solid rgba(0, 0, 0, 0.5); // gray
+    background-color: rgba(0, 0, 0, 0.1);
+  }
+}
+.viewConfig-labels {
+  .label {
+    visibility: visible;
+  }
+}
+
+input[type="range"] {
+  width: 400px;
 }
 
 .paper-section {
