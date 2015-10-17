@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {Router, Route, Link, IndexRoute, NotFoundRoute} from 'react-router';
+import {Route, Link, IndexRoute, NotFoundRoute} from 'react-router';
 import {combineReducers, createStore, applyMiddleware, compose} from 'redux';
 import {Provider, connect} from 'react-redux';
 import {reduxReactRouter, routerStateReducer, ReduxRouter} from 'redux-router';
@@ -97,27 +97,22 @@ const reducer = combineReducers({
 });
 
 const store = compose(
-  reduxReactRouter({
-    createHistory
-  })
+  reduxReactRouter({createHistory})
 )(createStore)(reducer);
 
-var react_mount = document.getElementById('app');
 ReactDOM.render((
   <Provider store={store}>
     <ReduxRouter>
-      <Router history={history}>
-        <Route path="/" component={App}>
-          <Route path=":name" component={PDFNavigator}>
-            <Route path="document" component={PDFDocument} />
-            <Route path="cross-references" component={PDFCrossReferences} />
-            <Route path="citations" component={PDFCitations} />
-            <Route path="page/:page" component={PDFPageLayout} />
-            <Route path="object/:object_number" component={PDFObject} />
-          </Route>
-          <Route path="*" component={NotFound} />
+      <Route path="/" component={App}>
+        <Route path=":name" component={PDFNavigator}>
+          <Route path="document" component={PDFDocument} />
+          <Route path="cross-references" component={PDFCrossReferences} />
+          <Route path="citations" component={PDFCitations} />
+          <Route path="page/:page" component={PDFPageLayout} />
+          <Route path="object/:object_number" component={PDFObject} />
         </Route>
-      </Router>
+        <Route path="*" component={NotFound} />
+      </Route>
     </ReduxRouter>
   </Provider>
-), react_mount);
+), document.getElementById('app'));

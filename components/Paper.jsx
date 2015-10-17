@@ -9,7 +9,7 @@ export default class Paper extends React.Component {
       return (
         <div key={index} className="hpad section">
           <h3><i>Section {index}</i></h3>
-          <Section {...section} />
+          <PaperSection {...section} />
         </div>
       );
     });

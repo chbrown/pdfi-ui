@@ -11,16 +11,24 @@ var entry = production ? [
 ];
 
 var plugins = [
-  new webpack.HotModuleReplacementPlugin(),
-  new webpack.NoErrorsPlugin()
+  new webpack.optimize.OccurenceOrderPlugin(true),
 ].concat(production ? [
-  new webpack.optimize.UglifyJsPlugin(),
-  new webpack.optimize.OccurenceOrderPlugin(),
-] : []);
+  // production-only
+  // TODO: get this working again (it reduces the size from 3.93 MB to 1.73 MB)
+  // new webpack.optimize.UglifyJsPlugin({
+  //   compress: {
+  //     keep_fnames: true, // hack; allows @checkArguments to work
+  //   }
+  // }),
+] : [
+  // development-only
+  new webpack.NoErrorsPlugin(),
+  new webpack.HotModuleReplacementPlugin(),
+]);
 
 
 module.exports = {
-  devtool: 'source-map', // 'eval'
+  // devtool: 'source-map', // 'eval'
   entry: entry,
   output: {
     path: path.join(__dirname, 'build'),
@@ -33,12 +41,12 @@ module.exports = {
       '',
       // '.json',
       '.js',
+      '.jsx',
       // .ts should come after .js so that we don't try to compile external modules
       '.ts',
-      '.jsx',
       '.tsx',
+      '.json', // is this necessary? I saw somewhere it was one of the default extensions
       '.less',
-      '.json',
     ],
   },
   resolveLoader: {

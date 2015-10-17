@@ -15,7 +15,7 @@ app.use(require('webpack-dev-middleware')(compiler, {
 
 app.use(require('webpack-hot-middleware')(compiler));
 
-app.use('/templates', express.static('templates'));
+app.use('/img', express.static('img'));
 
 app.use('/files', express.static('/Users/chbrown/pdfs'));
 /**
@@ -44,7 +44,7 @@ app.get('*', function(req, res) {
   res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-app.listen(process.env.PORT, 'localhost', function (err) {
+app.listen(process.env.PORT, 'localhost', function(err) {
   if (err) {
     return console.log(err);
   }

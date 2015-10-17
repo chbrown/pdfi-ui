@@ -1,5 +1,5 @@
 import React from 'react';
-import * as arrays from 'arrays';
+import * as arrays from '@chbrown/arrays';
 import {connect} from 'react-redux';
 const pdfi_graphics = require('pdfi/graphics');
 
