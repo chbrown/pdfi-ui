@@ -19,18 +19,15 @@
   "dependencies": {
     "academia": "*",
     "@chbrown/arrays": "*",
-    "flow-copy": "*",
     "history": "*",
-    "httprequest": "*",
     "lexing": "*",
-    "lodash": "*",
-    "notify-ui": "*",
     "object-assign": "*",
     "pdfi": "*",
     "react": "*",
     "react-dom": "*",
-    "redbox-react": "*",
-    "textarea": "*",
+    "react-redux": "*",
+    "redux": "*",
+    "redux-router": "latest",
     "visible": "*"
   },
   "devDependencies": {
@@ -42,25 +39,18 @@
     "json-loader": "*",
     "less": "*",
     "less-loader": "*",
-    "ng-annotate-loader": "*",
     "react-hot-loader": "*",
-    "react-redux": "*",
     "react-router": "^1.0.0-rc1",
     "react-transform-catch-errors": "*",
     "react-transform-hmr": "*",
-    "redux": "*",
+    "redbox-react": "*",
     "redux-devtools": "*",
-    "redux-router": "latest",
     "style-loader": "*",
     "ts-loader": "*",
     "typescript": "1.7.0-dev.20151006",
-    "watsh": "*",
     "webpack": "*",
     "webpack-dev-middleware": "*",
     "webpack-dev-server": "*",
     "webpack-hot-middleware": "*"
-  },
-  "scripts": {
-    "dev": "PORT=8080 node webpack-dev-server.js"
   }
 }
