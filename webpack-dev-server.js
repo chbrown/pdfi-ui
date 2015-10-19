@@ -1,6 +1,5 @@
 var path = require('path');
 var express = require('express');
-// var serveIndex = require('serve-index')
 var fs = require('fs');
 var webpack = require('webpack');
 var config = require('./webpack.config');
@@ -17,7 +16,9 @@ app.use(require('webpack-hot-middleware')(compiler));
 
 app.use('/img', express.static('img'));
 
-app.use('/files', express.static('/Users/chbrown/pdfs'));
+var pdfs_dirpath = path.join(process.env.HOME, 'pdfs');
+
+app.use('/files', express.static(pdfs_dirpath));
 /**
 nginx's `autoindex_format json;` setting renders an array of files like:
 [
@@ -38,7 +39,7 @@ function directoryRenderer(path) {
     });
   };
 }
-app.get('/files', directoryRenderer('/Users/chbrown/pdfs'));
+app.get('/files', directoryRenderer(pdfs_dirpath));
 
 app.get('*', function(req, res) {
   res.sendFile(path.join(__dirname, 'index.html'));
