@@ -2,21 +2,22 @@ import React from 'react';
 import {Link} from 'react-router';
 import {connect} from 'react-redux';
 
-import {fetchFile, readArrayBufferSync} from '../models';
-import {RectanglePropTypes} from './propTypes';
+import {readArrayBufferSync} from '../models';
 import ObjectView from './ObjectView';
 import NumberFormat from './NumberFormat';
 
 @connect(state => ({router: state.router, pdf: state.pdf}))
 export default class PDFNavigator extends React.Component {
-  reloadState(name) {
-    fetchFile(name, (error, arrayBuffer) => {
-      if (error) throw error;
+  reloadState(filename) {
+    fetch(`/files/${filename}`)
+    .then(response => response.arrayBuffer())
+    .then(arrayBuffer => {
       var pdf = readArrayBufferSync(arrayBuffer, {type: 'pdf'});
       this.props.dispatch({type: 'SET_PDF', pdf});
     });
+    // TODO: handle errors
   }
-  componentDidMount() {
+  componentWillMount() {
     // I wish there were a better way for hooking into path changes and loading
     // a PDF into the store/context, but this is the best I can think up.
     this.reloadState(this.props.params.name);
@@ -52,9 +53,9 @@ export default class PDFNavigator extends React.Component {
           {pages}
         </nav>
         <article>
-          {this.props.pdf.size ? this.props.children : 'Loading...'}
+          {this.props.pdf.size ? this.props.children : <h4 className="hpad">Loading...</h4>}
         </article>
       </div>
-    )
+    );
   }
 }

@@ -7,7 +7,6 @@
   },
   "files": [
     "models.ts",
-    "components/common.ts",
-    "type_declarations/index.d.ts"
+    "components/common.ts"
   ]
 }

@@ -1,9 +1,6 @@
 import React from 'react';
-import {Link} from 'react-router';
 import {connect} from 'react-redux';
 import {pushState} from 'redux-router';
-
-import {fetchFilenames} from '../models';
 
 @connect(state => ({router: state.router}))
 export default class FileSelector extends React.Component {
@@ -13,11 +10,11 @@ export default class FileSelector extends React.Component {
       files: []
     };
   }
-  componentDidMount() {
-    fetchFilenames((error, files) => {
-      if (error) throw error;
-      this.setState({files});
-    });
+  componentWillMount() {
+    fetch('/files')
+    .then(response => response.json())
+    .then(files => this.setState({files}));
+    // TODO: handle errors
   }
   changed(ev) {
     var name = ev.target.value;
@@ -30,11 +27,10 @@ export default class FileSelector extends React.Component {
     //       <li key={file.name}><Link to={`/${file.name}`}>{file.name}</Link></li>
     //     ))}
     //   </ul>
-    var options = this.state.files.map(file => <option key={file.name} value={file.name}>{file.name}</option>);
     return (
       <select onChange={this.changed.bind(this)} value={this.props.router.params.name}>
         <option value="">-- none selected --</option>
-        {options}
+        {this.state.files.map(file => <option key={file.name} value={file.name}>{file.name}</option>)}
       </select>
     );
   }

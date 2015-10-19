@@ -1,6 +1,13 @@
-import {range} from 'lodash';
 import React from 'react';
 import {connect} from 'react-redux';
+
+function range(min, max, step, epsilon = 1e-9) {
+  var xs = [];
+  for (var x = min; x < (max - epsilon); x += step) {
+    xs.push(x);
+  }
+  return xs;
+}
 
 @connect(state => ({scale: state.viewConfig.scale}))
 export default class Scale extends React.Component {
@@ -15,7 +22,7 @@ export default class Scale extends React.Component {
         <input type="range" list="ticks" value={this.props.scale} onChange={this.onChange.bind(this)}
           min={this.props.min} max={this.props.max} step={this.props.step} />
         <datalist id="ticks">
-          {ticks.map((tick, i) => <option key={i}>{tick}</option>)}
+          {ticks.map((tick, i) => <option key={i}>{tick.toFixed(1)}</option>)}
         </datalist>
       </div>
     );

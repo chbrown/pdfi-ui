@@ -1,7 +1,7 @@
 import React from 'react';
 import * as arrays from '@chbrown/arrays';
 import {connect} from 'react-redux';
-const pdfi_graphics = require('pdfi/graphics');
+import pdfi_graphics from 'pdfi/graphics';
 
 import NumberFormat from './NumberFormat';
 import Paper from './Paper';

@@ -1,6 +1,6 @@
 import React from 'react';
 import {connect} from 'react-redux';
-const pdfi_graphics = require('pdfi/graphics');
+import pdfi_graphics from 'pdfi/graphics';
 
 import Layout from './Layout';
 import ViewConfigScale from './ViewConfigScale';

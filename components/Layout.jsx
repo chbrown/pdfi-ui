@@ -2,7 +2,7 @@ import React from 'react';
 import {connect} from 'react-redux';
 
 import {px, makeBoundsStyle, makeBoundsString} from './common';
-import {RectanglePropTypes, TextSpanPropTypes, ContainerPropTypes} from './propTypes';
+import {RectanglePropTypes, ContainerPropTypes} from './propTypes';
 import TextSpan from './TextSpan';
 
 class TextSpansContainer extends React.Component {

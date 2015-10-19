@@ -1,8 +1,7 @@
-/// <reference path="type_declarations/index.d.ts" />
-import {Request} from 'httprequest';
-
-const pdfi = require('pdfi');
+/// <reference path="node_modules/lexing/lexing.d.ts" />
+/// <reference path="type_declarations/DefinitelyTyped/node/node.d.ts" />
 import {Buffer as LexingBuffer, Source} from 'lexing';
+const pdfi = require('pdfi');
 
 // declare var Buffer: {
 //   new (size: number): LexingBuffer;
@@ -56,22 +55,6 @@ export function readArrayBufferSync(arrayBuffer: ArrayBuffer,
                                     options = {type: 'string'}): any {
   var source: Source = new ArrayBufferSource(arrayBuffer);
   return pdfi.readSourceSync(source, options);
-}
-
-export function fetchFilenames(callback: (error: Error, files?: RemoteFile[]) => void) {
-  new Request('GET', '/files').send((error: Error, files: RemoteFile[]) => {
-    if (error) return callback(error);
-    callback(null, files);
-  });
-}
-
-export function fetchFile(filename: string, callback: (error: Error, arrayBuffer?: ArrayBuffer) => void) {
-  var request = new Request('GET', `/files/${filename}`);
-  request.xhr.responseType = 'arraybuffer';
-  request.send((error: Error, arrayBuffer: ArrayBuffer) => {
-    if (error) return callback(error);
-    callback(null, arrayBuffer);
-  });
 }
 
 // export function uploadFile(dom_file, callback: (error: Error, file?: File) => void) {

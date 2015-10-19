@@ -1,14 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {Route, Link, IndexRoute, NotFoundRoute} from 'react-router';
-import {combineReducers, createStore, applyMiddleware, compose} from 'redux';
+import {Route} from 'react-router';
+import {combineReducers, createStore, compose} from 'redux';
 import {Provider, connect} from 'react-redux';
 import {reduxReactRouter, routerStateReducer, ReduxRouter} from 'redux-router';
-// const createHashHistory = require('history/lib/createHashHistory');
 import {createHistory} from 'history';
 import objectAssign from 'object-assign';
-
-// import {NotifyUI} from 'notify-ui';
 
 import FileSelector from './components/FileSelector';
 import PDFNavigator from './components/PDFNavigator';
