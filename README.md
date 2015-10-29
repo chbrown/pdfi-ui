@@ -13,4 +13,4 @@ To start the `webpack-dev-server` listening on [`http://localhost:7334`](http://
 
 ## License
 
-Copyright 2015 Christopher Brown. [MIT Licensed](http://opensource.org/licenses/MIT).
+Copyright 2015 Christopher Brown. [MIT Licensed](http://chbrown.github.io/licenses/MIT/#2015).
