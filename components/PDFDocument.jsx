@@ -1,7 +1,7 @@
 import React from 'react';
-import * as arrays from '@chbrown/arrays';
+import {flatMap, quantile} from 'tarry';
 import {connect} from 'react-redux';
-import pdfi_graphics from 'pdfi/graphics';
+import {renderPageLayout} from 'pdfi/graphics';
 
 import NumberFormat from './NumberFormat';
 import Paper from './Paper';
@@ -13,12 +13,10 @@ export default class PDFDocument extends React.Component {
     var paper = pdf.renderPaper();
     // paper: React.PropTypes.shape(PaperPropTypes).isRequired,
 
-    var spans = arrays.flatMap(pdf.pages, page => {
-      return pdfi_graphics.renderPageLayout(page).textSpans;
-    });
+    var spans = flatMap(pdf.pages, page => renderPageLayout(page).textSpans);
 
     var fontSizes = spans.map(textSpan => textSpan.fontSize);
-    var fontSize_quartiles = arrays.quantile(fontSizes, 4);
+    var fontSize_quartiles = quantile(fontSizes, 4);
     // fontSize_quartiles: React.PropTypes.arrayOf(React.PropTypes.number).isRequired,
 
     // spans?

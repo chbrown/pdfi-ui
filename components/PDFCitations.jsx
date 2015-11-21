@@ -1,11 +1,9 @@
 import React from 'react';
 import {connect} from 'react-redux';
-
-import * as academia from 'academia';
+import {linkPaper, citeRegExp} from 'academia/styles/acl';
 
 import {AuthorPropTypes, ReferencePropTypes} from './propTypes';
 import Author from './Author';
-import ObjectView from './ObjectView';
 
 class ReferenceRow extends React.Component {
   render() {
@@ -59,11 +57,11 @@ export default class PDFCitations extends React.Component {
     var pdf = this.props.pdf;
     var paper = pdf.renderPaper();
     // use linking logic from academia
-    academia.styles.acl.linkPaper(paper);
+    linkPaper(paper);
     var references = paper.references;
     var citations = paper.cites;
 
-    var regExp = academia.styles.acl.citeRegExp;
+    var regExp = citeRegExp;
 
     // replace references
     function highlightCitations(string) {

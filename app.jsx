@@ -5,7 +5,6 @@ import {combineReducers, createStore, compose} from 'redux';
 import {Provider, connect} from 'react-redux';
 import {reduxReactRouter, routerStateReducer, ReduxRouter} from 'redux-router';
 import {createHistory} from 'history';
-import objectAssign from 'object-assign';
 
 import FileSelector from './components/FileSelector';
 import PDFNavigator from './components/PDFNavigator';
@@ -76,10 +75,10 @@ try {
 }
 catch (exc) { }
 
-function viewConfigReducer(viewConfig = objectAssign({}, initialViewConfig, storedViewConfig), action) {
+function viewConfigReducer(viewConfig = {...initialViewConfig, ...storedViewConfig}, action) {
   switch (action.type) {
   case 'UPDATE_VIEW_CONFIG':
-    var newViewConfig = objectAssign({}, viewConfig, {[action.key]: action.value});
+    var newViewConfig = {...viewConfig, [action.key]: action.value};
     localStorage.viewConfig = JSON.stringify(newViewConfig);
     return newViewConfig;
   default:

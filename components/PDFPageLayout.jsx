@@ -1,6 +1,6 @@
 import React from 'react';
 import {connect} from 'react-redux';
-import pdfi_graphics from 'pdfi/graphics';
+import {renderPageLayout} from 'pdfi/graphics';
 
 import Layout from './Layout';
 import ViewConfigScale from './ViewConfigScale';
@@ -17,7 +17,7 @@ export default class PDFPageLayout extends React.Component {
 
     var page_index = parseInt(this.props.params.page, 10) - 1;
     var page = pdf.pages[page_index];
-    var layout = pdfi_graphics.renderPageLayout(page, false);
+    var layout = renderPageLayout(page, false);
 
     return (
       <section className="hpad">

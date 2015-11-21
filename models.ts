@@ -1,5 +1,3 @@
-/// <reference path="node_modules/lexing/lexing.d.ts" />
-/// <reference path="type_declarations/DefinitelyTyped/node/node.d.ts" />
 import {Buffer as LexingBuffer, Source} from 'lexing';
 const pdfi = require('pdfi');
 
