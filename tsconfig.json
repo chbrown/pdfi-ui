@@ -6,6 +6,7 @@
     "jsx": "react"
   },
   "files": [
+    "node_modules/declarations/node/node.d.ts",
     "models.ts",
     "components/common.ts"
   ]

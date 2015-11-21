@@ -1,12 +1,12 @@
 BIN := node_modules/.bin
 
-all: build/bundle.js
+all: components/common.js models.js build/bundle.js
 
 $(BIN)/tsc $(BIN)/webpack:
 	npm install
 
-%.js: %.ts type_declarations $(BIN)/tsc
-	$(BIN)/tsc -m commonjs -t ES5 $<
+%.js: %.ts $(BIN)/tsc
+	$(BIN)/tsc
 
 build/bundle.js: webpack.config.js app.jsx .babelrc $(BIN)/webpack
 	NODE_ENV=production $(BIN)/webpack --config $<
