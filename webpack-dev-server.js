@@ -50,5 +50,5 @@ app.listen(process.env.PORT, 'localhost', function(err) {
     return console.log(err);
   }
   var address = this.address();
-  console.log('Listening at %s:%s', address.address, address.port);
+  console.log('Listening at http://%s:%s/', address.address, address.port);
 });
