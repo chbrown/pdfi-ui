@@ -1,5 +1,5 @@
 import React from 'react';
-import {OperationPropTypes} from './propTypes';
+import {OperationPropTypes} from '../propTypes';
 
 class Operation extends React.Component {
   render() {

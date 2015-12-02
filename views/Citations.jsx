@@ -2,8 +2,8 @@ import React from 'react';
 import {connect} from 'react-redux';
 import {linkPaper, citeRegExp} from 'academia/styles/acl';
 
-import {AuthorPropTypes, ReferencePropTypes} from './propTypes';
-import Author from './Author';
+import {AuthorPropTypes, ReferencePropTypes} from '../propTypes';
+import Author from '../components/Author';
 
 class ReferenceRow extends React.Component {
   render() {

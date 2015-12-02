@@ -1,6 +1,6 @@
 import React from 'react';
-import {TextSpanPropTypes} from './propTypes';
-import {makeBoundsStyle} from './common';
+import {TextSpanPropTypes} from '../propTypes';
+import {makeBoundsStyle} from '../graphics';
 
 export default class TextSpan extends React.Component {
   render() {

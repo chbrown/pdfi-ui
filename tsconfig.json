@@ -7,7 +7,14 @@
   },
   "files": [
     "node_modules/declarations/node/node.d.ts",
+    "node_modules/declarations/es6-shim/es6-shim.d.ts",
+    "node_modules/declarations/react/react.d.ts",
+    "node_modules/declarations/react-router/react-router.d.ts",
+    "node_modules/declarations/redux/redux.d.ts",
+    "shims.d.ts",
+    "graphics.ts",
     "models.ts",
-    "components/common.ts"
+    "propTypes.ts",
+    "store.ts"
   ]
 }

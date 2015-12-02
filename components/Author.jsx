@@ -1,5 +1,5 @@
 import React from 'react';
-import {AuthorPropTypes} from './propTypes';
+import {AuthorPropTypes} from '../propTypes';
 
 export default class Author extends React.Component {
   render() {

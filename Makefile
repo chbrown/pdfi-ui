@@ -1,6 +1,6 @@
 BIN := node_modules/.bin
 
-all: components/common.js models.js build/bundle.js
+all: graphics.js models.js store.js build/bundle.js
 
 $(BIN)/tsc $(BIN)/webpack:
 	npm install

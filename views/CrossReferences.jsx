@@ -1,7 +1,7 @@
 import React from 'react';
 import {connect} from 'react-redux';
 
-import ObjectView from './ObjectView';
+import ObjectView from '../components/ObjectView';
 
 @connect(state => ({pdf: state.pdf}))
 export default class PDFCrossReferences extends React.Component {

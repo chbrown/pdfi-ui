@@ -1,10 +1,6 @@
 import {Buffer as LexingBuffer, Source} from 'lexing';
 const pdfi = require('pdfi');
 
-// declare var Buffer: {
-//   new (size: number): LexingBuffer;
-// };
-
 export interface RemoteFile {
   name: string;
 }

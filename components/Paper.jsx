@@ -1,7 +1,17 @@
 import React from 'react';
-import {PaperPropTypes} from './propTypes';
+import {PaperPropTypes, PaperSectionPropTypes} from '../propTypes';
 
-import PaperSection from './PaperSection';
+export class PaperSection extends React.Component {
+  render() {
+    return (
+      <div className="paper-section">
+        <h4>{this.props.title}</h4>
+        {this.props.paragraphs.map((paragraph, i) => <p key={i}>{paragraph}</p>)}
+      </div>
+    );
+  }
+  static propTypes = PaperSectionPropTypes
+}
 
 export default class Paper extends React.Component {
   render() {

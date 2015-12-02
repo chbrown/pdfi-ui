@@ -2,9 +2,9 @@ import React from 'react';
 import {connect} from 'react-redux';
 import {renderPageLayout} from 'pdfi/graphics';
 
-import Layout from './Layout';
-import ViewConfigScale from './ViewConfigScale';
-import ViewConfigCheckbox from './ViewConfigCheckbox';
+import Layout from '../components/Layout';
+import ViewConfigScale from '../components/ViewConfigScale';
+import ViewConfigCheckbox from '../components/ViewConfigCheckbox';
 
 /**
 PDFPageLayout just reads the pdf out of the store, renders it to a Layout,

@@ -24,7 +24,7 @@ export default class ObjectView extends React.Component {
     }
     else if (object.object_number !== undefined && object.generation_number !== undefined) {
       return (
-        <Link className="reference" to={`/${this.props.router.params.name}/object/${object.object_number}`}>
+        <Link className="reference" to={`/${this.props.router.params.name}/objects/${object.object_number}`}>
           {object.object_number}:{object.generation_number}
         </Link>
       );

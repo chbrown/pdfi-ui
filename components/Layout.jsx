@@ -1,8 +1,8 @@
 import React from 'react';
 import {connect} from 'react-redux';
 
-import {px, makeBoundsStyle, makeBoundsString} from './common';
-import {RectanglePropTypes, ContainerPropTypes} from './propTypes';
+import {px, makeBoundsStyle, makeBoundsString} from '../graphics';
+import {RectanglePropTypes, ContainerPropTypes} from '../propTypes';
 import TextSpan from './TextSpan';
 
 class TextSpansContainer extends React.Component {

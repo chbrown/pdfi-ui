@@ -1,10 +1,11 @@
 import React from 'react';
 import {Link} from 'react-router';
 import {connect} from 'react-redux';
+import {asArray} from 'tarry';
 
 import {readArrayBufferSync} from '../models';
-import ObjectView from './ObjectView';
-import NumberFormat from './NumberFormat';
+import ObjectView from '../components/ObjectView';
+import NumberFormat from '../components/NumberFormat';
 
 @connect(state => ({router: state.router, pdf: state.pdf}))
 export default class PDFNavigator extends React.Component {
@@ -28,14 +29,16 @@ export default class PDFNavigator extends React.Component {
     }
   }
   render() {
-    var pages = this.props.pdf.pages ? this.props.pdf.pages.map((page, i) => {
+    var pages = asArray(this.props.pdf.pages).map((page, i) => {
       return (
         <div key={i} className="hpad page">
           <h4><Link to={`/${this.props.router.params.name}/page/${i + 1}`}>Page {i + 1}</Link></h4>
           <ObjectView object={page} />
         </div>
       );
-    }) : [];
+    });
+    var trailer = this.props.pdf.trailer;
+    var trailerObjects = asArray(trailer ? trailer.objects : []);
     return (
       <div className="pdf-container">
         <nav className="thumbnails">
@@ -48,6 +51,8 @@ export default class PDFNavigator extends React.Component {
 
           <h3>Trailer</h3>
           <ObjectView object={this.props.pdf.trailer} />
+          <h3>Raw trailer objects</h3>
+          <ObjectView object={trailerObjects} />
 
           <h3>Pages</h3>
           {pages}

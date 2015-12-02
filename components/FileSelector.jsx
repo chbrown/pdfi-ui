@@ -22,11 +22,6 @@ export default class FileSelector extends React.Component {
     this.props.dispatch(pushState(null, `/${name}`));
   }
   render() {
-    //   <ul>
-    //     {this.state.files.map(file => (
-    //       <li key={file.name}><Link to={`/${file.name}`}>{file.name}</Link></li>
-    //     ))}
-    //   </ul>
     return (
       <select onChange={this.changed.bind(this)} value={this.props.router.params.name}>
         <option value="">-- none selected --</option>

@@ -3,8 +3,8 @@ import {flatMap, quantile} from 'tarry';
 import {connect} from 'react-redux';
 import {renderPageLayout} from 'pdfi/graphics';
 
-import NumberFormat from './NumberFormat';
-import Paper from './Paper';
+import NumberFormat from '../components/NumberFormat';
+import Paper from '../components/Paper';
 
 @connect(state => ({pdf: state.pdf}))
 export default class PDFDocument extends React.Component {
