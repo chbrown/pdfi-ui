@@ -11,10 +11,10 @@ var escaper = new Escaper({
   literalSpace: true,
 });
 
-@connect(state => ({router: state.router}))
+@connect(state => ({filename: state.filename}))
 export default class ObjectView extends React.Component {
   render() {
-    var object = this.props.object;
+    let {object, filename} = this.props;
     object = escaper.simplify(object);
     if (object === undefined) {
       return <i className="undefined">undefined</i>;
@@ -24,7 +24,7 @@ export default class ObjectView extends React.Component {
     }
     else if (object.object_number !== undefined && object.generation_number !== undefined) {
       return (
-        <Link className="reference" to={`/${this.props.router.params.name}/objects/${object.object_number}`}>
+        <Link className="reference" to={`/${filename}/objects/${object.object_number}`}>
           {object.object_number}:{object.generation_number}
         </Link>
       );

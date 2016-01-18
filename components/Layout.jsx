@@ -5,47 +5,44 @@ import {px, makeBoundsStyle, makeBoundsString} from '../graphics';
 import {RectanglePropTypes, ContainerPropTypes} from '../propTypes';
 import TextSpan from './TextSpan';
 
-class TextSpansContainer extends React.Component {
-  render() {
-    var textSpans = this.props.elements.map((textSpan, i) => <TextSpan key={i} {...textSpan} />);
-    // each container describes a box, relative to the layout, but the
-    // textSpans inside that container are also positioned relative to the
-    // layout, not the box.
-    return (
-      <div>
-        <div className="box-shaded" style={makeBoundsStyle(this.props)}>
-          <span className="label">{this.props.index.toString()}</span>
-        </div>
-        {textSpans}
-      </div>
-    );
-  }
-  static propTypes = ContainerPropTypes
-}
+const TextSpansContainer = ({minX, minY, maxX, maxY, elements, index}) => (
+  // each container describes a box, relative to the layout, but the
+  // textSpans inside that container are also positioned relative to the
+  // layout, not the box.
+  <div>
+    <div className="box-shaded" style={makeBoundsStyle({minX, minY, maxX, maxY})}>
+      <span className="label">{index.toString()}</span>
+    </div>
+    {elements.map((textSpan, i) => <TextSpan key={i} {...textSpan} />)}
+  </div>
+);
+TextSpansContainer.propTypes = ContainerPropTypes;
 
 @connect(state => ({scale: state.viewConfig.scale}))
 export default class Layout extends React.Component {
   render() {
+    const {outerBounds, containers, scale} = this.props;
     var root_style = {
       // the browser just can't handle scaling of the container based on the scaled contents,
       // so we have to do some of the math here.
-      width: px((this.props.outerBounds.maxX - this.props.outerBounds.minX) * this.props.scale),
-      height: px((this.props.outerBounds.maxY - this.props.outerBounds.minY) * this.props.scale),
+      width: px((outerBounds.maxX - outerBounds.minX) * scale),
+      height: px((outerBounds.maxY - outerBounds.minY) * scale),
       position: 'relative',
       // overflow: 'hidden',
     };
     var scale_style = {
-      transform: `scale(${this.props.scale})`,
+      transform: `scale(${scale})`,
       transformOrigin: '0% 0%',
     };
-    var containers = this.props.containers.map((container, i) => <TextSpansContainer key={i} index={i} {...container} />);
     return (
       <div className="layout" style={root_style}>
         <div style={scale_style}>
-          <div className="box" style={makeBoundsStyle(this.props.outerBounds)}>
-            <span className="label">{makeBoundsString(this.props.outerBounds)}</span>
+          <div className="box" style={makeBoundsStyle(outerBounds)}>
+            <span className="label">{makeBoundsString(outerBounds)}</span>
           </div>
-          {containers}
+          {containers.map((container, i) =>
+            <TextSpansContainer key={i} index={i} {...container} />
+          )}
         </div>
       </div>
     );

@@ -9,7 +9,7 @@ import Paper from '../components/Paper';
 @connect(state => ({pdf: state.pdf}))
 export default class PDFDocument extends React.Component {
   render() {
-    var pdf = this.props.pdf;
+    var {pdf} = this.props;
     var paper = pdf.renderPaper();
     // paper: React.PropTypes.shape(PaperPropTypes).isRequired,
 

@@ -42,7 +42,7 @@ function renderMode(mode, pdf, object_number, generation_number) {
     let font_object = new pdfi_models.Model(pdf, object).object;
     let Font = pdfi_font.Font.getConstructor(font_object.Subtype);
     let font = new Font(pdf, font_object);
-    return <Encoding encoding={font.encoding} />;
+    return <Encoding mapping={font.encoding.mapping} characterByteLength={font.encoding.characterByteLength} />;
   }
   else { // if (mode === 'raw')
     return <ObjectView object={object} />;
@@ -58,20 +58,19 @@ const modes = [
   'encoding',
 ];
 
-@connect(state => ({router: state.router, pdf: state.pdf}))
+@connect(state => ({pdf: state.pdf}))
 export default class PDFObjects extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      mode: 'raw'
-    };
+    this.state = {mode: 'raw'};
   }
   onModeChange(mode) {
     this.setState({mode});
   }
   render() {
-    var object_number = parseInt(this.props.router.params.object_number, 10);
-    var generation_number = parseInt(this.props.router.params.generation_number || 0, 10);
+    const {params, pdf} = this.props;
+    var object_number = parseInt(params.object_number, 10);
+    var generation_number = parseInt(params.generation_number || 0, 10);
 
     var modeLinks = modes.map((mode, i) => {
       return <span key={i} onClick={this.onModeChange.bind(this, mode)}>{mode}</span>;
@@ -81,7 +80,7 @@ export default class PDFObjects extends React.Component {
       <section className="hpad">
         <h2>Object {object_number}:{generation_number}</h2>
         <div className="hlinks">{modeLinks}</div>
-        {renderMode(this.state.mode, this.props.pdf, object_number, generation_number)}
+        {renderMode(this.state.mode, pdf, object_number, generation_number)}
       </section>
     );
   }

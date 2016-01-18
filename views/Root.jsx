@@ -6,9 +6,10 @@ import FileSelector from '../components/FileSelector';
 @connect(state => ({viewConfig: state.viewConfig}))
 export default class Root extends React.Component {
   render() {
+    const {viewConfig, children} = this.props;
     var app_className = [
-      ...(this.props.viewConfig.outlines ? ['viewConfig-outlines'] : []),
-      ...(this.props.viewConfig.labels ? ['viewConfig-labels'] : []),
+      ...(viewConfig.outlines ? ['viewConfig-outlines'] : []),
+      ...(viewConfig.labels ? ['viewConfig-labels'] : []),
     ].join(' ');
 
     return (
@@ -25,7 +26,7 @@ export default class Root extends React.Component {
             </span>
           </nav>
         </header>
-        {this.props.children}
+        {children}
       </div>
     );
   }

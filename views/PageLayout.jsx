@@ -13,9 +13,9 @@ and sends that layout over the Layout component.
 @connect(state => ({pdf: state.pdf}))
 export default class PDFPageLayout extends React.Component {
   render() {
-    var pdf = this.props.pdf;
+    const {pdf, params} = this.props;
 
-    var page_index = parseInt(this.props.params.page, 10) - 1;
+    var page_index = parseInt(params.page, 10) - 1;
     var page = pdf.pages[page_index];
     var layout = renderPageLayout(page, false);
 
@@ -32,6 +32,6 @@ export default class PDFPageLayout extends React.Component {
     );
   }
   static propTypes = {
-    pdf: React.PropTypes.any.isRequired
+    pdf: React.PropTypes.any.isRequired,
   }
 }

@@ -3,50 +3,40 @@ var webpack = require('webpack');
 
 var production = process.env.NODE_ENV == 'production';
 
-var entry = production ? [
-  './app',
-] : [
-  'webpack-hot-middleware/client',
-  './app',
-];
-
-var plugins = [
-  new webpack.optimize.OccurenceOrderPlugin(true),
-].concat(production ? [
-  // production-only
-  // TODO: get this working again (it reduces the size from 3.93 MB to 1.73 MB)
-  // new webpack.optimize.UglifyJsPlugin({
-  //   compress: {
-  //     keep_fnames: true, // hack; allows @checkArguments to work
-  //   }
-  // }),
-] : [
-  // development-only
-  new webpack.NoErrorsPlugin(),
-  new webpack.HotModuleReplacementPlugin(),
-]);
-
+// TODO: get this working again (it reduces the size from 3.93 MB to 1.73 MB)
+// new webpack.optimize.UglifyJsPlugin({
+//   compress: {
+//     keep_fnames: true, // hack; allows @checkArguments to work
+//   }
+// }),
 
 module.exports = {
-  // devtool: 'source-map', // 'eval'
-  entry: entry,
+  entry: [
+    './app',
+  ].concat(production ? [] : ['webpack-hot-middleware/client']),
   output: {
     path: path.join(__dirname, 'build'),
     filename: 'bundle.js',
-    publicPath: '/build/'
+    publicPath: '/build/',
   },
-  plugins: plugins,
+  plugins: [
+    new webpack.optimize.OccurenceOrderPlugin(true),
+  ].concat(production ? [
+    // production-only
+  ] : [
+    // development-only
+    new webpack.NoErrorsPlugin(),
+    new webpack.HotModuleReplacementPlugin(),
+  ]),
   resolve: {
     extensions: [
       '',
-      // '.json',
-      '.js',
-      '.jsx',
-      // .ts should come after .js so that we don't try to compile external modules
       '.ts',
       '.tsx',
-      '.json', // is this necessary? I saw somewhere it was one of the default extensions
-      '.less',
+      // .ts may need to come after .js so that we don't try to compile external modules
+      '.js',
+      '.jsx',
+      '.json',
     ],
   },
   resolveLoader: {
@@ -58,7 +48,7 @@ module.exports = {
     loaders: [
       {
         test: /\.tsx?$/,
-        loaders: ['ts-loader'],
+        loaders: ['babel-loader', 'ts-loader'],
         include: __dirname,
         exclude: /node_modules|~/,
       },
@@ -82,10 +72,10 @@ module.exports = {
         test: /\.json$/,
         loaders: ['json-loader'],
       },
-    ]
+    ],
   },
   node: {
     console: true,
     process: true,
-  }
+  },
 };

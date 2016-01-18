@@ -1,18 +1,18 @@
 import React from 'react';
 import {AuthorPropTypes} from '../propTypes';
 
-export default class Author extends React.Component {
-  render() {
-    // TODO: is there a way to avoid the {' '} whitespace?
-    return (
-      <span>
-        <span title="first">{this.props.first}</span>
-        {' '}
-        <span title="middle">{this.props.middle}</span>
-        {' '}
-        <span title="last">{this.props.last}</span>
-      </span>
-    );
-  }
-  static propTypes = AuthorPropTypes
-}
+const Author = ({first, middle, last}) => {
+  // TODO: is there a way to avoid the {' '} whitespace?
+  return (
+    <span>
+      <span title="first">{first}</span>
+      {' '}
+      <span title="middle">{middle}</span>
+      {' '}
+      <span title="last">{last}</span>
+    </span>
+  );
+};
+Author.propTypes = AuthorPropTypes;
+
+export default Author;

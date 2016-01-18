@@ -1,27 +1,21 @@
 import React from 'react';
 import {OperationPropTypes} from '../propTypes';
 
-class Operation extends React.Component {
-  render() {
-    return (
-      <div className="key-row">
-        <span>{this.props.operator}</span>
-        <span>{JSON.stringify(this.props.operands, null, '  ')}</span>
-      </div>
-    );
-  }
-  static propTypes = OperationPropTypes
-}
+const Operation = ({operator, operands}) => (
+  <div className="key-row">
+    <span>{operator}</span>
+    <span>{JSON.stringify(operands, null, '  ')}</span>
+  </div>
+);
+Operation.propTypes = OperationPropTypes;
 
-export default class ContentStream extends React.Component {
-  render() {
-    return (
-      <section className="hpad">
-        {this.props.operations.map((operation, i) => <Operation key={i} {...operation} />)}
-      </section>
-    );
-  }
-  static propTypes = {
-    operations: React.PropTypes.arrayOf(React.PropTypes.shape(OperationPropTypes)).isRequired,
-  }
-}
+const ContentStream = ({operations}) => (
+  <section className="hpad">
+    {operations.map((operation, i) => <Operation key={i} {...operation} />)}
+  </section>
+);
+ContentStream.propTypes = {
+  operations: React.PropTypes.arrayOf(React.PropTypes.shape(OperationPropTypes)).isRequired,
+};
+
+export default ContentStream;

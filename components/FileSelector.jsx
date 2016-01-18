@@ -1,13 +1,13 @@
 import React from 'react';
 import {connect} from 'react-redux';
-import {pushState} from 'redux-router';
+import {routeActions} from 'redux-simple-router';
 
-@connect(state => ({router: state.router}))
+@connect(state => ({filename: state.filename}))
 export default class FileSelector extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      files: []
+      files: [],
     };
   }
   componentWillMount() {
@@ -16,14 +16,15 @@ export default class FileSelector extends React.Component {
     .then(files => this.setState({files}));
     // TODO: handle errors
   }
-  changed(ev) {
+  onChange(ev) {
     var name = ev.target.value;
     // pushState creates an action that the routerStateReducer handles
-    this.props.dispatch(pushState(null, `/${name}`));
+    this.props.dispatch(routeActions.push(`/${name}`));
   }
   render() {
+    const {filename} = this.props;
     return (
-      <select onChange={this.changed.bind(this)} value={this.props.router.params.name}>
+      <select onChange={this.onChange.bind(this)} value={filename}>
         <option value="">-- none selected --</option>
         {this.state.files.map(file => <option key={file.name} value={file.name}>{file.name}</option>)}
       </select>
