@@ -24,9 +24,9 @@
     "react": "*",
     "react-dom": "*",
     "react-redux": "*",
-    "react-router": "next",
+    "react-router": "*",
+    "react-router-redux": "*",
     "redux": "*",
-    "redux-simple-router": "*",
     "tarry": "*",
     "visible": "*"
   },

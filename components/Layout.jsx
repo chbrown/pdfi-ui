@@ -5,10 +5,12 @@ import {px, makeBoundsStyle, makeBoundsString} from '../graphics';
 import {RectanglePropTypes, ContainerPropTypes} from '../propTypes';
 import TextSpan from './TextSpan';
 
+/**
+Each container describes a box, relative to the layout, but the
+textSpans inside that container are also positioned relative to the
+layout, not the box.
+*/
 const TextSpansContainer = ({minX, minY, maxX, maxY, elements, index}) => (
-  // each container describes a box, relative to the layout, but the
-  // textSpans inside that container are also positioned relative to the
-  // layout, not the box.
   <div>
     <div className="box-shaded" style={makeBoundsStyle({minX, minY, maxX, maxY})}>
       <span className="label">{index.toString()}</span>

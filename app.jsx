@@ -4,7 +4,7 @@ import ReactDOM from 'react-dom';
 import {createStore, combineReducers, applyMiddleware} from 'redux';
 import {Provider} from 'react-redux';
 import {Router, Route, browserHistory} from 'react-router';
-import {syncHistory, routeReducer} from 'redux-simple-router';
+import {syncHistory, routeReducer} from 'react-router-redux';
 
 import * as reducers from './reducers';
 
