@@ -15,6 +15,7 @@ const ReferenceRow = ({authors, year, title, index}) => {
       </td>
       <td>{year}</td>
       <td>{title}</td>
+      {/* <td><code style="font-size: 80%">{source}</code></td> */}
     </tr>
   );
 };
@@ -23,6 +24,7 @@ ReferenceRow.propTypes = ReferencePropTypes;
 const CitationRow = ({reference, authors, year, index}) => (
   <tr>
     <td><i>{index}</i></td>
+    {/* <td><code style="font-size: 80%">{source}</code></td> */}
     <td className="list">
       {authors.map((author, index) => <Author key={index} {...author} />)}
     </td>
@@ -91,6 +93,7 @@ export default class PDFCitations extends React.Component {
               <th>Authors</th>
               <th>Year</th>
               <th>Title</th>
+              {/* <th>Source</th> */}
             </tr>
           </thead>
           <tbody>
@@ -104,6 +107,7 @@ export default class PDFCitations extends React.Component {
           <thead>
             <tr>
               <th>Index</th>
+              {/* <th>Source</th> */}
               <th>Authors</th>
               <th>Year</th>
               <th>Matched Reference</th>
