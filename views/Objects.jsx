@@ -69,18 +69,20 @@ export default class PDFObjects extends React.Component {
   }
   render() {
     const {params, pdf} = this.props;
-    var object_number = parseInt(params.object_number, 10);
-    var generation_number = parseInt(params.generation_number || 0, 10);
+    const object_number = parseInt(params.object_number, 10);
+    const generation_number = parseInt(params.generation_number || 0, 10);
 
-    var modeLinks = modes.map((mode, i) => {
+    const modeLinks = modes.map((mode, i) => {
       return <span key={i} onClick={this.onModeChange.bind(this, mode)}>{mode}</span>;
     });
+
+    const children = renderMode(this.state.mode, pdf, object_number, generation_number);
 
     return (
       <section className="hpad">
         <h2>Object {object_number}:{generation_number}</h2>
         <div className="hlinks">{modeLinks}</div>
-        {renderMode(this.state.mode, pdf, object_number, generation_number)}
+        {children}
       </section>
     );
   }

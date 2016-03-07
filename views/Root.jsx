@@ -1,7 +1,7 @@
 import React from 'react';
 import {connect} from 'react-redux';
 
-import FileSelector from '../components/FileSelector';
+import FileSelector from './FileSelector';
 
 @connect(state => ({viewConfig: state.viewConfig}))
 export default class Root extends React.Component {
@@ -33,5 +33,5 @@ export default class Root extends React.Component {
   static propTypes = {
     viewConfig: React.PropTypes.object.isRequired,
     children: React.PropTypes.node,
-  }
+  };
 }

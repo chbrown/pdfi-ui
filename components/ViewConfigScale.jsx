@@ -34,5 +34,5 @@ export default class Scale extends React.Component {
     max: React.PropTypes.number,
     step: React.PropTypes.number,
     scale: React.PropTypes.number.isRequired,
-  }
+  };
 }

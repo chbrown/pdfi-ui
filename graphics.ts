@@ -45,7 +45,7 @@ export function makeBoundsStyle(rectangle: Rectangle): {[index: string]: string}
 
 export function makeBoundsString(rectangle: Rectangle): string {
   if (rectangle === undefined) return undefined;
-  var dX = rectangle.maxX - rectangle.minX;
-  var dY = rectangle.maxY - rectangle.minY;
+  const dX = rectangle.maxX - rectangle.minX;
+  const dY = rectangle.maxY - rectangle.minY;
   return `(${rectangle.minX.toFixed(3)},${rectangle.minY.toFixed(3)}) (${dX.toFixed(3)}x${dY.toFixed(3)})`;
 }

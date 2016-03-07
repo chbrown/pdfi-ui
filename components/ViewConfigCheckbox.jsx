@@ -23,5 +23,5 @@ export default class ViewConfigCheckbox extends React.Component {
     viewConfig: React.PropTypes.any.isRequired,
     name: React.PropTypes.string.isRequired,
     label: React.PropTypes.string,
-  }
+  };
 }

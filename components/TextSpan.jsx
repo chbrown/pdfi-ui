@@ -2,7 +2,6 @@ import React from 'react';
 import {TextSpanPropTypes} from '../propTypes';
 import {makeBoundsStyle} from '../graphics';
 
-
 const TextSpan = ({minX, minY, maxX, maxY, string, fontSize, fontBold, fontItalic, details}) => {
   // if fontSize is less than 6, set it to 6 (kind of a hack)
   var normalized_fontSize = Math.max(fontSize, 6);

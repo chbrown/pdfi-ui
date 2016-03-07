@@ -30,7 +30,7 @@ const initialViewConfig = {
   labels: true,
 };
 
-var storedViewConfig = {};
+let storedViewConfig = {};
 try {
   storedViewConfig = JSON.parse(localStorage['viewConfig']);
 }
@@ -39,7 +39,7 @@ catch (exc) { }
 export function viewConfig(viewConfig = Object.assign(initialViewConfig, storedViewConfig), action: Action) {
   switch (action.type) {
   case 'UPDATE_VIEW_CONFIG':
-    var newViewConfig = Object.assign({}, viewConfig, {[action.key]: action.value});
+    const newViewConfig = Object.assign({}, viewConfig, {[action.key]: action.value});
     localStorage['viewConfig'] = JSON.stringify(newViewConfig);
     return newViewConfig;
   default:

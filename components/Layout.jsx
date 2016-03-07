@@ -24,7 +24,7 @@ TextSpansContainer.propTypes = ContainerPropTypes;
 export default class Layout extends React.Component {
   render() {
     const {outerBounds, containers, scale} = this.props;
-    var root_style = {
+    const root_style = {
       // the browser just can't handle scaling of the container based on the scaled contents,
       // so we have to do some of the math here.
       width: px((outerBounds.maxX - outerBounds.minX) * scale),
@@ -32,7 +32,7 @@ export default class Layout extends React.Component {
       position: 'relative',
       // overflow: 'hidden',
     };
-    var scale_style = {
+    const scale_style = {
       transform: `scale(${scale})`,
       transformOrigin: '0% 0%',
     };
@@ -54,5 +54,5 @@ export default class Layout extends React.Component {
     // we don't use textSpans, though, since they're also in `containers`
     //textSpans: React.PropTypes.arrayOf(React.PropTypes.shape(TextSpanPropTypes)).isRequired,
     containers: React.PropTypes.arrayOf(React.PropTypes.shape(ContainerPropTypes)).isRequired,
-  }
+  };
 }

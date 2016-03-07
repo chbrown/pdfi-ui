@@ -9,7 +9,7 @@ export default class Trailer extends React.Component {
   render() {
     const {pdf} = this.props;
     const {trailer} = pdf;
-    var trailerObjects = asArray(trailer ? trailer.objects : []);
+    const trailerObjects = asArray(trailer ? trailer.objects : []);
     return (
       <section className="hpad">
         <h2>Trailer object sequence</h2>

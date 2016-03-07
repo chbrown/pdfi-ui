@@ -1,6 +1,7 @@
 import React from 'react';
+import {browserHistory} from 'react-router';
 import {connect} from 'react-redux';
-import {routeActions} from 'react-router-redux';
+// import {routeActions} from 'react-router-redux';
 
 @connect(state => ({filename: state.filename}))
 export default class FileSelector extends React.Component {
@@ -17,9 +18,9 @@ export default class FileSelector extends React.Component {
     // TODO: handle errors
   }
   onChange(ev) {
-    var name = ev.target.value;
+    const name = ev.target.value;
     // pushState creates an action that the routerStateReducer handles
-    this.props.dispatch(routeActions.push(`/${name}`));
+    browserHistory.push(`/${name}`);
   }
   render() {
     const {filename} = this.props;

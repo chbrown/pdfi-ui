@@ -33,5 +33,5 @@ export default class PDFPageLayout extends React.Component {
   }
   static propTypes = {
     pdf: React.PropTypes.any.isRequired,
-  }
+  };
 }
