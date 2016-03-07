@@ -12,8 +12,17 @@ $(BIN)/tsc $(BIN)/webpack:
 %.js: %.ts $(BIN)/tsc
 	$(BIN)/tsc
 
-build/bundle.js: webpack.config.js app.jsx .babelrc $(BIN)/webpack
+build/bundle.js: webpack.config.js app.jsx $(TYPESCRIPT:%.ts=%.js) .babelrc $(BIN)/webpack
 	NODE_ENV=production $(BIN)/webpack --config $<
 
 dev:
-	node webpack-dev-server.js
+	(\
+   NODE_ENV=production $(BIN)/webpack --watch --config webpack.config.js & \
+   $(BIN)/tsc --watch & \
+   wait)
+
+dev-server:
+	(\
+   node webpack-dev-server.js & \
+   $(BIN)/tsc --watch & \
+   wait)
