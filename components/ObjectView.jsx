@@ -11,8 +11,7 @@ var escaper = new Escaper({
   literalSpace: true,
 });
 
-@connect(state => ({filename: state.filename}))
-export default class ObjectView extends React.Component {
+class DisconnectedObjectView extends React.Component {
   render() {
     let {object, filename} = this.props;
     object = escaper.simplify(object);
@@ -61,6 +60,11 @@ export default class ObjectView extends React.Component {
     return <span className="string">{object.toString()}</span>;
   }
   static propTypes = {
+    // object shouldn't be required
     object: React.PropTypes.any,
-  }
+  };
 }
+
+const ObjectView = connect(state => ({filename: state.filename}))(DisconnectedObjectView);
+
+export default ObjectView;
