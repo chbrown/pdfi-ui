@@ -3,17 +3,12 @@ var webpack = require('webpack');
 
 var production = process.env.NODE_ENV == 'production';
 
-// TODO: get this working again (it reduces the size from 3.93 MB to 1.73 MB)
-// new webpack.optimize.UglifyJsPlugin({
-//   compress: {
-//     keep_fnames: true, // hack; allows @checkArguments to work
-//   }
-// }),
-
 module.exports = {
   entry: [
     './app',
-  ].concat(production ? [] : ['webpack-hot-middleware/client']),
+  ].concat(production ? [] : [
+    'webpack-hot-middleware/client',
+  ]),
   output: {
     path: path.join(__dirname, 'build'),
     filename: 'bundle.js',
@@ -23,6 +18,7 @@ module.exports = {
     new webpack.optimize.OccurenceOrderPlugin(true),
   ].concat(production ? [
     // production-only
+    new webpack.optimize.UglifyJsPlugin(),
   ] : [
     // development-only
     new webpack.NoErrorsPlugin(),
@@ -31,9 +27,6 @@ module.exports = {
   resolve: {
     extensions: [
       '',
-      '.ts',
-      '.tsx',
-      // .ts may need to come after .js so that we don't try to compile external modules
       '.js',
       '.jsx',
       '.json',
@@ -47,21 +40,8 @@ module.exports = {
   module: {
     loaders: [
       {
-        test: /\.tsx?$/,
-        loaders: ['babel-loader', 'ts-loader'],
-        include: __dirname,
-        exclude: /node_modules|~/,
-      },
-      {
-        test: /\.js$/,
+        test: /\.jsx?$/,
         loaders: ['babel-loader'],
-        include: __dirname,
-        exclude: /node_modules/,
-      },
-      {
-        test: /\.jsx$/,
-        loaders: ['babel-loader'],
-        include: __dirname,
         exclude: /node_modules/,
       },
       {
@@ -73,9 +53,5 @@ module.exports = {
         loaders: ['json-loader'],
       },
     ],
-  },
-  node: {
-    console: true,
-    process: true,
   },
 };
