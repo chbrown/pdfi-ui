@@ -1,10 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import {createStore, combineReducers, applyMiddleware} from 'redux';
+import {createStore, combineReducers} from 'redux';
 import {Provider} from 'react-redux';
 import {Router, Route, browserHistory} from 'react-router';
-import {syncHistory, routeReducer} from 'react-router-redux';
+import {syncHistoryWithStore, routerReducer} from 'react-router-redux';
 
 import * as reducers from './reducers';
 
@@ -19,11 +19,11 @@ import Trailer from './views/Trailer';
 
 import './site.less';
 
-const reducer = combineReducers({...reducers, routing: routeReducer}); // has to be "routing"?
-// Sync dispatched route actions to the history
-const reduxRouterMiddleware = syncHistory(browserHistory);
-const createStoreWithMiddleware = applyMiddleware(reduxRouterMiddleware)(createStore);
-const store = createStoreWithMiddleware(reducer);
+// the routerReducer has to be keyed as "routing"
+const reducer = combineReducers({...reducers, routing: routerReducer});
+const store = createStore(reducer);
+
+const history = syncHistoryWithStore(browserHistory, store);
 
 class NotFound extends React.Component {
   render() {
@@ -37,7 +37,7 @@ class NotFound extends React.Component {
 
 ReactDOM.render((
   <Provider store={store}>
-    <Router history={browserHistory}>
+    <Router history={history}>
       <Route path="/" component={Root}>
         <Route path=":name" component={Navigator}>
           <Route path="document" component={Document} />
