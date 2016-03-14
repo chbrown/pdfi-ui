@@ -1,7 +1,6 @@
 import React from 'react';
 import {browserHistory} from 'react-router';
 import {connect} from 'react-redux';
-// import {routeActions} from 'react-router-redux';
 
 @connect(state => ({filename: state.filename}))
 export default class FileSelector extends React.Component {

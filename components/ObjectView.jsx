@@ -1,20 +1,12 @@
 import React from 'react';
 import {Link} from 'react-router';
 import {connect} from 'react-redux';
-import {Escaper} from 'visible';
-
-var escaper = new Escaper({
-  escapeSlash: true,
-  // literalVisibles: false,
-  // useEscapes: true,
-  literalEOL: true,
-  literalSpace: true,
-});
+import {simplify} from 'pdfi';
 
 class DisconnectedObjectView extends React.Component {
   render() {
     let {object, filename} = this.props;
-    object = escaper.simplify(object);
+    object = simplify(object);
     if (object === undefined) {
       return <i className="undefined">undefined</i>;
     }

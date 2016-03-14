@@ -1,4 +1,4 @@
-import {Buffer as LexingBuffer, Source} from 'lexing';
+import {Source} from 'lexing';
 const pdfi = require('pdfi');
 
 export interface RemoteFile {
@@ -15,7 +15,7 @@ class ArrayBufferSource implements Source {
     return this.arrayBuffer.byteLength;
   }
 
-  read(buffer: LexingBuffer, offset: number, length: number, position: number): number {
+  read(buffer: Buffer, offset: number, length: number, position: number): number {
     // if position is negative set it to 0
     position = Math.max(0, position);
     if (length === 0) {
@@ -36,7 +36,7 @@ class ArrayBufferSource implements Source {
   /**
   Same as FileSystemSource#readBuffer
   */
-  readBuffer(length: number, position: number): LexingBuffer {
+  readBuffer(length: number, position: number): Buffer {
     // console.log(`ArrayBufferSource#readBuffer length=${length} position=${position}`);
     let buffer = new Buffer(length);
     const bytesRead = this.read(buffer, 0, length, position);

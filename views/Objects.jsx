@@ -1,6 +1,6 @@
 import React from 'react';
 import {connect} from 'react-redux';
-import {StringIterator} from 'lexing';
+import {BufferIterator} from 'lexing';
 
 import pdfi_models from 'pdfi/models';
 import pdfi_font from 'pdfi/font';
@@ -23,9 +23,8 @@ function renderMode(mode, pdf, object_number, generation_number) {
       return <ObjectView object={stream_string} />;
     }
     else if (mode === 'content-stream') {
-      let stream_string = content_stream.buffer.toString('binary');
-      let stream_string_iterable = new StringIterator(stream_string);
-      let operations = new CONTENT_STREAM(stream_string_iterable, 1024).read();
+      let stream_buffer_iterable = new BufferIterator(content_stream.buffer);
+      let operations = new CONTENT_STREAM(stream_buffer_iterable, 'binary', 1024).read();
       return <ContentStream operations={operations} />;
     }
     else if (mode === 'content-stream-layout') {

@@ -27,8 +27,7 @@
     "react-router": "*",
     "react-router-redux": "*",
     "redux": "*",
-    "tarry": "*",
-    "visible": "*"
+    "tarry": "*"
   },
   "devDependencies": {
     "babel-core": "*",
