@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 
 import {createStore, combineReducers} from 'redux';
 import {Provider} from 'react-redux';
-import {Router, Route, browserHistory} from 'react-router';
+import {Router, Route, IndexRoute, browserHistory} from 'react-router';
 import {syncHistoryWithStore, routerReducer} from 'react-router-redux';
 
 import * as reducers from './reducers';
@@ -12,7 +12,14 @@ import Citations from './views/Citations';
 import CrossReferences from './views/CrossReferences';
 import Document from './views/Document';
 import Navigator from './views/Navigator';
-import Objects from './views/Objects';
+import Objects, {
+  ObjectRaw,
+  ObjectStream,
+  ObjectContentStream,
+  ObjectContentStreamLayout,
+  ObjectContentStreamText,
+  ObjectEncoding,
+} from './views/Objects';
 import PageLayout from './views/PageLayout';
 import Root from './views/Root';
 import Trailer from './views/Trailer';
@@ -45,7 +52,15 @@ ReactDOM.render((
           <Route path="citations" component={Citations} />
           <Route path="trailer" component={Trailer} />
           <Route path="page/:page" component={PageLayout} />
-          <Route path="objects/:object_number" component={Objects} />
+          <Route path="objects/:object_number" component={Objects}>
+            <IndexRoute component={ObjectRaw} />
+            <Route path="raw" component={ObjectRaw} />
+            <Route path="stream" component={ObjectStream} />
+            <Route path="content-stream" component={ObjectContentStream} />
+            <Route path="content-stream-layout" component={ObjectContentStreamLayout} />
+            <Route path="content-stream-text" component={ObjectContentStreamText} />
+            <Route path="encoding" component={ObjectEncoding} />
+          </Route>
         </Route>
         <Route path="*" component={NotFound} />
       </Route>

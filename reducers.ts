@@ -1,6 +1,7 @@
 interface Action {
   type: string;
   pdf?: any;
+  object?: any;
   filename?: string;
   key?: string;
   value?: any;
@@ -12,6 +13,15 @@ export function pdf(pdf = {}, action: Action) {
     return action.pdf;
   default:
     return pdf;
+  }
+}
+
+export function object(object = {}, action: Action) {
+  switch (action.type) {
+  case 'SET_OBJECT':
+    return action.object;
+  default:
+    return object;
   }
 }
 
