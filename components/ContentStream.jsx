@@ -1,10 +1,12 @@
 import React from 'react';
 import {OperationPropTypes} from '../propTypes';
 
+import ObjectView from './ObjectView';
+
 const Operation = ({operator, operands}) => (
   <div className="key-row">
     <span>{operator}</span>
-    <span>{JSON.stringify(operands, null, '  ')}</span>
+    <span><ObjectView object={operands} /></span>
   </div>
 );
 Operation.propTypes = OperationPropTypes;
