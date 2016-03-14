@@ -1,12 +1,12 @@
 {
   "compilerOptions": {
+    "experimentalDecorators": true,
     "jsx": "react",
     "module": "commonjs",
-    "moduleResolution": "node",
     "target": "ES6"
   },
   "files": [
-    "node_modules/declarations/node/node.d.ts",
+    "node_modules/declarations/lib/buffer.d.ts",
     "node_modules/declarations/react/react-dom.d.ts",
     "node_modules/declarations/react/react.d.ts",
     "node_modules/declarations/react-router/history.d.ts",
