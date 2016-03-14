@@ -1,9 +1,5 @@
 import {Source} from 'lexing';
-const pdfi = require('pdfi');
-
-export interface RemoteFile {
-  name: string;
-}
+import {readSourceSync} from 'pdfi';
 
 /**
 From lexing/browser.ts
@@ -50,7 +46,7 @@ class ArrayBufferSource implements Source {
 export function readArrayBufferSync(arrayBuffer: ArrayBuffer,
                                     options = {type: 'string'}): any {
   const source: Source = new ArrayBufferSource(arrayBuffer);
-  return pdfi.readSourceSync(source, options);
+  return readSourceSync(source, options);
 }
 
 // export function uploadFile(dom_file, callback: (error: Error, file?: File) => void) {

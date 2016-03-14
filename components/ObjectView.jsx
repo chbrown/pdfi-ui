@@ -46,7 +46,7 @@ class DisconnectedObjectView extends React.Component {
       return <span className="number">{object.toString()}</span>;
     }
     else if (typeof object === 'boolean') {
-      return <span className="boolean">{object.toString()}</span>;
+      return <span className="boolean" title={object.toString()}>{object ? '✓' : '✗'}</span>;
     }
     // catch-all
     return <span className="string">{object.toString()}</span>;

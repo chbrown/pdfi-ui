@@ -176,6 +176,14 @@ header {
   white-space: pre-wrap;
   word-break: break-all;
 }
+.boolean {
+  &[title="true"] {
+    color: green;
+  }
+  &[title="false"] {
+    color: darkred;
+  }
+}
 
 .layout {
   margin: 10px;

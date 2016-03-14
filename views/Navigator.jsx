@@ -30,14 +30,6 @@ export default class Navigator extends React.Component {
   }
   render() {
     const {params, pdf, children} = this.props;
-    var pages = asArray(pdf.pages).map((page, i) => {
-      return (
-        <div key={i} className="hpad page">
-          <h4><Link to={`/${params.name}/page/${i + 1}`}>Page {i + 1}</Link></h4>
-          <ObjectView object={page} />
-        </div>
-      );
-    });
     return (
       <div className="pdf-container">
         <nav className="thumbnails">
@@ -51,7 +43,12 @@ export default class Navigator extends React.Component {
           <ObjectView object={pdf.trailer} />
 
           <h4>Pages</h4>
-          {pages}
+          {asArray(pdf.pages).map((page, i) =>
+            <div key={i} className="hpad page">
+              <h4><Link to={`/${params.name}/page/${i + 1}`}>Page {i + 1}</Link></h4>
+              <ObjectView object={page} />
+            </div>
+          )}
         </nav>
         <article>
           {pdf.size ? children : <h4 className="hpad">Loading...</h4>}

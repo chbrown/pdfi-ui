@@ -1,32 +1,4 @@
-// interfaces
-
-export interface Rectangle {
-  minX: number;
-  minY: number;
-  maxX: number;
-  maxY: number;
-}
-
-export interface Container<T> extends Rectangle {
-  elements: T[];
-}
-
-/** this matches the properties in shapes.TextSpan (and thus, its JSON representation) */
-export interface TextSpan extends Rectangle {
-  string: string;
-  fontSize: number;
-  fontBold: boolean;
-  fontItalic: boolean;
-  details?: any;
-}
-
-export interface Layout {
-  outerBounds: Rectangle;
-  textSpans: TextSpan[];
-  containers: Container<TextSpan>[]
-}
-
-// util / helpers
+import {Rectangle} from 'pdfi/graphics/geometry';
 
 export function px(length: number, fractionDigits = 3) {
   return length.toFixed(fractionDigits) + 'px';
