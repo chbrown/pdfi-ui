@@ -12,6 +12,9 @@ $(BIN)/tsc $(BIN)/webpack:
 %.js: %.ts $(BIN)/tsc
 	$(BIN)/tsc
 
+compile:
+	$(BIN)/tsc
+
 build/bundle.js: webpack.config.js app.jsx $(TYPESCRIPT:%.ts=%.js) .babelrc $(BIN)/webpack
 	NODE_ENV=production $(BIN)/webpack --config $<
 
