@@ -1,4 +1,3 @@
-graphics.js
-models.js
-propTypes.js
-reducers.js
+*.js
+!build/*.js
+!webpack.config.js
