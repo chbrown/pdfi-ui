@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as PropTypes from 'prop-types';
 import {browserHistory} from 'react-router';
 import {connect} from 'react-redux';
 
@@ -80,7 +81,7 @@ export default class Root extends React.Component<{viewConfig: any} & React.Prop
     );
   }
   static propTypes: React.ValidationMap<any> = {
-    viewConfig: React.PropTypes.object.isRequired,
-    children: React.PropTypes.node,
+    viewConfig: PropTypes.object.isRequired,
+    children: PropTypes.node,
   };
 }

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as PropTypes from 'prop-types';
 import {Link} from 'react-router';
 import {connect} from 'react-redux';
 import {flatMap} from 'tarry';
@@ -206,6 +207,6 @@ export default class PDFPage extends React.Component<{pdf: PDF, params?: any} & 
     );
   }
   static propTypes: React.ValidationMap<any> = {
-    pdf: React.PropTypes.any.isRequired,
+    pdf: PropTypes.any.isRequired,
   };
 }

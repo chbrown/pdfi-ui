@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 
 import {ReduxProps} from '../models';
@@ -32,9 +33,9 @@ export default class Scale extends React.Component<{min?: number, max?: number, 
     );
   }
   static propTypes: React.ValidationMap<any> = {
-    min: React.PropTypes.number,
-    max: React.PropTypes.number,
-    step: React.PropTypes.number,
-    scale: React.PropTypes.number.isRequired,
+    min: PropTypes.number,
+    max: PropTypes.number,
+    step: PropTypes.number,
+    scale: PropTypes.number.isRequired,
   };
 }

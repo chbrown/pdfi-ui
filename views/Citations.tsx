@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 import {linkPaper, citeRegExp} from 'academia/styles/acl';
 
@@ -44,9 +45,9 @@ const CitationRow = ({reference = null, authors, year, index}) => (
   </tr>
 );
 CitationRow['propTypes'] = {
-  authors: React.PropTypes.arrayOf(React.PropTypes.shape(AuthorPropTypes)).isRequired,
-  year: React.PropTypes.string.isRequired,
-  reference: React.PropTypes.shape(ReferencePropTypes), // might be missing if it could not be matched
+  authors: PropTypes.arrayOf(PropTypes.shape(AuthorPropTypes)).isRequired,
+  year: PropTypes.string.isRequired,
+  reference: PropTypes.shape(ReferencePropTypes), // might be missing if it could not be matched
 };
 
 @connect(state => ({pdf: state.pdf}))

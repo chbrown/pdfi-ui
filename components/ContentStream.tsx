@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as PropTypes from 'prop-types';
 import {OperationPropTypes} from '../propTypes';
 
 import ObjectView from './ObjectView';
@@ -17,7 +18,7 @@ const ContentStream = ({operations}) => (
   </section>
 );
 ContentStream['propTypes'] = {
-  operations: React.PropTypes.arrayOf(React.PropTypes.shape(OperationPropTypes)).isRequired,
+  operations: PropTypes.arrayOf(PropTypes.shape(OperationPropTypes)).isRequired,
 };
 
 export default ContentStream;

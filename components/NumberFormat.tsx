@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as PropTypes from 'prop-types';
 
 /**
 <NumberFormat value={16090.0010413} digits={3} /> is a component for rendering
@@ -10,8 +11,8 @@ const NumberFormat = ({value, digits}: {value: number, digits?: number}) => {
   return <span>{formatted}</span>;
 };
 NumberFormat['propTypes'] = {
-  value: React.PropTypes.number,
-  digits: React.PropTypes.number,
+  value: PropTypes.number,
+  digits: PropTypes.number,
 };
 
 export default NumberFormat;

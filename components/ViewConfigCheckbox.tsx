@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 
 import {ReduxProps} from '../models';
@@ -23,8 +24,8 @@ export default class ViewConfigCheckbox extends React.Component<{viewConfig?: an
     );
   }
   static propTypes: React.ValidationMap<any> = {
-    viewConfig: React.PropTypes.any.isRequired,
-    name: React.PropTypes.string.isRequired,
-    label: React.PropTypes.string,
+    viewConfig: PropTypes.any.isRequired,
+    name: PropTypes.string.isRequired,
+    label: PropTypes.string,
   };
 }

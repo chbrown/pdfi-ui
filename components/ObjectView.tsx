@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as PropTypes from 'prop-types';
 import {Link} from 'react-router';
 import {connect} from 'react-redux';
 import {simplify} from 'pdfi';
@@ -54,7 +55,7 @@ class NaiveObjectView extends React.Component<{object: any, filename?: string}, 
   }
   static propTypes: React.ValidationMap<any> = {
     // object shouldn't be required
-    object: React.PropTypes.any,
+    object: PropTypes.any,
   };
 }
 

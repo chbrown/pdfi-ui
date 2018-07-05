@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as PropTypes from 'prop-types';
 import {flatMap, quantile, groupBy} from 'tarry';
 import {connect} from 'react-redux';
 
@@ -108,6 +109,6 @@ export default class PDFDocument extends React.Component<{pdf: PDF}, {}> {
     );
   }
   static propTypes: React.ValidationMap<any> = {
-    pdf: React.PropTypes.any.isRequired,
+    pdf: PropTypes.any.isRequired,
   };
 }

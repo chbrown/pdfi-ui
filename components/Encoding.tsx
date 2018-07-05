@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as PropTypes from 'prop-types';
 
 const Encoding = ({mapping, characterByteLength}) => (
   <div>
@@ -13,8 +14,8 @@ const Encoding = ({mapping, characterByteLength}) => (
   </div>
 );
 Encoding['propTypes'] = {
-  mapping: React.PropTypes.array.isRequired,
-  characterByteLength: React.PropTypes.number.isRequired,
+  mapping: PropTypes.array.isRequired,
+  characterByteLength: PropTypes.number.isRequired,
 };
 
 export default Encoding;

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as PropTypes from 'prop-types';
 import {Model} from 'pdfi/models';
 import {decodeGlyphname, expandDifferences} from 'pdfi/encoding/index';
 import * as glyphmaps from 'pdfi/encoding/glyphmaps';
@@ -66,7 +67,7 @@ const Font = ({font}) => {
   );
 };
 Font['propTypes'] = {
-  font: React.PropTypes.object.isRequired,
+  font: PropTypes.object.isRequired,
 };
 
 export default Font;

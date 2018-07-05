@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as PropTypes from 'prop-types';
 
 // const ContentStreamText = ({spans}) => (
 //   <section className="hpad">
@@ -28,7 +29,7 @@ import * as React from 'react';
 //   </section>
 // );
 // ContentStreamText['propTypes'] = {
-//   spans: React.PropTypes.array.isRequired,
+//   spans: PropTypes.array.isRequired,
 // };
 
 // export default ContentStreamText;
