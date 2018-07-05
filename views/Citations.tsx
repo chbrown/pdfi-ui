@@ -1,6 +1,8 @@
-import React from 'react';
+import * as React from 'react';
 import {connect} from 'react-redux';
 import {linkPaper, citeRegExp} from 'academia/styles/acl';
+
+import {PDF} from 'pdfi';
 
 import {AuthorPropTypes, ReferencePropTypes} from '../propTypes';
 import Author from '../components/Author';
@@ -19,9 +21,9 @@ const ReferenceRow = ({authors, year, title, index}) => {
     </tr>
   );
 };
-ReferenceRow.propTypes = ReferencePropTypes;
+ReferenceRow['propTypes'] = ReferencePropTypes;
 
-const CitationRow = ({reference, authors, year, index}) => (
+const CitationRow = ({reference = null, authors, year, index}) => (
   <tr>
     <td><i>{index}</i></td>
     {/* <td><code style="font-size: 80%">{source}</code></td> */}
@@ -41,35 +43,35 @@ const CitationRow = ({reference, authors, year, index}) => (
     }
   </tr>
 );
-CitationRow.propTypes = {
+CitationRow['propTypes'] = {
   authors: React.PropTypes.arrayOf(React.PropTypes.shape(AuthorPropTypes)).isRequired,
   year: React.PropTypes.string.isRequired,
   reference: React.PropTypes.shape(ReferencePropTypes), // might be missing if it could not be matched
 };
 
 @connect(state => ({pdf: state.pdf}))
-export default class PDFCitations extends React.Component {
+export default class PDFCitations extends React.Component<{pdf?: PDF}, {}> {
   render() {
     const {pdf} = this.props;
     const originalPaper = pdf.renderPaper();
     // use linking logic from academia
     const paper = linkPaper(originalPaper);
 
-    var regExp = citeRegExp;
+    const regExp = citeRegExp;
     // replace references
     function highlightCitations(string) {
       // reset the regex
       regExp.lastIndex = 0;
       // set up the iteration variables
-      var previousLastIndex = regExp.lastIndex;
-      var elements = [];
-      var match;
+      const elements = [];
+      let previousLastIndex = regExp.lastIndex;
+      let match;
       while ((match = regExp.exec(string)) !== null) {
-        var prefix = string.slice(previousLastIndex, match.index);
+        const prefix = string.slice(previousLastIndex, match.index);
         elements.push(prefix, <span className="citation">{match[0]}</span>);
         previousLastIndex = regExp.lastIndex;
       }
-      var postfix = string.slice(previousLastIndex);
+      const postfix = string.slice(previousLastIndex);
       elements.push(postfix);
       return elements;
     }

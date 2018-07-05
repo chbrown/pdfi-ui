@@ -1,23 +1,25 @@
-import React from 'react';
+import * as React from 'react';
 import {connect} from 'react-redux';
 
+import {ReduxProps} from '../models';
+
 function range(min, max, step, epsilon = 1e-9) {
-  var xs = [];
-  for (var x = min; x < (max - epsilon); x += step) {
+  const xs = [];
+  for (let x = min; x < (max - epsilon); x += step) {
     xs.push(x);
   }
   return xs;
 }
 
 @connect(state => ({scale: state.viewConfig.scale}))
-export default class Scale extends React.Component {
+export default class Scale extends React.Component<{min?: number, max?: number, step?: number, scale?: number} & ReduxProps, {}> {
   onChange(ev) {
-    var value = parseFloat(ev.target.value);
+    const value = parseFloat(ev.target.value);
     this.props.dispatch({type: 'UPDATE_VIEW_CONFIG', key: 'scale', value});
   }
   render() {
     const {min = 0.1, max = 4.0, step = 0.1, scale} = this.props;
-    var ticks = range(min, max + step, step);
+    const ticks = range(min, max + step, step);
     return (
       <div>
         <div>Scale (<output>{(scale * 100).toFixed(0)}</output>%)</div>
@@ -29,7 +31,7 @@ export default class Scale extends React.Component {
       </div>
     );
   }
-  static propTypes = {
+  static propTypes: React.ValidationMap<any> = {
     min: React.PropTypes.number,
     max: React.PropTypes.number,
     step: React.PropTypes.number,

@@ -1,5 +1,5 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
+import * as React from 'react';
+import {render} from 'react-dom';
 
 import {createStore, combineReducers} from 'redux';
 import {Provider} from 'react-redux';
@@ -17,22 +17,29 @@ import Objects, {
   ObjectStream,
   ObjectContentStream,
   ObjectContentStreamLayout,
-  ObjectContentStreamText,
+  ObjectFont,
   ObjectEncoding,
+  ObjectCMap,
 } from './views/Objects';
-import PageLayout from './views/PageLayout';
+import Page, {
+  PageLayout,
+  PageTree,
+  PageTable,
+} from './views/PageLayout';
 import Root from './views/Root';
 import Trailer from './views/Trailer';
 
 import './site.less';
 
-// the routerReducer has to be keyed as "routing"
-const reducer = combineReducers({...reducers, routing: routerReducer});
-const store = createStore(reducer);
+import {setLoggerLevel} from 'pdfi';
+setLoggerLevel(20);
 
+// the routerReducer has to be keyed as "routing"
+const reducer = combineReducers(Object.assign(reducers, {routing: routerReducer}));
+const store = createStore(reducer);
 const history = syncHistoryWithStore(browserHistory, store);
 
-class NotFound extends React.Component {
+class NotFound extends React.Component<{}, {}> {
   render() {
     return (
       <section className="hpad">
@@ -42,7 +49,7 @@ class NotFound extends React.Component {
   }
 }
 
-ReactDOM.render((
+render((
   <Provider store={store}>
     <Router history={history}>
       <Route path="/" component={Root}>
@@ -51,15 +58,21 @@ ReactDOM.render((
           <Route path="cross-references" component={CrossReferences} />
           <Route path="citations" component={Citations} />
           <Route path="trailer" component={Trailer} />
-          <Route path="page/:page" component={PageLayout} />
+          <Route path="pages/:page" component={Page}>
+            <IndexRoute component={PageLayout} />
+            <Route path="layout" component={PageLayout} />
+            <Route path="tree" component={PageTree} />
+            <Route path="table" component={PageTable} />
+          </Route>
           <Route path="objects/:object_number" component={Objects}>
             <IndexRoute component={ObjectRaw} />
             <Route path="raw" component={ObjectRaw} />
             <Route path="stream" component={ObjectStream} />
             <Route path="content-stream" component={ObjectContentStream} />
             <Route path="content-stream-layout" component={ObjectContentStreamLayout} />
-            <Route path="content-stream-text" component={ObjectContentStreamText} />
+            <Route path="font" component={ObjectFont} />
             <Route path="encoding" component={ObjectEncoding} />
+            <Route path="cmap" component={ObjectCMap} />
           </Route>
         </Route>
         <Route path="*" component={NotFound} />

@@ -1,19 +1,21 @@
-import React from 'react';
+import * as React from 'react';
 import {Link} from 'react-router';
 import {connect} from 'react-redux';
 import {asArray} from 'tarry';
 
-import {readArrayBufferSync} from '../models';
+import {PDF} from 'pdfi';
+
+import {ReduxProps, readArrayBufferSync} from '../models';
 import ObjectView from '../components/ObjectView';
 import NumberFormat from '../components/NumberFormat';
 
 @connect(state => ({pdf: state.pdf}))
-export default class Navigator extends React.Component {
+export default class Navigator extends React.Component<{params?: any, pdf?: PDF} & React.Props<any> & ReduxProps, {}> {
   reloadState(filename) {
     fetch(`/files/${filename}`)
     .then(response => response.arrayBuffer())
     .then(arrayBuffer => {
-      var pdf = readArrayBufferSync(arrayBuffer, {type: 'pdf'});
+      const pdf = readArrayBufferSync(arrayBuffer, {type: 'pdf'});
       this.props.dispatch({type: 'SET_PDF', pdf, filename});
     });
     // TODO: handle errors
@@ -45,7 +47,7 @@ export default class Navigator extends React.Component {
           <h4>Pages</h4>
           {asArray(pdf.pages).map((page, i) =>
             <div key={i} className="hpad page">
-              <h4><Link to={`/${params.name}/page/${i + 1}`}>Page {i + 1}</Link></h4>
+              <h4><Link to={`/${params.name}/pages/${i + 1}`}>Page {i + 1}</Link></h4>
               <ObjectView object={page} />
             </div>
           )}

@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 
 import {CrossReferencePropTypes} from '../propTypes';
 import ObjectView from './ObjectView';
@@ -27,7 +27,7 @@ const CrossReferencesTable = ({cross_references}) => (
     </tbody>
   </table>
 );
-CrossReferencesTable.propTypes = {
+CrossReferencesTable['propTypes'] = {
   cross_references: React.PropTypes.arrayOf(React.PropTypes.shape(CrossReferencePropTypes)).isRequired,
 };
 export default CrossReferencesTable;

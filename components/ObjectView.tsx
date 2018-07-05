@@ -1,9 +1,10 @@
-import React from 'react';
+import * as React from 'react';
 import {Link} from 'react-router';
 import {connect} from 'react-redux';
 import {simplify} from 'pdfi';
 
-class DisconnectedObjectView extends React.Component {
+// @connect(state => ({filename: state.filename})) // doesn't work? (recursive calls are not @connect'ed)
+class NaiveObjectView extends React.Component<{object: any, filename?: string}, {}> {
   render() {
     let {object, filename} = this.props;
     object = simplify(object);
@@ -21,18 +22,18 @@ class DisconnectedObjectView extends React.Component {
       );
     }
     else if (Array.isArray(object)) {
-      var array_children = object.map((child, index) => <ObjectView key={index} object={child} />);
+      const array_children = object.map((child, index) => <ObjectView key={index} object={child} />);
       return <span className="array">[{array_children}]</span>;
     }
     else if (typeof object === 'object') {
       // if (object.toJSON) {
       //   object = object.toJSON();
       // }
-      // var data = JSON.stringify(simplified_value);
+      // const data = JSON.stringify(simplified_value);
       // skip keys that start with an underscore
-      var keys = Object.keys(object).filter(key => key[0] !== '_');
-      var object_children = keys.map(key => {
-        var child = object[key];
+      const keys = Object.keys(object).filter(key => key[0] !== '_');
+      const object_children = keys.map(key => {
+        const child = object[key];
         return (
           <div key={key}>
             <span className="name">{key}:</span>
@@ -51,12 +52,12 @@ class DisconnectedObjectView extends React.Component {
     // catch-all
     return <span className="string">{object.toString()}</span>;
   }
-  static propTypes = {
+  static propTypes: React.ValidationMap<any> = {
     // object shouldn't be required
     object: React.PropTypes.any,
   };
 }
 
-const ObjectView = connect(state => ({filename: state.filename}))(DisconnectedObjectView);
+const ObjectView = connect(state => ({filename: state.filename}))(NaiveObjectView);
 
 export default ObjectView;

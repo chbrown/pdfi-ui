@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import {AuthorPropTypes} from '../propTypes';
 
 // TODO: is there a way to avoid the {' '} whitespace?
@@ -11,6 +11,6 @@ const Author = ({first, middle, last}) => (
     <span title="last">{last}</span>
   </span>
 );
-Author.propTypes = AuthorPropTypes;
+Author['propTypes'] = AuthorPropTypes;
 
 export default Author;

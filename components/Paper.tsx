@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import {PaperPropTypes, PaperSectionPropTypes} from '../propTypes';
 
 const PaperSection = ({title, paragraphs}) => (
@@ -7,7 +7,7 @@ const PaperSection = ({title, paragraphs}) => (
     {paragraphs.map((paragraph, i) => <p key={i}>{paragraph}</p>)}
   </div>
 );
-PaperSection.propTypes = PaperSectionPropTypes;
+PaperSection['propTypes'] = PaperSectionPropTypes;
 
 const Paper = ({sections}) => (
   <div className="paper">
@@ -19,6 +19,6 @@ const Paper = ({sections}) => (
     )}
   </div>
 );
-Paper.propTypes = PaperPropTypes;
+Paper['propTypes'] = PaperPropTypes;
 
 export default Paper;
