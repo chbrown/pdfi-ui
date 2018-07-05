@@ -51,7 +51,7 @@ CitationRow['propTypes'] = {
 };
 
 @connect(state => ({pdf: state.pdf}))
-export default class PDFCitations extends React.Component<{pdf?: PDF}, {}> {
+export default class PDFCitations extends React.Component<{pdf?: PDF}> {
   render() {
     const {pdf} = this.props;
     const originalPaper = pdf.renderPaper();

@@ -41,7 +41,7 @@ const MapView = ({map}) => (
 );
 
 @connect(state => ({pdf: state.pdf}))
-export default class PDFDocument extends React.Component<{pdf: PDF}, {}> {
+export default class PDFDocument extends React.Component<{pdf: PDF}> {
   render() {
     const {pdf} = this.props;
     const pages = pdf.pages;

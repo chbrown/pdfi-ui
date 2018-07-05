@@ -27,7 +27,7 @@ function isTextSpan(element: LayoutElement): element is TextSpan {
 }
 
 @connect(state => ({page: state.page}))
-export class PageTable extends React.Component<{page?: Page}, {}> {
+export class PageTable extends React.Component<{page?: Page}> {
   render() {
     const {page} = this.props;
     // `containers` represents the paragraphs on the page
@@ -52,7 +52,7 @@ export class PageTable extends React.Component<{page?: Page}, {}> {
   }
 }
 
-class ContainerTree extends React.Component<Container<LayoutElement> & React.Props<any>, {}> {
+class ContainerTree extends React.Component<Container<LayoutElement> & React.Props<any>> {
   render() {
     const {minX, minY, maxX, maxY, elements} = this.props;
     return (
@@ -72,7 +72,7 @@ class ContainerTree extends React.Component<Container<LayoutElement> & React.Pro
 }
 
 @connect(state => ({page: state.page}))
-export class PageTree extends React.Component<{page?: Page}, {}> {
+export class PageTree extends React.Component<{page?: Page}> {
   render() {
     const {page} = this.props;
     // `containers` represents the paragraphs on the page
@@ -88,7 +88,7 @@ export class PageTree extends React.Component<{page?: Page}, {}> {
   }
 }
 
-class BoxLabel extends React.Component<Rectangle, {}> {
+class BoxLabel extends React.Component<Rectangle> {
   render() {
     const {minX, minY, maxX, maxY} = this.props;
     return (
@@ -99,7 +99,7 @@ class BoxLabel extends React.Component<Rectangle, {}> {
   }
 }
 
-class TextSpanBox extends React.Component<TextSpan & React.Props<any>, {}> {
+class TextSpanBox extends React.Component<TextSpan & React.Props<any>> {
   render() {
     const {minX, minY, maxX, maxY, text, fontName, fontSize, fontBold, fontItalic} = this.props;
     // if fontSize is less than 6, set it to 6 (kind of a hack)
@@ -115,7 +115,7 @@ class TextSpanBox extends React.Component<TextSpan & React.Props<any>, {}> {
   static propTypes = TextSpanPropTypes;
 }
 
-class ContainerBox extends React.Component<Container<LayoutElement> & React.Props<any>, {}> {
+class ContainerBox extends React.Component<Container<LayoutElement> & React.Props<any>> {
   render() {
     const {minX, minY, maxX, maxY, elements} = this.props;
     return (
@@ -133,7 +133,7 @@ class ContainerBox extends React.Component<Container<LayoutElement> & React.Prop
 }
 
 @connect(state => ({page: state.page, scale: state.viewConfig.scale}))
-export class PageLayout extends React.Component<{page?: Page, scale?: number}, {}> {
+export class PageLayout extends React.Component<{page?: Page, scale?: number}> {
   render() {
     const {page, scale} = this.props;
     const outerBounds = makeRectangle(page.MediaBox[0], page.MediaBox[1], page.MediaBox[2], page.MediaBox[3]);
@@ -177,7 +177,7 @@ PDFPageLayout just reads the pdf out of the store, renders it to a Layout,
 and sends that layout over the Layout component.
 */
 @connect(state => ({pdf: state.pdf}))
-export default class PDFPage extends React.Component<{pdf: PDF, params?: any} & React.Props<any> & ReduxProps, {}> {
+export default class PDFPage extends React.Component<{pdf: PDF, params?: any} & React.Props<any> & ReduxProps> {
   reloadState(props) {
     const {params, pdf} = props;
     const page_index = parseInt(params.page, 10) - 1;

@@ -10,7 +10,7 @@ import ObjectView from '../components/ObjectView';
 import NumberFormat from '../components/NumberFormat';
 
 @connect(state => ({pdf: state.pdf}))
-export default class Navigator extends React.Component<{params?: any, pdf?: PDF} & React.Props<any> & ReduxProps, {}> {
+export default class Navigator extends React.Component<{params?: any, pdf?: PDF} & React.Props<any> & ReduxProps> {
   reloadState(filename) {
     fetch(`/files/${filename}`)
     .then(response => response.arrayBuffer())

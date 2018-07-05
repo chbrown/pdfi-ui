@@ -8,7 +8,7 @@ import {ReduxProps} from '../models';
 We use 'name' instead of 'key' since 'key' is absorbed by React and not sent to the component.
 */
 @connect(state => ({viewConfig: state.viewConfig}))
-export default class ViewConfigCheckbox extends React.Component<{viewConfig?: any, name: string, label: string} & ReduxProps, {}> {
+export default class ViewConfigCheckbox extends React.Component<{viewConfig?: any, name: string, label: string} & ReduxProps> {
   onChange(ev: React.FormEvent) {
     const {checked} = ev.target as HTMLInputElement;
     const {name} = this.props;

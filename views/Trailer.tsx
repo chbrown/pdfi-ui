@@ -6,7 +6,7 @@ import {PDF} from 'pdfi';
 import ObjectView from '../components/ObjectView';
 
 @connect(state => ({pdf: state.pdf}))
-export default class Trailer extends React.Component<{pdf: PDF}, {}> {
+export default class Trailer extends React.Component<{pdf: PDF}> {
   render() {
     const {pdf} = this.props;
     const {trailer} = pdf;

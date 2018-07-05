@@ -13,7 +13,7 @@ function range(min, max, step, epsilon = 1e-9) {
 }
 
 @connect(state => ({scale: state.viewConfig.scale}))
-export default class Scale extends React.Component<{min?: number, max?: number, step?: number, scale?: number} & ReduxProps, {}> {
+export default class Scale extends React.Component<{min?: number, max?: number, step?: number, scale?: number} & ReduxProps> {
   onChange(ev) {
     const value = parseFloat(ev.target.value);
     this.props.dispatch({type: 'UPDATE_VIEW_CONFIG', key: 'scale', value});

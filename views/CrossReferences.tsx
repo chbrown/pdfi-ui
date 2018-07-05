@@ -6,7 +6,7 @@ import {PDF} from 'pdfi';
 import CrossReferencesTable from '../components/CrossReferences';
 
 @connect(state => ({pdf: state.pdf}))
-export default class PDFCrossReferencesTable extends React.Component<{pdf?: PDF}, {}> {
+export default class PDFCrossReferencesTable extends React.Component<{pdf?: PDF}> {
   render() {
     const {pdf} = this.props;
     return (

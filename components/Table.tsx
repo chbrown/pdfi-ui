@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-class Table extends React.Component<{objects: any[], columns?: string[]}, {}> {
+class Table extends React.Component<{objects: any[], columns?: string[]}> {
   render() {
     let {objects, columns} = this.props;
     if (!columns) {

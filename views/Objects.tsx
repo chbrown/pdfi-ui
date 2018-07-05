@@ -19,7 +19,7 @@ import ObjectView from '../components/ObjectView';
 import Table from '../components/Table';
 
 @connect(state => ({object: state.object}))
-export class ObjectRaw extends React.Component<{object: any}, {}> {
+export class ObjectRaw extends React.Component<{object: any}> {
   render() {
     const {object} = this.props;
     return <ObjectView object={object} />;
@@ -27,7 +27,7 @@ export class ObjectRaw extends React.Component<{object: any}, {}> {
 }
 
 @connect(state => ({pdf: state.pdf, object: state.object}))
-export class ObjectStream extends React.Component<{pdf: PDF, object: any}, {}> {
+export class ObjectStream extends React.Component<{pdf: PDF, object: any}> {
   render() {
     const {pdf, object} = this.props;
     const contentStream = new ContentStream(pdf, object);
@@ -36,7 +36,7 @@ export class ObjectStream extends React.Component<{pdf: PDF, object: any}, {}> {
 }
 
 @connect(state => ({pdf: state.pdf, object: state.object}))
-export class ObjectContentStream extends React.Component<{pdf: PDF, object: any}, {}> {
+export class ObjectContentStream extends React.Component<{pdf: PDF, object: any}> {
   render() {
     const {pdf, object} = this.props;
     const contentStream = new ContentStream(pdf, object);
@@ -47,7 +47,7 @@ export class ObjectContentStream extends React.Component<{pdf: PDF, object: any}
 }
 
 @connect(state => ({pdf: state.pdf, object: state.object}))
-export class ObjectContentStreamLayout extends React.Component<{pdf: PDF, object: any}, {}> {
+export class ObjectContentStreamLayout extends React.Component<{pdf: PDF, object: any}> {
   render() {
     const {pdf, object} = this.props;
     const contentStream = new ContentStream(pdf, object);
@@ -59,7 +59,7 @@ export class ObjectContentStreamLayout extends React.Component<{pdf: PDF, object
 }
 
 @connect(state => ({pdf: state.pdf, object: state.object}))
-export class ObjectCMap extends React.Component<{pdf: PDF, object: any}, {}> {
+export class ObjectCMap extends React.Component<{pdf: PDF, object: any}> {
   render() {
     const {pdf, object} = this.props;
     const contentStream = new ContentStream(pdf, object);
@@ -82,7 +82,7 @@ export class ObjectCMap extends React.Component<{pdf: PDF, object: any}, {}> {
 
 
 // @connect(state => ({pdf: state.pdf, object: state.object}))
-// export class ObjectContentStreamText extends React.Component<{pdf: PDF, object: any}, {}> {
+// export class ObjectContentStreamText extends React.Component<{pdf: PDF, object: any}> {
 //   render() {
 //     const {pdf, object} = this.props;
 //     const contentStream = new ContentStream(pdf, object);
@@ -92,7 +92,7 @@ export class ObjectCMap extends React.Component<{pdf: PDF, object: any}, {}> {
 // }
 
 @connect(state => ({pdf: state.pdf, object: state.object}))
-export class ObjectFont extends React.Component<{pdf: PDF, object: any}, {}> {
+export class ObjectFont extends React.Component<{pdf: PDF, object: any}> {
   render() {
     const {pdf, object} = this.props;
     const FontCtor = pdfiFont.getConstructor(object.Subtype);
@@ -102,7 +102,7 @@ export class ObjectFont extends React.Component<{pdf: PDF, object: any}, {}> {
 }
 
 @connect(state => ({pdf: state.pdf, object: state.object}))
-export class ObjectEncoding extends React.Component<{pdf: PDF, object: any}, {}> {
+export class ObjectEncoding extends React.Component<{pdf: PDF, object: any}> {
   render() {
     const {pdf, object} = this.props;
     const FontCtor = pdfiFont.getConstructor(object.Subtype);
@@ -123,7 +123,7 @@ const modes = [
 ];
 
 @connect(state => ({pdf: state.pdf}))
-export default class PDFObjects extends React.Component<{params?: any} & React.Props<any> & ReduxProps, {}> {
+export default class PDFObjects extends React.Component<{params?: any} & React.Props<any> & ReduxProps> {
   reloadState(props) {
     // this just makes it easier for child components to access the current object
     const {params, pdf} = props;

@@ -39,7 +39,7 @@ const reducer = combineReducers(Object.assign(reducers, {routing: routerReducer}
 const store = createStore(reducer);
 const history = syncHistoryWithStore(browserHistory, store);
 
-class NotFound extends React.Component<{}, {}> {
+class NotFound extends React.Component<{}> {
   render() {
     return (
       <section className="hpad">

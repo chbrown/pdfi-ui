@@ -5,7 +5,7 @@ import {connect} from 'react-redux';
 import {simplify} from 'pdfi';
 
 // @connect(state => ({filename: state.filename})) // doesn't work? (recursive calls are not @connect'ed)
-class NaiveObjectView extends React.Component<{object: any, filename?: string}, {}> {
+class NaiveObjectView extends React.Component<{object: any, filename?: string}> {
   render() {
     let {object, filename} = this.props;
     object = simplify(object);

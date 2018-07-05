@@ -3,7 +3,7 @@ import {browserHistory} from 'react-router';
 import {connect} from 'react-redux';
 
 @connect(state => ({filename: state.filename, files: state.files}))
-export default class FileSelector extends React.Component<{filename?: string, files?: {name: string}[]}, {}> {
+export default class FileSelector extends React.Component<{filename?: string, files?: {name: string}[]}> {
   onChange(ev: React.FormEvent) {
     const {value} = ev.target as HTMLSelectElement;
     // pushState creates an action that the routerStateReducer handles
