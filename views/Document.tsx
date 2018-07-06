@@ -7,6 +7,7 @@ import {PDF} from 'pdfi';
 import {renderLayoutFromPage} from 'pdfi/graphics';
 // import {paperFromContainers} from 'pdfi/graphics/document';
 
+import {ReduxState} from '../models';
 import NumberFormat from '../components/NumberFormat';
 import Paper from '../components/Paper';
 
@@ -40,8 +41,7 @@ const MapView = ({map}) => (
   </table>
 );
 
-@connect(state => ({pdf: state.pdf}))
-export default class PDFDocument extends React.Component<{pdf: PDF}> {
+class PDFDocument extends React.Component<{pdf: PDF}> {
   render() {
     const {pdf} = this.props;
     const pages = pdf.pages;
@@ -112,3 +112,8 @@ export default class PDFDocument extends React.Component<{pdf: PDF}> {
     pdf: PropTypes.any.isRequired,
   };
 }
+
+const mapStateToProps = ({pdf}: ReduxState) => ({pdf});
+const ConnectedPDFDocument = connect(mapStateToProps)(PDFDocument);
+
+export default ConnectedPDFDocument;

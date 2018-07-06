@@ -3,12 +3,11 @@ import * as PropTypes from 'prop-types';
 import {browserHistory} from 'react-router';
 import {connect} from 'react-redux';
 
-import {ReduxProps} from '../models';
-import {assertSuccess, parseContent} from '../util';
+import {ReduxState, ConnectProps} from '../models';
+import {bind, assertSuccess, parseContent} from '../util';
 import FileSelector from './FileSelector';
 
-@connect(state => ({viewConfig: state.viewConfig}))
-export default class Root extends React.Component<{viewConfig: any} & React.Props<any> & ReduxProps, {uploadResult?: string}> {
+class Root extends React.Component<{viewConfig: any} & React.Props<any> & ConnectProps, {uploadResult?: string}> {
   constructor(props) {
     super(props);
     this.state = {uploadResult: ''};
@@ -21,10 +20,11 @@ export default class Root extends React.Component<{viewConfig: any} & React.Prop
     });
     // TODO: handle errors
   }
+  @bind
   onFileChange(ev: React.FormEvent) {
     const el = ev.target as HTMLInputElement;
     // const files = el.multiple ? el.files : el.files[0];
-    const body = new FormData()
+    const body = new FormData();
     Array.from(el.files).forEach(file => {
       body.append('file', file);
     });
@@ -70,7 +70,7 @@ export default class Root extends React.Component<{viewConfig: any} & React.Prop
             <span>
               <b>Add PDF: </b>
               <form ref="form">
-                <input type="file" onChange={this.onFileChange.bind(this)} />
+                <input type="file" onChange={this.onFileChange} />
               </form>
               <i>{uploadResult}</i>
             </span>
@@ -85,3 +85,8 @@ export default class Root extends React.Component<{viewConfig: any} & React.Prop
     children: PropTypes.node,
   };
 }
+
+const mapStateToProps = ({viewConfig}: ReduxState) => ({viewConfig});
+const ConnectedRoot = connect(mapStateToProps)(Root);
+
+export default ConnectedRoot;

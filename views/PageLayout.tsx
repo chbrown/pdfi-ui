@@ -9,7 +9,7 @@ import {Page} from 'pdfi/models';
 import {TextSpan, renderLayoutFromPage} from 'pdfi/graphics';
 import {Rectangle, makeRectangle, Container} from 'pdfi/graphics/geometry';
 
-import {ReduxProps} from '../models';
+import {ReduxState, ConnectProps} from '../models';
 import {px, makeBoundsStyle} from '../graphics';
 import {RectanglePropTypes, ContainerPropTypes, TextSpanPropTypes} from '../propTypes';
 
@@ -26,8 +26,7 @@ function isTextSpan(element: LayoutElement): element is TextSpan {
   return !isContainer(element);
 }
 
-@connect(state => ({page: state.page}))
-export class PageTable extends React.Component<{page?: Page}> {
+class NaivePageTable extends React.Component<{page?: Page}> {
   render() {
     const {page} = this.props;
     // `containers` represents the paragraphs on the page
@@ -52,6 +51,8 @@ export class PageTable extends React.Component<{page?: Page}> {
   }
 }
 
+export const PageTable = connect(({page}: ReduxState) => ({page}))(NaivePageTable);
+
 class ContainerTree extends React.Component<Container<LayoutElement> & React.Props<any>> {
   render() {
     const {minX, minY, maxX, maxY, elements} = this.props;
@@ -71,8 +72,7 @@ class ContainerTree extends React.Component<Container<LayoutElement> & React.Pro
   static propTypes = ContainerPropTypes;
 }
 
-@connect(state => ({page: state.page}))
-export class PageTree extends React.Component<{page?: Page}> {
+class NaivePageTree extends React.Component<{page?: Page}> {
   render() {
     const {page} = this.props;
     // `containers` represents the paragraphs on the page
@@ -87,6 +87,8 @@ export class PageTree extends React.Component<{page?: Page}> {
     );
   }
 }
+
+export const PageTree = connect(({page}: ReduxState) => ({page}))(NaivePageTree);
 
 class BoxLabel extends React.Component<Rectangle> {
   render() {
@@ -132,15 +134,14 @@ class ContainerBox extends React.Component<Container<LayoutElement> & React.Prop
   static propTypes = ContainerPropTypes;
 }
 
-@connect(state => ({page: state.page, scale: state.viewConfig.scale}))
-export class PageLayout extends React.Component<{page?: Page, scale?: number}> {
+class NaivePageLayout extends React.Component<{page?: Page, scale?: number}> {
   render() {
     const {page, scale} = this.props;
     const outerBounds = makeRectangle(page.MediaBox[0], page.MediaBox[1], page.MediaBox[2], page.MediaBox[3]);
     // `containers` represents the paragraphs on the page
     const containers = renderLayoutFromPage(page, false);
 
-    const rootStyle = {
+    const rootStyle: React.CSSProperties = {
       // the browser just can't handle scaling of the container based on the scaled contents,
       // so we have to do some of the math here.
       width: px((outerBounds.maxX - outerBounds.minX) * scale),
@@ -172,12 +173,13 @@ export class PageLayout extends React.Component<{page?: Page, scale?: number}> {
   }
 }
 
+export const PageLayout = connect(({page, viewConfig: {scale}}: ReduxState) => ({page, scale}))(NaivePageLayout);
+
 /**
 PDFPageLayout just reads the pdf out of the store, renders it to a Layout,
 and sends that layout over the Layout component.
 */
-@connect(state => ({pdf: state.pdf}))
-export default class PDFPage extends React.Component<{pdf: PDF, params?: any} & React.Props<any> & ReduxProps> {
+class PDFPage extends React.Component<{pdf: PDF, params?: any} & React.Props<any> & ConnectProps> {
   reloadState(props) {
     const {params, pdf} = props;
     const page_index = parseInt(params.page, 10) - 1;
@@ -210,3 +212,7 @@ export default class PDFPage extends React.Component<{pdf: PDF, params?: any} & 
     pdf: PropTypes.any.isRequired,
   };
 }
+
+const ConnectedPDFPage = connect(({pdf}: ReduxState) => ({pdf}))(PDFPage);
+
+export default ConnectedPDFPage;

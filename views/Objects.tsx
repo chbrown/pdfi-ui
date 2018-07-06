@@ -10,7 +10,7 @@ import {renderLayoutFromContentStream} from 'pdfi/graphics';
 import {PDFBufferIterator} from 'pdfi/parsers';
 import {CONTENT_STREAM, CMAP} from 'pdfi/parsers/states';
 
-import {ReduxProps} from '../models';
+import {ReduxState, ConnectProps} from '../models';
 import ContentStreamOperations from '../components/ContentStream';
 // import ContentStreamText from '../components/ContentStreamText';
 import Encoding from '../components/Encoding';
@@ -18,25 +18,24 @@ import Font from '../components/Font';
 import ObjectView from '../components/ObjectView';
 import Table from '../components/Table';
 
-@connect(state => ({object: state.object}))
-export class ObjectRaw extends React.Component<{object: any}> {
+class NaiveObjectRaw extends React.Component<{object: any}> {
   render() {
     const {object} = this.props;
     return <ObjectView object={object} />;
   }
 }
+export const ObjectRaw = connect(({page}: ReduxState) => ({page}))(NaiveObjectRaw);
 
-@connect(state => ({pdf: state.pdf, object: state.object}))
-export class ObjectStream extends React.Component<{pdf: PDF, object: any}> {
+class NaiveObjectStream extends React.Component<{pdf: PDF, object: any}> {
   render() {
     const {pdf, object} = this.props;
     const contentStream = new ContentStream(pdf, object);
     return <ObjectView object={contentStream.buffer} />;
   }
 }
+export const ObjectStream = connect(({pdf, object}: ReduxState) => ({pdf, object}))(NaiveObjectStream);
 
-@connect(state => ({pdf: state.pdf, object: state.object}))
-export class ObjectContentStream extends React.Component<{pdf: PDF, object: any}> {
+class NaiveObjectContentStream extends React.Component<{pdf: PDF, object: any}> {
   render() {
     const {pdf, object} = this.props;
     const contentStream = new ContentStream(pdf, object);
@@ -45,9 +44,9 @@ export class ObjectContentStream extends React.Component<{pdf: PDF, object: any}
     return <ContentStreamOperations operations={operations} />;
   }
 }
+export const ObjectContentStream = connect(({pdf, object}: ReduxState) => ({pdf, object}))(NaiveObjectContentStream);
 
-@connect(state => ({pdf: state.pdf, object: state.object}))
-export class ObjectContentStreamLayout extends React.Component<{pdf: PDF, object: any}> {
+class NaiveObjectContentStreamLayout extends React.Component<{pdf: PDF, object: any}> {
   render() {
     const {pdf, object} = this.props;
     const contentStream = new ContentStream(pdf, object);
@@ -57,9 +56,9 @@ export class ObjectContentStreamLayout extends React.Component<{pdf: PDF, object
     return <div>Not yet implemented: "content-stream-layout"</div>;
   }
 }
+export const ObjectContentStreamLayout = connect(({pdf, object}: ReduxState) => ({pdf, object}))(NaiveObjectContentStreamLayout);
 
-@connect(state => ({pdf: state.pdf, object: state.object}))
-export class ObjectCMap extends React.Component<{pdf: PDF, object: any}> {
+class NaiveObjectCMap extends React.Component<{pdf: PDF, object: any}> {
   render() {
     const {pdf, object} = this.props;
     const contentStream = new ContentStream(pdf, object);
@@ -79,10 +78,10 @@ export class ObjectCMap extends React.Component<{pdf: PDF, object: any}> {
     );
   }
 }
+export const ObjectCMap = connect(({pdf, object}: ReduxState) => ({pdf, object}))(NaiveObjectCMap);
 
 
-// @connect(state => ({pdf: state.pdf, object: state.object}))
-// export class ObjectContentStreamText extends React.Component<{pdf: PDF, object: any}> {
+// class NaiveObjectContentStreamText extends React.Component<{pdf: PDF, object: any}> {
 //   render() {
 //     const {pdf, object} = this.props;
 //     const contentStream = new ContentStream(pdf, object);
@@ -90,9 +89,9 @@ export class ObjectCMap extends React.Component<{pdf: PDF, object: any}> {
 //     return <ContentStreamText spans={spans} />;
 //   }
 // }
+// export const ObjectContentStreamText = connect(({pdf, object}: ReduxState) => ({pdf, object}))(NaiveObjectContentStreamText);
 
-@connect(state => ({pdf: state.pdf, object: state.object}))
-export class ObjectFont extends React.Component<{pdf: PDF, object: any}> {
+class NaiveObjectFont extends React.Component<{pdf: PDF, object: any}> {
   render() {
     const {pdf, object} = this.props;
     const FontCtor = pdfiFont.getConstructor(object.Subtype);
@@ -100,9 +99,9 @@ export class ObjectFont extends React.Component<{pdf: PDF, object: any}> {
     return <Font font={font} />;
   }
 }
+export const ObjectFont = connect(({pdf, object}: ReduxState) => ({pdf, object}))(NaiveObjectFont);
 
-@connect(state => ({pdf: state.pdf, object: state.object}))
-export class ObjectEncoding extends React.Component<{pdf: PDF, object: any}> {
+class NaiveObjectEncoding extends React.Component<{pdf: PDF, object: any}> {
   render() {
     const {pdf, object} = this.props;
     const FontCtor = pdfiFont.getConstructor(object.Subtype);
@@ -110,6 +109,7 @@ export class ObjectEncoding extends React.Component<{pdf: PDF, object: any}> {
     return <Encoding mapping={font.encoding.mapping} characterByteLength={font.encoding.characterByteLength} />;
   }
 }
+export const ObjectEncoding = connect(({pdf, object}: ReduxState) => ({pdf, object}))(NaiveObjectEncoding);
 
 const modes = [
   'raw',
@@ -122,8 +122,7 @@ const modes = [
   'cmap',
 ];
 
-@connect(state => ({pdf: state.pdf}))
-export default class PDFObjects extends React.Component<{params?: any} & React.Props<any> & ReduxProps> {
+class PDFObjects extends React.Component<{params?: any} & React.Props<any> & ConnectProps> {
   reloadState(props) {
     // this just makes it easier for child components to access the current object
     const {params, pdf} = props;
@@ -155,3 +154,7 @@ export default class PDFObjects extends React.Component<{params?: any} & React.P
     );
   }
 }
+
+const ConnectedPDFObjects = connect(({pdf}: ReduxState) => ({pdf}))(PDFObjects);
+
+export default ConnectedPDFObjects;

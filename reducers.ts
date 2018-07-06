@@ -1,10 +1,21 @@
-interface Action {
-  type: string;
-  pdf?: any;
-  object?: any;
-  filename?: string;
-  key?: string;
-  value?: any;
+import {ViewConfig, Action} from './models';
+
+export function files(files: {name: string}[] = [], action: Action) {
+  switch (action.type) {
+  case 'ADD_FILES':
+    return files.concat(...action.files);
+  default:
+    return files;
+  }
+}
+
+export function filename(filename = '', action: Action) {
+  switch (action.type) {
+  case 'SET_PDF':
+    return action.filename;
+  default:
+    return filename;
+  }
 }
 
 export function pdf(pdf = {}, action: Action) {
@@ -25,28 +36,30 @@ export function object(object = {}, action: Action) {
   }
 }
 
-export function filename(filename = '', action: Action) {
+export function page(page = {}, action: Action) {
   switch (action.type) {
-  case 'SET_PDF':
-    return action.filename;
+  case 'SET_PAGE':
+    return action.page;
   default:
-    return filename;
+    return page;
   }
 }
 
-const initialViewConfig = {
-  scale: 1.0,
+const initialViewConfig: ViewConfig = {
+  scale: 1,
   outlines: true,
   labels: true,
 };
 
-let storedViewConfig = {};
 try {
-  storedViewConfig = JSON.parse(localStorage['viewConfig']);
+  const storedViewConfig = JSON.parse(localStorage['viewConfig']);
+  Object.assign(initialViewConfig, storedViewConfig);
 }
-catch (exc) { }
+catch (exc) {
+  console.info('Could not read viewConfig from localStorage; using defaults');
+}
 
-export function viewConfig(viewConfig = Object.assign(initialViewConfig, storedViewConfig), action: Action) {
+export function viewConfig(viewConfig = initialViewConfig, action: Action) {
   switch (action.type) {
   case 'UPDATE_VIEW_CONFIG':
     const newViewConfig = Object.assign({}, viewConfig, {[action.key]: action.value});

@@ -5,6 +5,7 @@ import {linkPaper, citeRegExp} from 'academia/styles/acl';
 
 import {PDF} from 'pdfi';
 
+import {ReduxState} from '../models';
 import {AuthorPropTypes, ReferencePropTypes} from '../propTypes';
 import Author from '../components/Author';
 
@@ -50,8 +51,7 @@ CitationRow['propTypes'] = {
   reference: PropTypes.shape(ReferencePropTypes), // might be missing if it could not be matched
 };
 
-@connect(state => ({pdf: state.pdf}))
-export default class PDFCitations extends React.Component<{pdf?: PDF}> {
+class PDFCitations extends React.Component<{pdf?: PDF}> {
   render() {
     const {pdf} = this.props;
     const originalPaper = pdf.renderPaper();
@@ -126,3 +126,8 @@ export default class PDFCitations extends React.Component<{pdf?: PDF}> {
     );
   }
 }
+
+const mapStateToProps = ({pdf}: ReduxState) => ({pdf});
+const ConnectedPDFCitations = connect(mapStateToProps)(PDFCitations);
+
+export default ConnectedPDFCitations;

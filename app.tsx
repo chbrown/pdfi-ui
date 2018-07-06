@@ -39,15 +39,11 @@ const reducer = combineReducers(Object.assign(reducers, {routing: routerReducer}
 const store = createStore(reducer);
 const history = syncHistoryWithStore(browserHistory, store);
 
-class NotFound extends React.Component<{}> {
-  render() {
-    return (
-      <section className="hpad">
-        <h2>Route not found!</h2>
-      </section>
-    );
-  }
-}
+const NotFound = () => (
+  <section className="hpad">
+    <h2>Route not found!</h2>
+  </section>
+);
 
 render((
   <Provider store={store}>

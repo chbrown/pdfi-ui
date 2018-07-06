@@ -5,12 +5,11 @@ import {asArray} from 'tarry';
 
 import {PDF} from 'pdfi';
 
-import {ReduxProps, readArrayBufferSync} from '../models';
+import {ReduxState, ConnectProps, readArrayBufferSync} from '../models';
 import ObjectView from '../components/ObjectView';
 import NumberFormat from '../components/NumberFormat';
 
-@connect(state => ({pdf: state.pdf}))
-export default class Navigator extends React.Component<{params?: any, pdf?: PDF} & React.Props<any> & ReduxProps> {
+class Navigator extends React.Component<{params?: any, pdf?: PDF} & React.Props<any> & ConnectProps> {
   reloadState(filename) {
     fetch(`/files/${filename}`)
     .then(response => response.arrayBuffer())
@@ -59,3 +58,8 @@ export default class Navigator extends React.Component<{params?: any, pdf?: PDF}
     );
   }
 }
+
+const mapStateToProps = ({pdf}: ReduxState) => ({pdf});
+const ConnectedNavigator = connect(mapStateToProps)(Navigator);
+
+export default ConnectedNavigator;

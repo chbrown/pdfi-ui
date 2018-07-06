@@ -2,8 +2,11 @@ import * as React from 'react';
 import {browserHistory} from 'react-router';
 import {connect} from 'react-redux';
 
-@connect(state => ({filename: state.filename, files: state.files}))
-export default class FileSelector extends React.Component<{filename?: string, files?: {name: string}[]}> {
+import {ReduxState} from '../models';
+import {bind} from '../util';
+
+class FileSelector extends React.Component<{filename?: string, files?: {name: string}[]}> {
+  @bind
   onChange(ev: React.FormEvent) {
     const {value} = ev.target as HTMLSelectElement;
     // pushState creates an action that the routerStateReducer handles
@@ -19,3 +22,8 @@ export default class FileSelector extends React.Component<{filename?: string, fi
     );
   }
 }
+
+const mapStateToProps = ({filename, files}: ReduxState) => ({filename, files});
+const ConnectedFileSelector = connect(mapStateToProps)(FileSelector);
+
+export default ConnectedFileSelector;

@@ -1,5 +1,30 @@
 import {Source} from 'lexing';
 import {readSourceSync} from 'pdfi';
+import {DispatchProp} from 'react-redux';
+
+export interface ViewConfig {
+  scale: number;
+  outlines: boolean;
+  labels: boolean;
+}
+
+export interface ReduxState {
+  files: {name: string}[];
+  filename: string;
+  pdf: any;
+  object: any;
+  page: any;
+  viewConfig: ViewConfig;
+}
+
+export interface Action extends Partial<ReduxState> {
+  type: string;
+  // viewConfig is not replaced wholesale
+  key?: string;
+  value?: any;
+}
+
+export type ConnectProps = DispatchProp<Action>;
 
 /**
 From lexing/browser.ts

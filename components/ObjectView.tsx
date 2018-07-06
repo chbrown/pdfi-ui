@@ -4,8 +4,9 @@ import {Link} from 'react-router';
 import {connect} from 'react-redux';
 import {simplify} from 'pdfi';
 
-// @connect(state => ({filename: state.filename})) // doesn't work? (recursive calls are not @connect'ed)
-class NaiveObjectView extends React.Component<{object: any, filename?: string}> {
+import {ReduxState, ConnectProps} from '../models';
+
+class ObjectView extends React.Component<{object: any, filename?: string} & ConnectProps> {
   render() {
     let {object, filename} = this.props;
     object = simplify(object);
@@ -23,7 +24,7 @@ class NaiveObjectView extends React.Component<{object: any, filename?: string}> 
       );
     }
     else if (Array.isArray(object)) {
-      const array_children = object.map((child, index) => <ObjectView key={index} object={child} />);
+      const array_children = object.map((child, index) => <ConnectedObjectView key={index} object={child} />);
       return <span className="array">[{array_children}]</span>;
     }
     else if (typeof object === 'object') {
@@ -38,7 +39,7 @@ class NaiveObjectView extends React.Component<{object: any, filename?: string}> 
         return (
           <div key={key}>
             <span className="name">{key}:</span>
-            <ObjectView object={child} />
+            <ConnectedObjectView object={child} />
           </div>
         );
       });
@@ -59,6 +60,7 @@ class NaiveObjectView extends React.Component<{object: any, filename?: string}> 
   };
 }
 
-const ObjectView = connect(state => ({filename: state.filename}))(NaiveObjectView);
+const mapStateToProps = ({filename}: ReduxState) => ({filename});
+const ConnectedObjectView = connect(mapStateToProps)(ObjectView);
 
-export default ObjectView;
+export default ConnectedObjectView;

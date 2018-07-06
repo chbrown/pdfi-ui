@@ -3,10 +3,10 @@ import {connect} from 'react-redux';
 
 import {PDF} from 'pdfi';
 
+import {ReduxState} from '../models';
 import CrossReferencesTable from '../components/CrossReferences';
 
-@connect(state => ({pdf: state.pdf}))
-export default class PDFCrossReferencesTable extends React.Component<{pdf?: PDF}> {
+class PDFCrossReferencesTable extends React.Component<{pdf?: PDF}> {
   render() {
     const {pdf} = this.props;
     return (
@@ -17,3 +17,8 @@ export default class PDFCrossReferencesTable extends React.Component<{pdf?: PDF}
     );
   }
 }
+
+const mapStateToProps = ({pdf}: ReduxState) => ({pdf});
+const ConnectedPDFCrossReferencesTable = connect(mapStateToProps)(PDFCrossReferencesTable);
+
+export default ConnectedPDFCrossReferencesTable;

@@ -3,10 +3,10 @@ import {connect} from 'react-redux';
 import {asArray} from 'tarry';
 import {PDF} from 'pdfi';
 
+import {ReduxState} from '../models';
 import ObjectView from '../components/ObjectView';
 
-@connect(state => ({pdf: state.pdf}))
-export default class Trailer extends React.Component<{pdf: PDF}> {
+class Trailer extends React.Component<{pdf: PDF}> {
   render() {
     const {pdf} = this.props;
     const {trailer} = pdf;
@@ -25,3 +25,8 @@ export default class Trailer extends React.Component<{pdf: PDF}> {
     );
   }
 }
+
+const mapStateToProps = ({pdf}: ReduxState) => ({pdf});
+const ConnectedTrailer = connect(mapStateToProps)(Trailer);
+
+export default ConnectedTrailer;
