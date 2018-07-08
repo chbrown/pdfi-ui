@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as PropTypes from 'prop-types';
-import {Link} from 'react-router';
+import {NavLink} from 'react-router-dom';
 import {connect} from 'react-redux';
 import {simplify} from 'pdfi';
 
@@ -18,9 +18,9 @@ class ObjectView extends React.Component<{object: any, filename?: string} & Conn
     }
     else if (object.object_number !== undefined && object.generation_number !== undefined) {
       return (
-        <Link className="reference" to={`/${filename}/objects/${object.object_number}`}>
+        <NavLink className="reference" to={`/${filename}/objects/${object.object_number}`}>
           {object.object_number}:{object.generation_number}
-        </Link>
+        </NavLink>
       );
     }
     else if (Array.isArray(object)) {

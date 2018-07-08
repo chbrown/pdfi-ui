@@ -1,14 +1,23 @@
 import * as React from 'react';
-import * as PropTypes from 'prop-types';
-import {browserHistory} from 'react-router';
+import {Route, Switch, RouteComponentProps, withRouter} from 'react-router';
 import {connect} from 'react-redux';
+import {push} from 'connected-react-router';
 
-import {ReduxState, ConnectProps} from '../models';
+import {ViewConfig, ReduxState, ConnectProps} from '../models';
 import {bind, assertSuccess, parseContent} from '../util';
 import FileSelector from './FileSelector';
+import Navigator from './Navigator';
 
-class Root extends React.Component<{viewConfig: any} & React.Props<any> & ConnectProps, {uploadResult?: string}> {
-  constructor(props) {
+const NotFound = () => (
+  <section className="hpad">
+    <h2>Route not found!</h2>
+  </section>
+);
+
+type RootProps = {viewConfig: ViewConfig} & ConnectProps & RouteComponentProps<{}>;
+
+class Root extends React.Component<RootProps, {uploadResult?: string}> {
+  constructor(props: RootProps) {
     super(props);
     this.state = {uploadResult: ''};
   }
@@ -36,7 +45,7 @@ class Root extends React.Component<{viewConfig: any} & React.Props<any> & Connec
       const {files} = response.content as {files: {name: string}[]};
       this.props.dispatch({type: 'ADD_FILES', files});
       const [file] = files;
-      browserHistory.push(`/${file.name}`);
+      this.props.dispatch(push(`/${file.name}`));
       return `Uploaded ${files.length} file${files.length > 1 ? 's' : ''}: ${files.map(({name}) => name).join(', ')}`;
     }, response => {
       const {error} = response.content as {error: string};
@@ -52,7 +61,7 @@ class Root extends React.Component<{viewConfig: any} & React.Props<any> & Connec
     });
   }
   render() {
-    const {children, viewConfig} = this.props;
+    const {viewConfig} = this.props;
     const {uploadResult} = this.state;
     const app_className = [
       ...(viewConfig.outlines ? ['viewConfig-outlines'] : []),
@@ -76,17 +85,16 @@ class Root extends React.Component<{viewConfig: any} & React.Props<any> & Connec
             </span>
           </nav>
         </header>
-        {children}
+        <Switch>
+          <Route path="/:name" component={Navigator} />
+          <Route component={NotFound} />
+        </Switch>
       </div>
     );
   }
-  static propTypes: React.ValidationMap<any> = {
-    viewConfig: PropTypes.object.isRequired,
-    children: PropTypes.node,
-  };
 }
 
 const mapStateToProps = ({viewConfig}: ReduxState) => ({viewConfig});
-const ConnectedRoot = connect(mapStateToProps)(Root);
+const ConnectedRoot = withRouter(connect(mapStateToProps)(Root));
 
 export default ConnectedRoot;

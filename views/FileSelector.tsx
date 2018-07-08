@@ -1,16 +1,16 @@
 import * as React from 'react';
-import {browserHistory} from 'react-router';
+import {push} from 'connected-react-router';
 import {connect} from 'react-redux';
 
-import {ReduxState} from '../models';
+import {ReduxState, ConnectProps} from '../models';
 import {bind} from '../util';
 
-class FileSelector extends React.Component<{filename?: string, files?: {name: string}[]}> {
+class FileSelector extends React.Component<{filename?: string, files?: {name: string}[]} & ConnectProps> {
   @bind
   onChange(ev: React.FormEvent) {
     const {value} = ev.target as HTMLSelectElement;
     // pushState creates an action that the routerStateReducer handles
-    browserHistory.push(`/${value}`);
+    this.props.dispatch(push(`/${value}`));
   }
   render() {
     const {filename, files} = this.props;

@@ -1,6 +1,6 @@
 import * as React from 'react';
-import * as PropTypes from 'prop-types';
-import {Link} from 'react-router';
+import {Redirect, Route, Switch, RouteComponentProps, withRouter} from 'react-router';
+import {NavLink} from 'react-router-dom';
 import {connect} from 'react-redux';
 import {flatMap} from 'tarry';
 
@@ -11,7 +11,7 @@ import {Rectangle, makeRectangle, Container} from 'pdfi/graphics/geometry';
 
 import {ReduxState, ConnectProps} from '../models';
 import {px, makeBoundsStyle} from '../graphics';
-import {RectanglePropTypes, ContainerPropTypes, TextSpanPropTypes} from '../propTypes';
+import {ContainerPropTypes, TextSpanPropTypes} from '../propTypes';
 
 import {TextSpanTable} from '../components/TextSpan';
 import ViewConfigScale from '../components/ViewConfigScale';
@@ -53,7 +53,7 @@ class NaivePageTable extends React.Component<{page?: Page}> {
 
 export const PageTable = connect(({page}: ReduxState) => ({page}))(NaivePageTable);
 
-class ContainerTree extends React.Component<Container<LayoutElement> & React.Props<any>> {
+class ContainerTree extends React.Component<Container<LayoutElement>> {
   render() {
     const {minX, minY, maxX, maxY, elements} = this.props;
     return (
@@ -101,7 +101,7 @@ class BoxLabel extends React.Component<Rectangle> {
   }
 }
 
-class TextSpanBox extends React.Component<TextSpan & React.Props<any>> {
+class TextSpanBox extends React.Component<TextSpan> {
   render() {
     const {minX, minY, maxX, maxY, text, fontName, fontSize, fontBold, fontItalic} = this.props;
     // if fontSize is less than 6, set it to 6 (kind of a hack)
@@ -117,7 +117,7 @@ class TextSpanBox extends React.Component<TextSpan & React.Props<any>> {
   static propTypes = TextSpanPropTypes;
 }
 
-class ContainerBox extends React.Component<Container<LayoutElement> & React.Props<any>> {
+class ContainerBox extends React.Component<Container<LayoutElement>> {
   render() {
     const {minX, minY, maxX, maxY, elements} = this.props;
     return (
@@ -175,13 +175,20 @@ class NaivePageLayout extends React.Component<{page?: Page, scale?: number}> {
 
 export const PageLayout = connect(({page, viewConfig: {scale}}: ReduxState) => ({page, scale}))(NaivePageLayout);
 
+interface PDFPageRouteParams {
+  name: string;
+  page: string;
+}
+
+type PDFPageProps = {pdf: PDF} & ConnectProps & RouteComponentProps<PDFPageRouteParams>;
+
 /**
 PDFPageLayout just reads the pdf out of the store, renders it to a Layout,
 and sends that layout over the Layout component.
 */
-class PDFPage extends React.Component<{pdf: PDF, params?: any} & React.Props<any> & ConnectProps> {
-  reloadState(props) {
-    const {params, pdf} = props;
+class PDFPage extends React.Component<PDFPageProps> {
+  reloadState(props: PDFPageProps) {
+    const {match: {params}, pdf} = props;
     const page_index = parseInt(params.page, 10) - 1;
     const page = pdf.pages[page_index];
     this.props.dispatch({type: 'SET_PAGE', page});
@@ -189,30 +196,28 @@ class PDFPage extends React.Component<{pdf: PDF, params?: any} & React.Props<any
   componentWillMount() {
     this.reloadState(this.props);
   }
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.params.page != this.props.params.page) {
-      this.reloadState(nextProps);
-    }
-  }
   render() {
-    const {children, params} = this.props;
+    const {match} = this.props;
+    const {params} = match;
     return (
       <section className="hpad">
         <h2>Page {params.page}</h2>
         <div className="hlinks">
-          <Link to={`/${params.name}/pages/${params.page}/layout`}>layout</Link>
-          <Link to={`/${params.name}/pages/${params.page}/tree`}>tree</Link>
-          <Link to={`/${params.name}/pages/${params.page}/table`}>table</Link>
+          <NavLink to={`${match.url}/layout`}>layout</NavLink>
+          <NavLink to={`${match.url}/tree`}>tree</NavLink>
+          <NavLink to={`${match.url}/table`}>table</NavLink>
         </div>
-        {children}
+        <Switch>
+          <Route path={`${match.path}/layout`} component={PageLayout} />
+          <Route path={`${match.path}/tree`} component={PageTree} />
+          <Route path={`${match.path}/table`} component={PageTable} />
+          <Redirect to={`${match.url}/layout`} />
+        </Switch>
       </section>
     );
   }
-  static propTypes: React.ValidationMap<any> = {
-    pdf: PropTypes.any.isRequired,
-  };
 }
 
-const ConnectedPDFPage = connect(({pdf}: ReduxState) => ({pdf}))(PDFPage);
+const ConnectedPDFPage = withRouter(connect(({pdf}: ReduxState) => ({pdf}))(PDFPage));
 
 export default ConnectedPDFPage;

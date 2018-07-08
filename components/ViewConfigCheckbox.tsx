@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 
 import {ViewConfig, ReduxState, ConnectProps} from '../models';
@@ -30,11 +29,6 @@ class ViewConfigCheckbox extends React.Component<ViewConfigCheckboxProps & Conne
       </label>
     );
   }
-  // static propTypes: React.ValidationMap<any> = {
-  //   viewConfig: PropTypes.any.isRequired,
-  //   name: PropTypes.string.isRequired,
-  //   label: PropTypes.string,
-  // };
 }
 
 const mapStateToProps = ({viewConfig}: ReduxState) => ({viewConfig});

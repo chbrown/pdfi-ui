@@ -1,5 +1,6 @@
 import * as React from 'react';
-import {Link} from 'react-router';
+import {Redirect, Route, Switch, RouteComponentProps, withRouter} from 'react-router';
+import {NavLink} from 'react-router-dom';
 import {connect} from 'react-redux';
 import {BufferIterator} from 'lexing';
 
@@ -24,7 +25,7 @@ class NaiveObjectRaw extends React.Component<{object: any}> {
     return <ObjectView object={object} />;
   }
 }
-export const ObjectRaw = connect(({page}: ReduxState) => ({page}))(NaiveObjectRaw);
+export const ObjectRaw = connect(({object}: ReduxState) => ({object}))(NaiveObjectRaw);
 
 class NaiveObjectStream extends React.Component<{pdf: PDF, object: any}> {
   render() {
@@ -49,11 +50,15 @@ export const ObjectContentStream = connect(({pdf, object}: ReduxState) => ({pdf,
 class NaiveObjectContentStreamLayout extends React.Component<{pdf: PDF, object: any}> {
   render() {
     const {pdf, object} = this.props;
-    const contentStream = new ContentStream(pdf, object);
-    const layout = renderLayoutFromContentStream(contentStream, true);
-    console.log('layout', layout);
+    // const contentStream = new ContentStream(pdf, object);
+    // const layout = renderLayoutFromContentStream(contentStream, true); // currently throws
     // layout has fields: outerBounds, textSpans, containers
-    return <div>Not yet implemented: "content-stream-layout"</div>;
+    return (
+      <div>
+        <h3>Error</h3>
+        <p>NaiveObjectContentStreamLayout is not yet implemented.</p>
+      </div>
+    );
   }
 }
 export const ObjectContentStreamLayout = connect(({pdf, object}: ReduxState) => ({pdf, object}))(NaiveObjectContentStreamLayout);
@@ -80,16 +85,21 @@ class NaiveObjectCMap extends React.Component<{pdf: PDF, object: any}> {
 }
 export const ObjectCMap = connect(({pdf, object}: ReduxState) => ({pdf, object}))(NaiveObjectCMap);
 
-
-// class NaiveObjectContentStreamText extends React.Component<{pdf: PDF, object: any}> {
-//   render() {
-//     const {pdf, object} = this.props;
-//     const contentStream = new ContentStream(pdf, object);
-//     const spans = renderContentStreamText(contentStream);
-//     return <ContentStreamText spans={spans} />;
-//   }
-// }
-// export const ObjectContentStreamText = connect(({pdf, object}: ReduxState) => ({pdf, object}))(NaiveObjectContentStreamText);
+class NaiveObjectContentStreamText extends React.Component<{pdf: PDF, object: any}> {
+  render() {
+    // const {pdf, object} = this.props;
+    // const contentStream = new ContentStream(pdf, object);
+    // const spans = renderContentStreamText(contentStream);
+    // return <ContentStreamText spans={spans} />;
+    return (
+      <div>
+        <h3>Error</h3>
+        <p>NaiveObjectContentStreamText is not yet implemented.</p>
+      </div>
+    );
+  }
+}
+export const ObjectContentStreamText = connect(({pdf, object}: ReduxState) => ({pdf, object}))(NaiveObjectContentStreamText);
 
 class NaiveObjectFont extends React.Component<{pdf: PDF, object: any}> {
   render() {
@@ -122,39 +132,52 @@ const modes = [
   'cmap',
 ];
 
-class PDFObjects extends React.Component<{params?: any} & React.Props<any> & ConnectProps> {
-  reloadState(props) {
+interface PDFObjectsRouteParams {
+  name: string;
+  object_number: string;
+  generation_number: string;
+}
+
+type PDFObjectsProps = {pdf: PDF} & ConnectProps & RouteComponentProps<PDFObjectsRouteParams>;
+
+class PDFObjects extends React.Component<PDFObjectsProps> {
+  reloadState(props: PDFObjectsProps) {
     // this just makes it easier for child components to access the current object
-    const {params, pdf} = props;
+    const {match: {params}, pdf} = props;
     const object_number = parseInt(params.object_number, 10);
-    const generation_number = parseInt(params.generation_number || 0, 10);
+    const generation_number = parseInt(params.generation_number || '0', 10);
     const object = pdf.getObject(object_number, generation_number);
     this.props.dispatch({type: 'SET_OBJECT', object});
   }
   componentWillMount() {
     this.reloadState(this.props);
   }
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.params.object_number != this.props.params.object_number) {
-      this.reloadState(nextProps);
-    }
-  }
   render() {
-    const {children, params} = this.props;
+    const {match} = this.props;
+    const {params} = match;
     return (
       <section className="hpad">
         <h2>Object {params.object_number}:{params.generation_number || 0}</h2>
         <div className="hlinks">
           {modes.map((mode, i) =>
-            <Link key={i} to={`/${params.name}/objects/${params.object_number}/${mode}`}>{mode}</Link>
+            <NavLink key={i} to={`/${params.name}/objects/${params.object_number}/${mode}`}>{mode}</NavLink>
           )}
         </div>
-        {children}
+        <Switch>
+          <Route path={`${match.path}/raw`} component={ObjectRaw} />
+          <Route path={`${match.path}/stream`} component={ObjectStream} />
+          <Route path={`${match.path}/content-stream`} component={ObjectContentStream} />
+          <Route path={`${match.path}/content-stream-layout`} component={ObjectContentStreamLayout} />
+          <Route path={`${match.path}/font`} component={ObjectFont} />
+          <Route path={`${match.path}/encoding`} component={ObjectEncoding} />
+          <Route path={`${match.path}/cmap`} component={ObjectCMap} />
+          <Redirect to={`${match.url}/raw`} />
+        </Switch>
       </section>
     );
   }
 }
 
-const ConnectedPDFObjects = connect(({pdf}: ReduxState) => ({pdf}))(PDFObjects);
+const ConnectedPDFObjects = withRouter(connect(({pdf}: ReduxState) => ({pdf}))(PDFObjects));
 
 export default ConnectedPDFObjects;
