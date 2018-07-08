@@ -4,17 +4,5 @@
     "jsx": "react",
     "module": "commonjs",
     "target": "ES6"
-  },
-  "files": [
-    "node_modules/declarations/lib/buffer.d.ts",
-    "node_modules/declarations/react/react-dom.d.ts",
-    "node_modules/declarations/react/react.d.ts",
-    "node_modules/declarations/react-router/history.d.ts",
-    "node_modules/declarations/react-router/react-router.d.ts",
-    "node_modules/declarations/redux/redux.d.ts",
-    "graphics.ts",
-    "models.ts",
-    "propTypes.ts",
-    "reducers.ts"
-  ]
+  }
 }
