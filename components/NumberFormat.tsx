@@ -10,7 +10,7 @@ const NumberFormat = ({value, digits}: {value: number, digits?: number}) => {
   const formatted = value ? value.toLocaleString(undefined, {maximumFractionDigits: digits}) : '';
   return <span>{formatted}</span>;
 };
-NumberFormat['propTypes'] = {
+NumberFormat.propTypes = {
   value: PropTypes.number,
   digits: PropTypes.number,
 };

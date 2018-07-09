@@ -54,7 +54,7 @@ class Root extends React.Component<RootProps, {uploadResult?: string}> {
     .then(uploadResult => {
       this.setState({uploadResult});
       setTimeout(() => {
-        const form = this.refs['form'] as HTMLFormElement;
+        const form = this.refs.form as HTMLFormElement;
         form.reset();
         this.setState({uploadResult: ''});
       }, 3000);

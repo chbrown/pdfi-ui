@@ -18,8 +18,6 @@ const Font = ({font}) => {
   const defaultStringmap = defaultGlyphmap.map(decodeGlyphname);
   // TODO: handle ToUnicode
 
-  const encoding = font.encoding;
-
   const differences_mapping = expandDifferences(font.Differences || []);
 
   const characters = [];
@@ -29,7 +27,7 @@ const Font = ({font}) => {
       width: Widths[i - FirstChar],
       defaultEncoding: defaultStringmap[i],
       difference: differences_mapping[i],
-      encoding: encoding.mapping[i],
+      encoding: font.encoding.mapping[i],
     });
   }
 
@@ -66,7 +64,7 @@ const Font = ({font}) => {
     </div>
   );
 };
-Font['propTypes'] = {
+Font.propTypes = {
   font: PropTypes.object.isRequired,
 };
 

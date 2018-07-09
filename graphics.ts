@@ -2,7 +2,7 @@ import {CSSProperties} from 'react';
 import {Rectangle} from 'pdfi/graphics/geometry';
 
 export function px(length: number, fractionDigits = 3) {
-  return length.toFixed(fractionDigits) + 'px';
+  return `${length.toFixed(fractionDigits)}px`;
 }
 
 export function makeBoundsStyle({minX, minY, maxX, maxY}: Rectangle): CSSProperties {

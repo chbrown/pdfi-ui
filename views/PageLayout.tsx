@@ -38,8 +38,8 @@ class NaivePageTable extends React.Component<{page?: Page}> {
           // just run with the font properties of the first fragment
           const {fontName, fontSize, fontBold, fontItalic} = wordGroup.elements[0];
           // concat the text and buffer values
-          const buffer = Buffer.concat(wordGroup.elements.map(({buffer}) => buffer));
-          const text = wordGroup.elements.map(({text}) => text).join('');
+          const buffer = Buffer.concat(wordGroup.elements.map(textSpan => textSpan.buffer));
+          const text = wordGroup.elements.map(textSpan => textSpan.text).join('');
           return {minX, minY, maxX, maxY, fontName, fontSize, fontBold, fontItalic, buffer, text}; // : TextSpan
         })
       )
@@ -107,7 +107,7 @@ class TextSpanBox extends React.Component<TextSpan> {
     // if fontSize is less than 6, set it to 6 (kind of a hack)
     const normalized_fontSize = Math.max(fontSize, 6);
     const style  = makeBoundsStyle({minX, minY, maxX, maxY});
-    style.fontSize = normalized_fontSize.toFixed(3) + 'px';
+    style.fontSize = `${normalized_fontSize.toFixed(3)}px`;
     style.fontWeight = fontBold ? 'bold' : 'normal';
     style.fontStyle = fontItalic ? 'italic' : 'normal';
     const digits = 0;

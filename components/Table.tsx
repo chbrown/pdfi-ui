@@ -2,10 +2,8 @@ import * as React from 'react';
 
 class Table extends React.Component<{objects: any[], columns?: string[]}> {
   render() {
-    let {objects, columns} = this.props;
-    if (!columns) {
-      columns = Object.keys(objects[0]);
-    }
+    const {objects} = this.props;
+    const columns = this.props.columns || Object.keys(objects[0]);
     return (
       <table className="fill padded striped lined">
         <thead>

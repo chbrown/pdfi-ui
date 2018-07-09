@@ -8,8 +8,8 @@ import {ReduxState, ConnectProps} from '../models';
 
 class ObjectView extends React.Component<{object: any, filename?: string} & ConnectProps> {
   render() {
-    let {object, filename} = this.props;
-    object = simplify(object);
+    const {filename} = this.props;
+    const object = simplify(this.props.object);
     if (object === undefined) {
       return <i className="undefined">undefined</i>;
     }

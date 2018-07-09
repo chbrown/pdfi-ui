@@ -23,7 +23,7 @@ const ReferenceRow = ({authors, year, title, index}) => {
     </tr>
   );
 };
-ReferenceRow['propTypes'] = ReferencePropTypes;
+ReferenceRow.propTypes = ReferencePropTypes;
 
 const CitationRow = ({reference = null, authors, year, index}) => (
   <tr>
@@ -45,7 +45,7 @@ const CitationRow = ({reference = null, authors, year, index}) => (
     }
   </tr>
 );
-CitationRow['propTypes'] = {
+CitationRow.propTypes = {
   authors: PropTypes.arrayOf(PropTypes.shape(AuthorPropTypes)).isRequired,
   year: PropTypes.string.isRequired,
   reference: PropTypes.shape(ReferencePropTypes), // might be missing if it could not be matched
@@ -60,19 +60,19 @@ class PDFCitations extends React.Component<{pdf?: PDF}> {
 
     const regExp = citeRegExp;
     // replace references
-    function highlightCitations(string) {
+    function highlightCitations(text: string) {
       // reset the regex
       regExp.lastIndex = 0;
       // set up the iteration variables
       const elements = [];
       let previousLastIndex = regExp.lastIndex;
       let match;
-      while ((match = regExp.exec(string)) !== null) {
-        const prefix = string.slice(previousLastIndex, match.index);
+      while ((match = regExp.exec(text)) !== null) {
+        const prefix = text.slice(previousLastIndex, match.index);
         elements.push(prefix, <span className="citation">{match[0]}</span>);
         previousLastIndex = regExp.lastIndex;
       }
-      const postfix = string.slice(previousLastIndex);
+      const postfix = text.slice(previousLastIndex);
       elements.push(postfix);
       return elements;
     }
@@ -84,7 +84,7 @@ class PDFCitations extends React.Component<{pdf?: PDF}> {
           {paper.sections.filter(section => !/References?/.test(section.title)).map((section, i) =>
             <div key={i} className="paper-section">
               <h4>{highlightCitations(section.title)}</h4>
-              {section.paragraphs.map(paragraph => highlightCitations(paragraph))}
+              {section.paragraphs.map(highlightCitations)}
             </div>
           )}
         </section>

@@ -10,14 +10,14 @@ const Operation = ({operator, operands}) => (
     <span><ObjectView object={operands} /></span>
   </div>
 );
-Operation['propTypes'] = OperationPropTypes;
+Operation.propTypes = OperationPropTypes;
 
 const ContentStream = ({operations}) => (
   <section className="hpad">
     {operations.map((operation, i) => <Operation key={i} {...operation} />)}
   </section>
 );
-ContentStream['propTypes'] = {
+ContentStream.propTypes = {
   operations: PropTypes.arrayOf(PropTypes.shape(OperationPropTypes)).isRequired,
 };
 

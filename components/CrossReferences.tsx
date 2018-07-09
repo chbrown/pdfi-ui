@@ -28,7 +28,7 @@ const CrossReferencesTable = ({cross_references}) => (
     </tbody>
   </table>
 );
-CrossReferencesTable['propTypes'] = {
+CrossReferencesTable.propTypes = {
   cross_references: PropTypes.arrayOf(PropTypes.shape(CrossReferencePropTypes)).isRequired,
 };
 export default CrossReferencesTable;

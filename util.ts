@@ -35,9 +35,9 @@ so we use .content instead.
 export function parseContent<R extends Response>(response: R): Promise<R & {content: any}> {
   const contentType = response.headers.get('content-type');
   if (contentType == 'application/json') {
-    return response.json().then(content => Object.assign(response, {content}));
+    return response.json().then(content => ({...response, content}));
   }
   else {
-    return response.text().then(content => Object.assign(response, {content}));
+    return response.text().then(content => ({...response, content}));
   }
 }

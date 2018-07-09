@@ -20,7 +20,7 @@ class ViewConfigScale extends React.Component<{min?: number, max?: number, step?
     this.props.dispatch({type: 'UPDATE_VIEW_CONFIG', key: 'scale', value});
   }
   render() {
-    const {min = 0.1, max = 4.0, step = 0.1, scale} = this.props;
+    const {min = 0.1, max = 4, step = 0.1, scale} = this.props;
     const ticks = range(min, max + step, step);
     return (
       <div>

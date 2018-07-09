@@ -13,7 +13,7 @@ const Encoding = ({mapping, characterByteLength}) => (
     )}
   </div>
 );
-Encoding['propTypes'] = {
+Encoding.propTypes = {
   mapping: PropTypes.array.isRequired,
   characterByteLength: PropTypes.number.isRequired,
 };
