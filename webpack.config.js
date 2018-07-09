@@ -4,7 +4,7 @@ const env = process.env.NODE_ENV || 'development'
 module.exports = {
   mode: env,
   entry: {
-    app: './app',
+    app: ['babel-polyfill', './app'],
   },
   output: {
     path: resolve(__dirname, 'build'),
