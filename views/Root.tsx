@@ -3,8 +3,9 @@ import {Route, Switch, RouteComponentProps, withRouter} from 'react-router'
 import {connect} from 'react-redux'
 import {push} from 'connected-react-router'
 
-import {ViewConfig, ReduxState, ConnectProps} from '../models'
-import {bind, assertSuccess, parseContent} from '../util'
+import {ViewConfig, ReduxState, ConnectProps, readArrayBufferSync} from '../models'
+import * as remote from '../remote'
+import {bind, readArrayBuffer} from '../util'
 import FileSelector from './FileSelector'
 import Navigator from './Navigator'
 
@@ -22,8 +23,7 @@ class Root extends React.Component<RootProps, {uploadResult?: string}> {
     this.state = {uploadResult: ''}
   }
   componentWillMount() {
-    fetch('/files')
-    .then(response => response.json())
+    remote.listFiles()
     .then(files => {
       this.props.dispatch({type: 'ADD_FILES', files})
     })
@@ -32,17 +32,7 @@ class Root extends React.Component<RootProps, {uploadResult?: string}> {
   @bind
   onFileChange(ev: React.FormEvent) {
     const el = ev.target as HTMLInputElement
-    // const files = el.multiple ? el.files : el.files[0]
-    const body = new FormData()
-    Array.from(el.files).forEach(file => {
-      body.append('file', file)
-    })
-    // send to /upload endpoint
-    fetch('/upload', {method: 'PUT', body})
-    .then(parseContent)
-    .then(assertSuccess)
-    .then(response => {
-      const {files} = response.content as {files: {name: string}[]}
+    remote.uploadFiles(el.files).then(files => {
       this.props.dispatch({type: 'ADD_FILES', files})
       const [file] = files
       this.props.dispatch(push(`/${file.name}`))

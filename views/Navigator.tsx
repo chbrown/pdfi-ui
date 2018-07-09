@@ -7,6 +7,7 @@ import {asArray} from 'tarry'
 import {PDF} from 'pdfi'
 
 import {ReduxState, ConnectProps, readArrayBufferSync} from '../models'
+import * as remote from '../remote'
 import ObjectView from '../components/ObjectView'
 import NumberFormat from '../components/NumberFormat'
 import Objects from './Objects'
@@ -20,8 +21,7 @@ type NavigatorProps = {pdf?: PDF} & ConnectProps & RouteComponentProps<{name: st
 
 class Navigator extends React.Component<NavigatorProps> {
   reloadState(filename) {
-    fetch(`/files/${filename}`)
-    .then(response => response.arrayBuffer())
+    remote.readFile(filename)
     .then(arrayBuffer => {
       const pdf = readArrayBufferSync(arrayBuffer, {type: 'pdf'})
       this.props.dispatch({type: 'SET_PDF', pdf, filename})
