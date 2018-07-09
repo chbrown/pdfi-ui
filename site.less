@@ -221,14 +221,31 @@ header {
 // global viewConfig flags
 .viewConfig-outlines {
   .textSpan {
-    outline: 1px solid rgba(200, 100, 100, 0.4); // pink
+    outline: 1px solid rgba(200, 100, 100, 0.3); // pink
+    background-color: rgba(100, 0, 0, 0.1);
   }
   .box {
-    outline: 1px solid rgba(100, 50, 50, 0.9); // brown
+    outline: 1px solid rgba(50, 50, 50, 0.9); // gray
   }
-  .box-shaded {
-    outline: 2px solid rgba(0, 0, 0, 0.5); // gray
-    background-color: rgba(0, 0, 0, 0.1);
+  .container {
+    .box {
+      outline: 3px solid rgba(50, 150, 50, 0.9); // green
+    }
+    & .container {
+      .box {
+        outline: 2px solid rgba(150, 150, 50, 0.9); // orange
+      }
+      & .container {
+        .box {
+          outline: 1px solid rgba(50, 50, 150, 0.9); // purple
+        }
+        & .container {
+          .box {
+            outline: .3px solid rgba(150, 50, 150, 0.9); // electric pink
+          }
+        }
+      }
+    }
   }
 }
 .viewConfig-labels {
