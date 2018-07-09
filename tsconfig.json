@@ -3,6 +3,13 @@
     "experimentalDecorators": true,
     "jsx": "react",
     "module": "commonjs",
-    "target": "ES6"
+    "target": "ES6",
+
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitAny": true,
+    "noImplicitReturns": true,
+    "noImplicitThis": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true
   }
 }
