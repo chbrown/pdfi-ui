@@ -1,6 +1,10 @@
-import {ViewConfig, Action} from './models'
+import {PDF} from 'pdfi'
+import {PDFObject} from 'pdfi/pdfdom'
+import {Page} from 'pdfi/models'
 
-export function files(files: {name: string}[] = [], action: Action) {
+import {FileReference, ViewConfig, Action} from './models'
+
+export function files(files: FileReference[] = [], action: Action) {
   switch (action.type) {
   case 'ADD_FILES':
     return files.concat(...action.files)
@@ -18,7 +22,7 @@ export function filename(filename = '', action: Action) {
   }
 }
 
-export function pdf(pdf = {}, action: Action) {
+export function pdf(pdf: PDF = null, action: Action) {
   switch (action.type) {
   case 'SET_PDF':
     return action.pdf
@@ -27,7 +31,7 @@ export function pdf(pdf = {}, action: Action) {
   }
 }
 
-export function object(object = {}, action: Action) {
+export function object(object: PDFObject = null, action: Action) {
   switch (action.type) {
   case 'SET_OBJECT':
     return action.object
@@ -36,7 +40,7 @@ export function object(object = {}, action: Action) {
   }
 }
 
-export function page(page = {}, action: Action) {
+export function page(page: Page = null, action: Action) {
   switch (action.type) {
   case 'SET_PAGE':
     return action.page
