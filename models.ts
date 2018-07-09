@@ -2,6 +2,10 @@ import {Source} from 'lexing'
 import {readSourceSync} from 'pdfi'
 import {DispatchProp} from 'react-redux'
 
+export interface FileReference {
+  name: string
+}
+
 export interface ViewConfig {
   scale: number
   outlines: boolean
@@ -73,13 +77,3 @@ export function readArrayBufferSync(arrayBuffer: ArrayBuffer,
   const source: Source = new ArrayBufferSource(arrayBuffer)
   return readSourceSync(source, options)
 }
-
-// export function uploadFile(dom_file, callback: (error: Error, file?: File) => void) {
-//   const file = new File(dom_file.name)
-//   const form = new FormData()
-//   form.append('file', dom_file, dom_file.name)
-//   new Request('POST', `${server}/files`).sendData(form, (error, data) => {
-//     assign(file, data)
-//     callback(error, file)
-//   })
-// }
