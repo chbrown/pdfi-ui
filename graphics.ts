@@ -1,8 +1,8 @@
-import {CSSProperties} from 'react';
-import {Rectangle} from 'pdfi/graphics/geometry';
+import {CSSProperties} from 'react'
+import {Rectangle} from 'pdfi/graphics/geometry'
 
 export function px(length: number, fractionDigits = 3) {
-  return `${length.toFixed(fractionDigits)}px`;
+  return `${length.toFixed(fractionDigits)}px`
 }
 
 export function makeBoundsStyle({minX, minY, maxX, maxY}: Rectangle): CSSProperties {
@@ -12,5 +12,5 @@ export function makeBoundsStyle({minX, minY, maxX, maxY}: Rectangle): CSSPropert
     top: px(minY, 3),
     width: px(maxX - minX, 3),
     height: px(maxY - minY, 3),
-  };
+  }
 }

@@ -1,16 +1,16 @@
-import * as React from 'react';
-import {connect} from 'react-redux';
-import {asArray} from 'tarry';
-import {PDF} from 'pdfi';
+import * as React from 'react'
+import {connect} from 'react-redux'
+import {asArray} from 'tarry'
+import {PDF} from 'pdfi'
 
-import {ReduxState} from '../models';
-import ObjectView from '../components/ObjectView';
+import {ReduxState} from '../models'
+import ObjectView from '../components/ObjectView'
 
 class Trailer extends React.Component<{pdf: PDF}> {
   render() {
-    const {pdf} = this.props;
-    const {trailer} = pdf;
-    const trailerObjects = asArray(trailer ? trailer.objects : []);
+    const {pdf} = this.props
+    const {trailer} = pdf
+    const trailerObjects = asArray(trailer ? trailer.objects : [])
     return (
       <section className="hpad">
         <h2>Trailer object sequence</h2>
@@ -22,11 +22,11 @@ class Trailer extends React.Component<{pdf: PDF}> {
           ))}
         </ol>
       </section>
-    );
+    )
   }
 }
 
-const mapStateToProps = ({pdf}: ReduxState) => ({pdf});
-const ConnectedTrailer = connect(mapStateToProps)(Trailer);
+const mapStateToProps = ({pdf}: ReduxState) => ({pdf})
+const ConnectedTrailer = connect(mapStateToProps)(Trailer)
 
-export default ConnectedTrailer;
+export default ConnectedTrailer

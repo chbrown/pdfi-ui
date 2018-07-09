@@ -1,18 +1,12 @@
-import * as React from 'react';
-import * as PropTypes from 'prop-types';
+import * as React from 'react'
+import * as PropTypes from 'prop-types'
+import {CrossReference} from 'pdfi/pdfdom'
 
-import {CrossReferencePropTypes} from '../propTypes';
-import ObjectView from './ObjectView';
-
-interface CrossReference {
-  object_number: number;
-  generation_number: number;
-  offset: number;
-  in_use: boolean;
-}
+import {CrossReferencePropTypes} from '../propTypes'
+import ObjectView from './ObjectView'
 
 interface CrossReferencesTableProps {
-  cross_references: CrossReference[];
+  cross_references: CrossReference[]
 }
 
 const CrossReferencesTable: React.StatelessComponent<CrossReferencesTableProps> = ({cross_references}) => (
@@ -38,8 +32,8 @@ const CrossReferencesTable: React.StatelessComponent<CrossReferencesTableProps> 
       )}
     </tbody>
   </table>
-);
+)
 CrossReferencesTable.propTypes = {
   cross_references: PropTypes.arrayOf(PropTypes.shape(CrossReferencePropTypes)).isRequired,
-};
-export default CrossReferencesTable;
+}
+export default CrossReferencesTable

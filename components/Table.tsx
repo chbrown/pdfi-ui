@@ -1,9 +1,9 @@
-import * as React from 'react';
+import * as React from 'react'
 
 class Table extends React.Component<{objects: any[], columns?: string[]}> {
   render() {
-    const {objects} = this.props;
-    const columns = this.props.columns || Object.keys(objects[0]);
+    const {objects} = this.props
+    const columns = this.props.columns || Object.keys(objects[0])
     return (
       <table className="fill padded striped lined">
         <thead>
@@ -23,8 +23,8 @@ class Table extends React.Component<{objects: any[], columns?: string[]}> {
           )}
         </tbody>
       </table>
-    );
+    )
   }
 }
 
-export default Table;
+export default Table

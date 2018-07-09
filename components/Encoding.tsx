@@ -1,9 +1,9 @@
-import * as React from 'react';
-import * as PropTypes from 'prop-types';
+import * as React from 'react'
+import * as PropTypes from 'prop-types'
 
 interface EncodingProps {
-  mapping: string[];
-  characterByteLength: number;
+  mapping: string[]
+  characterByteLength: number
 }
 
 const Encoding: React.StatelessComponent<EncodingProps> = ({mapping, characterByteLength}) => (
@@ -17,10 +17,10 @@ const Encoding: React.StatelessComponent<EncodingProps> = ({mapping, characterBy
       </div>
     )}
   </div>
-);
+)
 Encoding.propTypes = {
   mapping: PropTypes.array.isRequired,
   characterByteLength: PropTypes.number.isRequired,
-};
+}
 
-export default Encoding;
+export default Encoding

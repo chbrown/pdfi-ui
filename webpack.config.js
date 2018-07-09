@@ -1,5 +1,5 @@
-const {resolve} = require('path');
-const env = process.env.NODE_ENV || 'development';
+const {resolve} = require('path')
+const env = process.env.NODE_ENV || 'development'
 
 module.exports = {
   mode: env,
@@ -35,4 +35,4 @@ module.exports = {
       },
     ],
   },
-};
+}

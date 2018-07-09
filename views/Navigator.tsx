@@ -1,41 +1,41 @@
-import * as React from 'react';
-import {Route, RouteComponentProps, withRouter} from 'react-router';
-import {NavLink} from 'react-router-dom';
-import {connect} from 'react-redux';
-import {asArray} from 'tarry';
+import * as React from 'react'
+import {Route, RouteComponentProps, withRouter} from 'react-router'
+import {NavLink} from 'react-router-dom'
+import {connect} from 'react-redux'
+import {asArray} from 'tarry'
 
-import {PDF} from 'pdfi';
+import {PDF} from 'pdfi'
 
-import {ReduxState, ConnectProps, readArrayBufferSync} from '../models';
-import ObjectView from '../components/ObjectView';
-import NumberFormat from '../components/NumberFormat';
-import Objects from './Objects';
-import Page from './PageLayout';
-import Citations from './Citations';
-import CrossReferences from './CrossReferences';
-import Document from './Document';
-import Trailer from './Trailer';
+import {ReduxState, ConnectProps, readArrayBufferSync} from '../models'
+import ObjectView from '../components/ObjectView'
+import NumberFormat from '../components/NumberFormat'
+import Objects from './Objects'
+import Page from './PageLayout'
+import Citations from './Citations'
+import CrossReferences from './CrossReferences'
+import Document from './Document'
+import Trailer from './Trailer'
 
-type NavigatorProps = {pdf?: PDF} & ConnectProps & RouteComponentProps<{name: string}>;
+type NavigatorProps = {pdf?: PDF} & ConnectProps & RouteComponentProps<{name: string}>
 
 class Navigator extends React.Component<NavigatorProps> {
   reloadState(filename) {
     fetch(`/files/${filename}`)
     .then(response => response.arrayBuffer())
     .then(arrayBuffer => {
-      const pdf = readArrayBufferSync(arrayBuffer, {type: 'pdf'});
-      this.props.dispatch({type: 'SET_PDF', pdf, filename});
-    });
+      const pdf = readArrayBufferSync(arrayBuffer, {type: 'pdf'})
+      this.props.dispatch({type: 'SET_PDF', pdf, filename})
+    })
     // TODO: handle errors
   }
   componentWillMount() {
     // I wish there were a better way for hooking into path changes and loading
     // a PDF into the store/context, but this is the best I can think up.
-    this.reloadState(this.props.match.params.name);
+    this.reloadState(this.props.match.params.name)
   }
   render() {
-    const {match, pdf} = this.props;
-    const {params} = match;
+    const {match, pdf} = this.props
+    const {params} = match
     return (
       <div className="pdf-container">
         <nav className="thumbnails">
@@ -69,11 +69,11 @@ class Navigator extends React.Component<NavigatorProps> {
             <h4 className="hpad">Loading...</h4>
           </article>}
       </div>
-    );
+    )
   }
 }
 
-const mapStateToProps = ({pdf}: ReduxState) => ({pdf});
-const ConnectedNavigator = withRouter(connect(mapStateToProps)(Navigator));
+const mapStateToProps = ({pdf}: ReduxState) => ({pdf})
+const ConnectedNavigator = withRouter(connect(mapStateToProps)(Navigator))
 
-export default ConnectedNavigator;
+export default ConnectedNavigator

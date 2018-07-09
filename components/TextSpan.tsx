@@ -1,10 +1,10 @@
-import * as React from 'react';
-import {TextSpan} from 'pdfi/graphics';
+import * as React from 'react'
+import {TextSpan} from 'pdfi/graphics'
 
 const BufferView = ({buffer, base}) => {
-  const bytes = [];
+  const bytes = []
   for (let i = 0, l = buffer.length; i < l; i++) {
-    bytes.push(buffer[i]);
+    bytes.push(buffer[i])
   }
   return (
     <div className="buffer">
@@ -12,11 +12,11 @@ const BufferView = ({buffer, base}) => {
         <span key={i}>{byte.toString(base)}</span>
       )}
     </div>
-  );
-};
+  )
+}
 
 interface TextSpanTableProps {
-  textSpans: TextSpan[];
+  textSpans: TextSpan[]
 }
 
 export const TextSpanTable: React.StatelessComponent<TextSpanTableProps> = ({textSpans}) => (
@@ -52,4 +52,4 @@ export const TextSpanTable: React.StatelessComponent<TextSpanTableProps> = ({tex
       )}
     </tbody>
   </table>
-);
+)

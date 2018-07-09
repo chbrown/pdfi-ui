@@ -1,14 +1,14 @@
-import * as React from 'react';
-import * as PropTypes from 'prop-types';
-import {connect} from 'react-redux';
-import {Reference, AuthorYearCite} from 'academia/types';
-import {linkPaper, citeRegExp} from 'academia/styles/acl';
+import * as React from 'react'
+import * as PropTypes from 'prop-types'
+import {connect} from 'react-redux'
+import {Reference, AuthorYearCite} from 'academia/types'
+import {linkPaper, citeRegExp} from 'academia/styles/acl'
 
-import {PDF} from 'pdfi';
+import {PDF} from 'pdfi'
 
-import {ReduxState} from '../models';
-import {AuthorPropTypes, ReferencePropTypes} from '../propTypes';
-import Author from '../components/Author';
+import {ReduxState} from '../models'
+import {AuthorPropTypes, ReferencePropTypes} from '../propTypes'
+import Author from '../components/Author'
 
 const ReferenceRow: React.StatelessComponent<Reference & {index: number}> = ({authors, year, title, index}) => {
   return (
@@ -22,9 +22,9 @@ const ReferenceRow: React.StatelessComponent<Reference & {index: number}> = ({au
       <td>{title}</td>
       {/* <td><code style="font-size: 80%">{source}</code></td> */}
     </tr>
-  );
-};
-ReferenceRow.propTypes = ReferencePropTypes;
+  )
+}
+ReferenceRow.propTypes = ReferencePropTypes
 
 const CitationRow: React.StatelessComponent<AuthorYearCite & {reference?: Reference, index: number}> = ({reference = null, authors, year, index}) => (
   <tr>
@@ -45,37 +45,37 @@ const CitationRow: React.StatelessComponent<AuthorYearCite & {reference?: Refere
       <td><i>no reference</i></td>
     }
   </tr>
-);
+)
 CitationRow.propTypes = {
   authors: PropTypes.arrayOf(PropTypes.shape(AuthorPropTypes)).isRequired,
   year: PropTypes.string.isRequired,
   reference: PropTypes.shape(ReferencePropTypes), // might be missing if it could not be matched
-};
+}
 
 class PDFCitations extends React.Component<{pdf?: PDF}> {
   render() {
-    const {pdf} = this.props;
-    const originalPaper = pdf.renderPaper();
+    const {pdf} = this.props
+    const originalPaper = pdf.renderPaper()
     // use linking logic from academia
-    const paper = linkPaper(originalPaper);
+    const paper = linkPaper(originalPaper)
 
-    const regExp = citeRegExp;
+    const regExp = citeRegExp
     // replace references
     function highlightCitations(text: string) {
       // reset the regex
-      regExp.lastIndex = 0;
+      regExp.lastIndex = 0
       // set up the iteration variables
-      const elements = [];
-      let previousLastIndex = regExp.lastIndex;
-      let match;
+      const elements = []
+      let previousLastIndex = regExp.lastIndex
+      let match
       while ((match = regExp.exec(text)) !== null) {
-        const prefix = text.slice(previousLastIndex, match.index);
-        elements.push(prefix, <span className="citation">{match[0]}</span>);
-        previousLastIndex = regExp.lastIndex;
+        const prefix = text.slice(previousLastIndex, match.index)
+        elements.push(prefix, <span className="citation">{match[0]}</span>)
+        previousLastIndex = regExp.lastIndex
       }
-      const postfix = text.slice(previousLastIndex);
-      elements.push(postfix);
-      return elements;
+      const postfix = text.slice(previousLastIndex)
+      elements.push(postfix)
+      return elements
     }
 
     return (
@@ -124,11 +124,11 @@ class PDFCitations extends React.Component<{pdf?: PDF}> {
           </tbody>
         </table>
       </div>
-    );
+    )
   }
 }
 
-const mapStateToProps = ({pdf}: ReduxState) => ({pdf});
-const ConnectedPDFCitations = connect(mapStateToProps)(PDFCitations);
+const mapStateToProps = ({pdf}: ReduxState) => ({pdf})
+const ConnectedPDFCitations = connect(mapStateToProps)(PDFCitations)
 
-export default ConnectedPDFCitations;
+export default ConnectedPDFCitations

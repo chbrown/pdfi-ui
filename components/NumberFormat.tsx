@@ -1,9 +1,9 @@
-import * as React from 'react';
-import * as PropTypes from 'prop-types';
+import * as React from 'react'
+import * as PropTypes from 'prop-types'
 
 interface NumberFormatProps {
-  value: number;
-  digits?: number;
+  value: number
+  digits?: number
 }
 
 /**
@@ -12,12 +12,12 @@ numbers with thousands separators and truncated decimals. The example above
 renders to <span>16,090.001</span>.
 */
 const NumberFormat: React.StatelessComponent<NumberFormatProps> = ({value, digits}) => {
-  const formatted = value ? value.toLocaleString(undefined, {maximumFractionDigits: digits}) : '';
-  return <span>{formatted}</span>;
-};
+  const formatted = value ? value.toLocaleString(undefined, {maximumFractionDigits: digits}) : ''
+  return <span>{formatted}</span>
+}
 NumberFormat.propTypes = {
   value: PropTypes.number,
   digits: PropTypes.number,
-};
+}
 
-export default NumberFormat;
+export default NumberFormat

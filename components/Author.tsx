@@ -1,7 +1,7 @@
-import * as React from 'react';
-import {Name} from 'academia/types';
+import * as React from 'react'
+import {Name} from 'academia/types'
 
-import {AuthorPropTypes} from '../propTypes';
+import {AuthorPropTypes} from '../propTypes'
 
 // TODO: is there a way to avoid the {' '} whitespace?
 const Author: React.StatelessComponent<Name> = ({first, middle, last}) => (
@@ -12,7 +12,7 @@ const Author: React.StatelessComponent<Name> = ({first, middle, last}) => (
     {' '}
     <span title="last">{last}</span>
   </span>
-);
-Author.propTypes = AuthorPropTypes;
+)
+Author.propTypes = AuthorPropTypes
 
-export default Author;
+export default Author

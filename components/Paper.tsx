@@ -1,9 +1,9 @@
-import * as React from 'react';
-import {PaperPropTypes, PaperSectionPropTypes} from '../propTypes';
+import * as React from 'react'
+import {PaperPropTypes, PaperSectionPropTypes} from '../propTypes'
 
 interface PaperSectionProps {
-  title: string;
-  paragraphs: string[];
+  title: string
+  paragraphs: string[]
 }
 
 const PaperSection: React.StatelessComponent<PaperSectionProps> = ({title, paragraphs}) => (
@@ -11,11 +11,11 @@ const PaperSection: React.StatelessComponent<PaperSectionProps> = ({title, parag
     <h4>{title}</h4>
     {paragraphs.map((paragraph, i) => <p key={i}>{paragraph}</p>)}
   </div>
-);
-PaperSection.propTypes = PaperSectionPropTypes;
+)
+PaperSection.propTypes = PaperSectionPropTypes
 
 interface PaperProps {
-  sections: PaperSectionProps[];
+  sections: PaperSectionProps[]
 }
 
 const Paper: React.StatelessComponent<PaperProps> = ({sections}) => (
@@ -27,7 +27,7 @@ const Paper: React.StatelessComponent<PaperProps> = ({sections}) => (
       </div>
     )}
   </div>
-);
-Paper.propTypes = PaperPropTypes;
+)
+Paper.propTypes = PaperPropTypes
 
-export default Paper;
+export default Paper

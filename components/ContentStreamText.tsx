@@ -1,16 +1,16 @@
-import * as React from 'react';
-import * as PropTypes from 'prop-types';
+import * as React from 'react'
+import * as PropTypes from 'prop-types'
 
 interface TextOperation {
-  action: 'showString' | 'advanceTextMatrix';
-  argument: string;
-  fontName?: string;
-  characterByteLength?: number;
-  buffer?: Buffer;
+  action: 'showString' | 'advanceTextMatrix'
+  argument: string
+  fontName?: string
+  characterByteLength?: number
+  buffer?: Buffer
 }
 
 interface ContentStreamTextProps {
-  spans: TextOperation[];
+  spans: TextOperation[]
 }
 
 const ContentStreamText: React.StatelessComponent<ContentStreamTextProps> = ({spans}) => (
@@ -39,9 +39,9 @@ const ContentStreamText: React.StatelessComponent<ContentStreamTextProps> = ({sp
       </tbody>
     </table>
   </section>
-);
+)
 ContentStreamText.propTypes = {
   spans: PropTypes.array.isRequired,
-};
+}
 
-export default ContentStreamText;
+export default ContentStreamText
