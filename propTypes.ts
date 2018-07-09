@@ -1,4 +1,4 @@
-import {ValidationMap, Validator} from 'react';
+import {ValidationMap} from 'react';
 import * as PropTypes from 'prop-types';
 
 export const RectanglePropTypes: ValidationMap<any> = {
