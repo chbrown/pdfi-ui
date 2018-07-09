@@ -5,7 +5,6 @@ import {connect} from 'react-redux';
 
 import {PDF} from 'pdfi';
 import {renderLayoutFromPage} from 'pdfi/graphics';
-// import {paperFromContainers} from 'pdfi/graphics/document';
 
 import {ReduxState} from '../models';
 import NumberFormat from '../components/NumberFormat';
@@ -13,8 +12,8 @@ import Paper from '../components/Paper';
 
 import {TextSpanTable} from '../components/TextSpan';
 
-function counter(iterable) {
-  const counts = new Map();
+function counter<T>(iterable: ArrayLike<T>) {
+  const counts = new Map<T, number>();
   for (let i = 0, l = iterable.length; i < l; i++) {
     const item = iterable[i];
     counts.set(item, (counts.get(item) || 0) + 1);
@@ -46,29 +45,28 @@ class PDFDocument extends React.Component<{pdf: PDF}> {
     const {pdf} = this.props;
     const pages = pdf.pages;
 
-    // const layouts = pages.map((page, i, pages) => {
-    //   console.log(`PDFDocument#render(): rendering page ${i + 1}/${pages.length}`);
-    //   return renderLayoutFromPage(page, false);
-    // });
-    // const containers = flatMap(layouts, layout => layout.containers);
-    const paper = {}; // paperFromContainers(containers);
+    const paper = pdf.renderPaper();
 
-    // const textSpans = flatMap(layouts, layout => layout.elements);
-    // const fontSizes = textSpans.map(textSpan => textSpan.fontSize);
-    const fontSize_quartiles = []; // quantile(fontSizes, 4);
+    const layouts = flatMap(pages, (page, i) => {
+      console.log(`PDFDocument#render(): rendering page ${i + 1}/${pages.length}`);
+      return renderLayoutFromPage(page, false);
+    });
 
-    // const spans = renderSpans(pages);
-    // const fontGroups = groupBy(spans, 'fontName');
-    // const fontCounts = fontGroups.map(spans => {
-    //   const buffers = spans.map(span => span.buffer);
-    //   const buffer = Buffer.concat(buffers);
-    //   const counts = counter(buffer);
-    //   return {
-    //     fontName: spans[0].fontName,
-    //     counts: counts,
-    //   };
-    // });
-    // console.log('fontCounts', fontCounts);
+    const lineContainers = flatMap(layouts, layout => layout.elements);
+    const lines = flatMap(lineContainers, lineContainer => lineContainer.elements);
+    const textSpans = flatMap(lines, line => line.elements);
+    const fontSizes = textSpans.map(textSpan => textSpan.fontSize);
+    const fontSize_quartiles = quantile(fontSizes, 4);
+
+    const fontGroups = groupBy(textSpans, 'fontName');
+    const fontCounts = fontGroups.map(spans => {
+      const {fontName} = spans[0];
+      const buffers = spans.map(span => span.buffer);
+      const buffer = Buffer.concat(buffers);
+      const counts = counter(buffer);
+      return {fontName, counts};
+    });
+    console.log('fontCounts', fontCounts);
 
     return (
       <section className="hpad">
@@ -90,21 +88,17 @@ class PDFDocument extends React.Component<{pdf: PDF}> {
             </tr>
           </tbody>
         </table>
-        {/*
-          <h2>Spans</h2>
-          <SpansTable spans={spans} />
-        */}
+        <h2>Spans</h2>
+        <TextSpanTable textSpans={textSpans} />
         <h2>Codes</h2>
-        {/*fontCounts.map(({fontName, counts}) =>
+        {fontCounts.map(({fontName, counts}) =>
           <div key={fontName}>
             <h3>{fontName}</h3>
             <MapView map={counts} />
           </div>
-        )*/}
-        {/*
-          <h2>Paper</h2>
-          <Paper {...paper} />
-        */}
+        )}
+        <h2>Paper</h2>
+        <Paper {...paper} />
       </section>
     );
   }

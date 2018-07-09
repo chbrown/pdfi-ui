@@ -1,7 +1,12 @@
 import * as React from 'react';
 import {PaperPropTypes, PaperSectionPropTypes} from '../propTypes';
 
-const PaperSection = ({title, paragraphs}) => (
+interface PaperSectionProps {
+  title: string;
+  paragraphs: string[];
+}
+
+const PaperSection: React.StatelessComponent<PaperSectionProps> = ({title, paragraphs}) => (
   <div className="paper-section">
     <h4>{title}</h4>
     {paragraphs.map((paragraph, i) => <p key={i}>{paragraph}</p>)}
@@ -9,7 +14,11 @@ const PaperSection = ({title, paragraphs}) => (
 );
 PaperSection.propTypes = PaperSectionPropTypes;
 
-const Paper = ({sections}) => (
+interface PaperProps {
+  sections: PaperSectionProps[];
+}
+
+const Paper: React.StatelessComponent<PaperProps> = ({sections}) => (
   <div className="paper">
     {sections.map((section, index) =>
       <div key={index} className="hpad section">

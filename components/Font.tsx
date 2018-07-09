@@ -1,15 +1,21 @@
 import * as React from 'react';
 import * as PropTypes from 'prop-types';
 import {Model} from 'pdfi/models';
+import {Font as pdfiFont} from 'pdfi/font';
 import {decodeGlyphname, expandDifferences} from 'pdfi/encoding/index';
 import * as glyphmaps from 'pdfi/encoding/glyphmaps';
 
 import ObjectView from './ObjectView';
 
-const Font = ({font}) => {
+interface FontProps {
+  font: pdfiFont;
+}
+
+const Font: React.StatelessComponent<FontProps> = ({font}) => {
   const FirstChar = font.get('FirstChar');
   const LastChar = font.get('LastChar');
-  const {Name, Type, Subtype} = font.object;
+  const Name = font.FontDescriptor.get('FontName');
+  const {Type, Subtype} = font.toJSON();
   const {BaseEncoding, BaseFont, bold, italic} = font;
   const details = {Name, Type, Subtype, BaseEncoding, BaseFont, bold, italic};
   const Widths = new Model(font._pdf, font.get('Widths')).object;

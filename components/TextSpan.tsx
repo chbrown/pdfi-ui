@@ -15,7 +15,11 @@ const BufferView = ({buffer, base}) => {
   );
 };
 
-export const TextSpanTable = ({textSpans}: {textSpans: TextSpan[]}) => (
+interface TextSpanTableProps {
+  textSpans: TextSpan[];
+}
+
+export const TextSpanTable: React.StatelessComponent<TextSpanTableProps> = ({textSpans}) => (
   <table className="fill padded striped lined">
     <thead>
       <tr>

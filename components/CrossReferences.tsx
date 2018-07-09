@@ -4,7 +4,18 @@ import * as PropTypes from 'prop-types';
 import {CrossReferencePropTypes} from '../propTypes';
 import ObjectView from './ObjectView';
 
-const CrossReferencesTable = ({cross_references}) => (
+interface CrossReference {
+  object_number: number;
+  generation_number: number;
+  offset: number;
+  in_use: boolean;
+}
+
+interface CrossReferencesTableProps {
+  cross_references: CrossReference[];
+}
+
+const CrossReferencesTable: React.StatelessComponent<CrossReferencesTableProps> = ({cross_references}) => (
   <table className="fill padded striped lined">
     <thead>
       <tr>

@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as PropTypes from 'prop-types';
 import {connect} from 'react-redux';
+import {Reference, AuthorYearCite} from 'academia/types';
 import {linkPaper, citeRegExp} from 'academia/styles/acl';
 
 import {PDF} from 'pdfi';
@@ -9,7 +10,7 @@ import {ReduxState} from '../models';
 import {AuthorPropTypes, ReferencePropTypes} from '../propTypes';
 import Author from '../components/Author';
 
-const ReferenceRow = ({authors, year, title, index}) => {
+const ReferenceRow: React.StatelessComponent<Reference & {index: number}> = ({authors, year, title, index}) => {
   return (
     <tr>
       <td><i>{index}</i></td>
@@ -25,7 +26,7 @@ const ReferenceRow = ({authors, year, title, index}) => {
 };
 ReferenceRow.propTypes = ReferencePropTypes;
 
-const CitationRow = ({reference = null, authors, year, index}) => (
+const CitationRow: React.StatelessComponent<AuthorYearCite & {reference?: Reference, index: number}> = ({reference = null, authors, year, index}) => (
   <tr>
     <td><i>{index}</i></td>
     {/* <td><code style="font-size: 80%">{source}</code></td> */}

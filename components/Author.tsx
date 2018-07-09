@@ -1,8 +1,10 @@
 import * as React from 'react';
+import {Name} from 'academia/types';
+
 import {AuthorPropTypes} from '../propTypes';
 
 // TODO: is there a way to avoid the {' '} whitespace?
-const Author = ({first, middle, last}) => (
+const Author: React.StatelessComponent<Name> = ({first, middle, last}) => (
   <span>
     <span title="first">{first}</span>
     {' '}

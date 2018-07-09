@@ -1,7 +1,12 @@
 import * as React from 'react';
 import * as PropTypes from 'prop-types';
 
-const Encoding = ({mapping, characterByteLength}) => (
+interface EncodingProps {
+  mapping: string[];
+  characterByteLength: number;
+}
+
+const Encoding: React.StatelessComponent<EncodingProps> = ({mapping, characterByteLength}) => (
   <div>
     <p>characterByteLength: {characterByteLength}</p>
     <p>highest index: {mapping.length}</p>

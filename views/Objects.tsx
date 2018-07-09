@@ -2,7 +2,6 @@ import * as React from 'react';
 import {Redirect, Route, Switch, RouteComponentProps, withRouter} from 'react-router';
 import {NavLink} from 'react-router-dom';
 import {connect} from 'react-redux';
-import {BufferIterator} from 'lexing';
 
 import {PDF} from 'pdfi';
 import {ContentStream} from 'pdfi/models';
@@ -50,15 +49,15 @@ export const ObjectContentStream = connect(({pdf, object}: ReduxState) => ({pdf,
 class NaiveObjectContentStreamLayout extends React.Component<{pdf: PDF, object: any}> {
   render() {
     const {pdf, object} = this.props;
-    // const contentStream = new ContentStream(pdf, object);
-    // const layout = renderLayoutFromContentStream(contentStream, true); // currently throws
-    // layout has fields: outerBounds, textSpans, containers
     return (
       <div>
         <h3>Error</h3>
         <p>NaiveObjectContentStreamLayout is not yet implemented.</p>
       </div>
     );
+    const contentStream = new ContentStream(pdf, object);
+    const layout = renderLayoutFromContentStream(contentStream, true); // currently throws
+    // layout has fields: outerBounds, textSpans, containers
   }
 }
 export const ObjectContentStreamLayout = connect(({pdf, object}: ReduxState) => ({pdf, object}))(NaiveObjectContentStreamLayout);
