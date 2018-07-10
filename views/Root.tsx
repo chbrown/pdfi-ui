@@ -18,7 +18,6 @@ const NotFound = () => (
 type RootProps = {viewConfig: ViewConfig} & ConnectProps & RouteComponentProps<{}>
 
 class Root extends React.Component<RootProps, {uploadResult?: string}> {
-  private formRef = React.createRef<HTMLFormElement>()
   constructor(props: RootProps) {
     super(props)
     this.state = {uploadResult: ''}
@@ -45,8 +44,7 @@ class Root extends React.Component<RootProps, {uploadResult?: string}> {
     .then(uploadResult => {
       this.setState({uploadResult})
       setTimeout(() => {
-        const form = this.formRef.current as HTMLFormElement
-        form.reset()
+        el.form.reset()
         this.setState({uploadResult: ''})
       }, 3000)
     })
@@ -69,7 +67,7 @@ class Root extends React.Component<RootProps, {uploadResult?: string}> {
             </span>
             <span>
               <b>Add PDF: </b>
-              <form ref={this.formRef}>
+              <form>
                 <input type="file" onChange={this.onFileChange} />
               </form>
               <i>{uploadResult}</i>
