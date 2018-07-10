@@ -26,7 +26,6 @@ class Trailer extends React.Component<{pdf: PDF}> {
   }
 }
 
-const mapStateToProps = ({pdf}: ReduxState) => ({pdf})
-const ConnectedTrailer = connect(mapStateToProps)(Trailer)
+const ConnectedTrailer = connect(({pdf}: ReduxState) => ({pdf}))(Trailer)
 
 export default ConnectedTrailer

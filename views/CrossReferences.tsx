@@ -18,7 +18,6 @@ class PDFCrossReferencesTable extends React.Component<{pdf?: PDF}> {
   }
 }
 
-const mapStateToProps = ({pdf}: ReduxState) => ({pdf})
-const ConnectedPDFCrossReferencesTable = connect(mapStateToProps)(PDFCrossReferencesTable)
+const ConnectedPDFCrossReferencesTable = connect(({pdf}: ReduxState) => ({pdf}))(PDFCrossReferencesTable)
 
 export default ConnectedPDFCrossReferencesTable

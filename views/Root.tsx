@@ -83,7 +83,6 @@ class Root extends React.Component<RootProps, {uploadResult?: string}> {
   }
 }
 
-const mapStateToProps = ({viewConfig}: ReduxState) => ({viewConfig})
-const ConnectedRoot = withRouter(connect(mapStateToProps)(Root))
+const ConnectedRoot = withRouter(connect(({viewConfig}: ReduxState) => ({viewConfig}))(Root))
 
 export default ConnectedRoot

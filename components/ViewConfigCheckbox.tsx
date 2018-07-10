@@ -31,7 +31,6 @@ class ViewConfigCheckbox extends React.Component<ViewConfigCheckboxProps & Conne
   }
 }
 
-const mapStateToProps = ({viewConfig}: ReduxState) => ({viewConfig})
-const ConnectedViewConfigCheckbox = connect(mapStateToProps)(ViewConfigCheckbox)
+const ConnectedViewConfigCheckbox = connect(({viewConfig}: ReduxState) => ({viewConfig}))(ViewConfigCheckbox)
 
 export default ConnectedViewConfigCheckbox

@@ -128,7 +128,6 @@ class PDFCitations extends React.Component<{pdf?: PDF}> {
   }
 }
 
-const mapStateToProps = ({pdf}: ReduxState) => ({pdf})
-const ConnectedPDFCitations = connect(mapStateToProps)(PDFCitations)
+const ConnectedPDFCitations = connect(({pdf}: ReduxState) => ({pdf}))(PDFCitations)
 
 export default ConnectedPDFCitations

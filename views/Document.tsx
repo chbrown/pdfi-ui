@@ -111,7 +111,6 @@ class PDFDocument extends React.Component<{pdf: PDF}> {
   }
 }
 
-const mapStateToProps = ({pdf}: ReduxState) => ({pdf})
-const ConnectedPDFDocument = connect(mapStateToProps)(PDFDocument)
+const ConnectedPDFDocument = connect(({pdf}: ReduxState) => ({pdf}))(PDFDocument)
 
 export default ConnectedPDFDocument

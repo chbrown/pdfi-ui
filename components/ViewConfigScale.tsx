@@ -42,7 +42,6 @@ class ViewConfigScale extends React.Component<{min?: number, max?: number, step?
   }
 }
 
-const mapStateToProps = ({viewConfig: {scale}}: ReduxState) => ({scale})
-const ConnectedViewConfigScale = connect(mapStateToProps)(ViewConfigScale)
+const ConnectedViewConfigScale = connect(({viewConfig: {scale}}: ReduxState) => ({scale}))(ViewConfigScale)
 
 export default ConnectedViewConfigScale

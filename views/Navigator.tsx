@@ -73,7 +73,6 @@ class Navigator extends React.Component<NavigatorProps> {
   }
 }
 
-const mapStateToProps = ({pdf}: ReduxState) => ({pdf})
-const ConnectedNavigator = withRouter(connect(mapStateToProps)(Navigator))
+const ConnectedNavigator = withRouter(connect(({pdf, viewConfig}: ReduxState) => ({pdf, viewConfig}))(Navigator))
 
 export default ConnectedNavigator
