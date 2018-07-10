@@ -27,6 +27,12 @@ async function readResponse(response: Response): Promise<any> {
     return response.json()
   case 'application/pdf':
     return response.arrayBuffer()
+  case 'text/html':
+    return response.text().then(html => {
+      const doc = new DOMParser().parseFromString(html, 'text/html')
+      const body = doc.querySelector('body')
+      return body.textContent.trim()
+    })
   default:
     return response.text()
   }
