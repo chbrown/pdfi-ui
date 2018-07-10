@@ -46,23 +46,22 @@ async function parseContent<R extends Response>(response: R): Promise<R & {conte
   return readResponse(response).then(content => Object.assign(response, {content}))
 }
 
+export class ResponseError extends Error {
+  constructor(public response: Response & {content?: any}) {
+    super(`HTTP ${response.status}: ${response.content}`)
+  }
+}
+
 /**
 Check that a fetch() Response has a successful status code and turn it into a
 rejected Promise if not.
 */
 async function assertSuccess<R extends Response>(response: R): Promise<R> {
   if (response.status < 200 || response.status > 299) {
-    // let error = new Error()
-    // error['response'] = response
-    return Promise.reject<R>(response)
+    const error = new ResponseError(response)
+    return Promise.reject(error)
   }
   return Promise.resolve(response)
-}
-
-export class ResponseError extends Error {
-  constructor(public response: Response & {content: any}) {
-    super(`HTTP ${response.status}: ${response.content}`)
-  }
 }
 
 /**
@@ -80,8 +79,6 @@ export async function uploadFiles(files: ArrayLike<File>,
   .then(assertSuccess)
   .then(response => {
     return response.content.files as RemoteFile[]
-  }, response => {
-    throw new ResponseError(response)
   })
 }
 
@@ -92,8 +89,6 @@ export async function listFiles(url = '/files'): Promise<RemoteFile[]> {
   .then(({content}) => {
     const entries = content as IndexEntry[]
     return entries.filter(isRemoteFile)
-  }, response => {
-    throw new ResponseError(response)
   })
 }
 
@@ -104,7 +99,5 @@ export async function readFile(name: string,
   .then(assertSuccess)
   .then(({content}) => {
     return content as ArrayBuffer
-  }, response => {
-    throw new ResponseError(response)
   })
 }
