@@ -2,16 +2,7 @@ import {PDF} from 'pdfi'
 import {PDFObject} from 'pdfi/pdfdom'
 import {Page} from 'pdfi/models'
 
-import {FileReference, ViewConfig, AddFilesAction, SetPDFAction, SetObjectAction, SetPageAction, UpdateViewConfigAction} from './models'
-
-export function files(files: FileReference[] = [], action: AddFilesAction) {
-  switch (action.type) {
-  case 'ADD_FILES':
-    return files.concat(...action.files)
-  default:
-    return files
-  }
-}
+import {ViewConfig, SetPDFAction, SetObjectAction, SetPageAction, UpdateViewConfigAction} from './models'
 
 export function pdf(pdf: PDF = null, action: SetPDFAction) {
   switch (action.type) {

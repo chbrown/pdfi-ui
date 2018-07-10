@@ -1,13 +1,43 @@
-import {FileReference} from './models'
+interface RemoteShared {
+  name: string
+  mtime: string
+}
+export interface RemoteFile extends RemoteShared {
+  type: 'file'
+  size: number
+}
+export interface RemoteDirectory extends RemoteShared {
+  type: 'directory'
+}
+
+/**
+The nginx settings,
+  autoindex on
+  autoindex_format json
+returns JSON objects like this.
+*/
+export type IndexEntry = RemoteFile | RemoteDirectory
+function isRemoteFile(entry: IndexEntry): entry is RemoteFile {
+  return entry.type == 'file'
+}
+
+async function readResponse(response: Response): Promise<any> {
+  switch (response.headers.get('content-type')) {
+  case 'application/json':
+    return response.json()
+  case 'application/pdf':
+    return response.arrayBuffer()
+  default:
+    return response.text()
+  }
+}
 
 /**
 We can't write the .body property of a Response because it's a read-only getter,
 so we use .content instead.
 */
 async function parseContent<R extends Response>(response: R): Promise<R & {content: any}> {
-  const contentType = response.headers.get('content-type')
-  const contentPromise = (contentType == 'application/json') ? response.json() : response.text()
-  return contentPromise.then(content => Object.assign(response, {content}))
+  return readResponse(response).then(content => Object.assign(response, {content}))
 }
 
 /**
@@ -16,18 +46,24 @@ rejected Promise if not.
 */
 async function assertSuccess<R extends Response>(response: R): Promise<R> {
   if (response.status < 200 || response.status > 299) {
-    // let error = new Error(`HTTP ${response.status}`)
+    // let error = new Error()
     // error['response'] = response
     return Promise.reject<R>(response)
   }
   return Promise.resolve(response)
 }
 
+export class ResponseError extends Error {
+  constructor(public response: Response & {content: any}) {
+    super(`HTTP ${response.status}: ${response.content}`)
+  }
+}
+
 /**
 Upload a FileList to a remote store.
 */
 export async function uploadFiles(files: ArrayLike<File>,
-                                  url = '/upload'): Promise<FileReference[]> {
+                                  url = '/upload'): Promise<RemoteFile[]> {
   const body = new FormData()
   Array.from(files).forEach(file => {
     body.append('file', file)
@@ -37,17 +73,32 @@ export async function uploadFiles(files: ArrayLike<File>,
   .then(parseContent)
   .then(assertSuccess)
   .then(response => {
-    return response.content.files as FileReference[]
+    return response.content.files as RemoteFile[]
+  }, response => {
+    throw new ResponseError(response)
   })
 }
 
-export async function listFiles(url = '/files'): Promise<FileReference[]> {
+export async function listFiles(url = '/files'): Promise<RemoteFile[]> {
   return fetch(url)
-  .then(async response => response.json())
+  .then(parseContent)
+  .then(assertSuccess)
+  .then(({content}) => {
+    const entries = content as IndexEntry[]
+    return entries.filter(isRemoteFile)
+  }, response => {
+    throw new ResponseError(response)
+  })
 }
 
 export async function readFile(name: string,
                                url = '/files'): Promise<ArrayBuffer> {
   return fetch(`${url}/${name}`)
-  .then(async response => response.arrayBuffer())
+  .then(parseContent)
+  .then(assertSuccess)
+  .then(({content}) => {
+    return content as ArrayBuffer
+  }, response => {
+    throw new ResponseError(response)
+  })
 }

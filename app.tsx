@@ -4,11 +4,14 @@ import {render} from 'react-dom'
 import {createBrowserHistory} from 'history'
 import {applyMiddleware, combineReducers, compose, createStore, Middleware} from 'redux'
 import {Provider} from 'react-redux'
+import {Route, Switch} from 'react-router'
 import {connectRouter, routerMiddleware, ConnectedRouter} from 'connected-react-router'
 
 import * as reducers from './reducers'
 
-import Root from './views/Root'
+import BrowserFile from './views/BrowserFile'
+import RemoteFiles from './views/RemoteFiles'
+import Navigator from './views/Navigator'
 
 import './site.less'
 
@@ -39,10 +42,29 @@ const store = createStore(
   )
 )
 
+const NotFound = () => (
+  <section className="hpad">
+    <h2>Route not found!</h2>
+  </section>
+)
+
 render((
   <Provider store={store}>
     <ConnectedRouter history={browserHistory}>
-      <Root />
+      <div>
+        <header>
+          <nav>
+            {/* provide optional match.params.name to RemoteFiles
+                for setting current value of select dropdown */}
+            <Route path="/:name?" component={RemoteFiles} />
+            <BrowserFile />
+          </nav>
+        </header>
+        <Switch>
+          <Route path="/:name" component={Navigator} />
+          <Route component={NotFound} />
+        </Switch>
+      </div>
     </ConnectedRouter>
   </Provider>
 ), document.getElementById('app'))

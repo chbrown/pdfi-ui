@@ -6,10 +6,6 @@ import {PDF, readSourceSync} from 'pdfi'
 import {PDFObject} from 'pdfi/pdfdom'
 import {Page} from 'pdfi/models'
 
-export interface FileReference {
-  name: string
-}
-
 export interface ViewConfig {
   scale: number
   outlines: boolean
@@ -17,21 +13,18 @@ export interface ViewConfig {
 }
 
 export interface ReduxState {
-  files: {name: string}[]
-  pdf: any
-  object: any
-  page: any
+  pdf: PDF
+  object: PDFObject
+  page: Page
   viewConfig: ViewConfig
 }
 
-export type AddFilesAction = Action<'ADD_FILES'> & { files: FileReference[] }
 export type SetPDFAction = Action<'SET_PDF'> & { pdf: PDF }
 export type SetObjectAction = Action<'SET_OBJECT'> & { object: PDFObject }
 export type SetPageAction = Action<'SET_PAGE'> & { page: Page }
-export type UpdateViewConfigAction = Action<'UPDATE_VIEW_CONFIG'> & { key: string, value: any }
+export type UpdateViewConfigAction = Action<'UPDATE_VIEW_CONFIG'> & { key: string, value: number | boolean }
 
-export type ActionUnion = AddFilesAction  |
-                          SetPDFAction |
+export type ActionUnion = SetPDFAction |
                           SetObjectAction |
                           SetPageAction |
                           UpdateViewConfigAction

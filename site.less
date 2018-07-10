@@ -15,14 +15,8 @@ table {
 h1, h2, h3, h4, h5, h6 {
   margin: 1ex 0;
 }
-div, section, nav, main, textarea, input, span {
+div, section, header, nav, main, textarea, input, span {
   box-sizing: border-box;
-}
-section {
-  margin-top: 5px;
-  margin-bottom: 5px;
-  padding-top: 5px;
-  padding-bottom: 5px;
 }
 .vpad {
   padding-top: 10px;
@@ -104,17 +98,25 @@ form {
 // }
 
 header {
+  // the position:fixed styling must apply to a child element
+  // since the :after placeholder is effectively within the header element's formatting box
   & > nav {
     position: fixed;
+    z-index: 1000;
+
     left: 0;
     right: 0;
-    z-index: 1000;
     padding: 2px;
+
     background: linear-gradient(to bottom, #EEE, #CCC);
     border-bottom: 1px solid #AAA;
+
     font-size: 80%;
-    & > span {
-      margin: 0 20px 0 2px;
+    & > section {
+      display: inline-block;
+      & > span {
+        margin: 0 20px 0 2px;
+      }
     }
   }
   &:after {
@@ -130,7 +132,7 @@ header {
   nav.thumbnails {
     // the thumbnails panel must be fixed that that it can scroll independent of the content to the right
     position: fixed;
-    top: 23px; // should equal the height of header > nav; there's not really a better way to do this
+    top: 23px; // should equal the height of header; there's not really a better way to do this
     bottom: 0;
     width: 240px;
     padding: 0 5px;
@@ -150,6 +152,12 @@ header {
   }
   article {
     margin-left: 240px;
+  }
+  section {
+    margin-top: 5px;
+    margin-bottom: 5px;
+    padding-top: 5px;
+    padding-bottom: 5px;
   }
 }
 

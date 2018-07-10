@@ -14,3 +14,14 @@ export function bind<T extends Function>(target: object,
     },
   }
 }
+
+export async function readArrayBuffer<T extends Blob>(blob: T): Promise<T & {arrayBuffer: ArrayBuffer}> {
+  const fileReader = new FileReader()
+  return new Promise<T & {arrayBuffer: ArrayBuffer}>((resolve, reject) => {
+    fileReader.onerror = reject
+    fileReader.onload = () => {
+      resolve(Object.assign(blob, {arrayBuffer: fileReader.result}))
+    }
+    fileReader.readAsArrayBuffer(blob)
+  })
+}
