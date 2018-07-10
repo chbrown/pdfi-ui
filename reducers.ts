@@ -2,9 +2,9 @@ import {PDF} from 'pdfi'
 import {PDFObject} from 'pdfi/pdfdom'
 import {Page} from 'pdfi/models'
 
-import {FileReference, ViewConfig, Action} from './models'
+import {FileReference, ViewConfig, AddFilesAction, SetPDFAction, SetObjectAction, SetPageAction, UpdateViewConfigAction} from './models'
 
-export function files(files: FileReference[] = [], action: Action) {
+export function files(files: FileReference[] = [], action: AddFilesAction) {
   switch (action.type) {
   case 'ADD_FILES':
     return files.concat(...action.files)
@@ -13,16 +13,7 @@ export function files(files: FileReference[] = [], action: Action) {
   }
 }
 
-export function filename(filename = '', action: Action) {
-  switch (action.type) {
-  case 'SET_PDF':
-    return action.filename
-  default:
-    return filename
-  }
-}
-
-export function pdf(pdf: PDF = null, action: Action) {
+export function pdf(pdf: PDF = null, action: SetPDFAction) {
   switch (action.type) {
   case 'SET_PDF':
     return action.pdf
@@ -31,7 +22,7 @@ export function pdf(pdf: PDF = null, action: Action) {
   }
 }
 
-export function object(object: PDFObject = null, action: Action) {
+export function object(object: PDFObject = null, action: SetObjectAction) {
   switch (action.type) {
   case 'SET_OBJECT':
     return action.object
@@ -40,7 +31,7 @@ export function object(object: PDFObject = null, action: Action) {
   }
 }
 
-export function page(page: Page = null, action: Action) {
+export function page(page: Page = null, action: SetPageAction) {
   switch (action.type) {
   case 'SET_PAGE':
     return action.page
@@ -63,7 +54,7 @@ catch (exc) {
   console.info('Could not read viewConfig from localStorage... using defaults')
 }
 
-export function viewConfig(viewConfig = initialViewConfig, action: Action) {
+export function viewConfig(viewConfig = initialViewConfig, action: UpdateViewConfigAction) {
   switch (action.type) {
   case 'UPDATE_VIEW_CONFIG':
     const newViewConfig = {...viewConfig, [action.key]: action.value}

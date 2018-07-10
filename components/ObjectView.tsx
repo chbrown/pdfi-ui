@@ -1,13 +1,13 @@
 import * as React from 'react'
-import {NavLink} from 'react-router-dom'
-import {connect} from 'react-redux'
+import {RouteComponentProps, withRouter} from 'react-router'
+import {Link} from 'react-router-dom'
 import {simplify} from 'pdfi'
 
-import {ReduxState, ConnectProps} from '../models'
+type ObjectViewProps = {object: any} & RouteComponentProps<{name: string}>
 
-class ObjectView extends React.Component<{object: any, filename?: string} & ConnectProps> {
+class ObjectView extends React.Component<ObjectViewProps> {
   render(): React.ReactNode {
-    const {filename} = this.props
+    const {name} = this.props.match.params
     const object = simplify(this.props.object)
     if (object === undefined) {
       return <i className="undefined">undefined</i>
@@ -17,9 +17,9 @@ class ObjectView extends React.Component<{object: any, filename?: string} & Conn
     }
     else if (object.object_number !== undefined && object.generation_number !== undefined) {
       return (
-        <NavLink className="reference" to={`/${filename}/objects/${object.object_number}`}>
+        <Link className="reference" to={`/${name}/objects/${object.object_number}`}>
           {object.object_number}:{object.generation_number}
-        </NavLink>
+        </Link>
       )
     }
     else if (Array.isArray(object)) {
@@ -55,7 +55,6 @@ class ObjectView extends React.Component<{object: any, filename?: string} & Conn
   }
 }
 
-const mapStateToProps = ({filename}: ReduxState) => ({filename})
-const ConnectedObjectView = connect(mapStateToProps)(ObjectView)
+const ConnectedObjectView = withRouter(ObjectView)
 
 export default ConnectedObjectView

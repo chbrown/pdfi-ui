@@ -1,11 +1,14 @@
 import * as React from 'react'
+import {RouteComponentProps, withRouter} from 'react-router'
 import {push} from 'connected-react-router'
 import {connect} from 'react-redux'
 
 import {ReduxState, ConnectProps} from '../models'
 import {bind} from '../util'
 
-class FileSelector extends React.Component<{filename?: string, files?: {name: string}[]} & ConnectProps> {
+type FileSelectorProps = {files?: {name: string}[]} & ConnectProps & RouteComponentProps<{name: string}>
+
+class FileSelector extends React.Component<FileSelectorProps> {
   @bind
   onChange(ev: React.FormEvent) {
     const {value} = ev.target as HTMLSelectElement
@@ -13,9 +16,10 @@ class FileSelector extends React.Component<{filename?: string, files?: {name: st
     this.props.dispatch(push(`/${value}`))
   }
   render() {
-    const {filename, files} = this.props
+    const {files} = this.props
+    const {name} = this.props.match.params
     return (
-      <select onChange={this.onChange} value={filename}>
+      <select onChange={this.onChange} value={name}>
         <option value="">-- none selected --</option>
         {files.map(file => <option key={file.name} value={file.name}>{file.name}</option>)}
       </select>
@@ -23,7 +27,6 @@ class FileSelector extends React.Component<{filename?: string, files?: {name: st
   }
 }
 
-const mapStateToProps = ({filename, files}: ReduxState) => ({filename, files})
-const ConnectedFileSelector = connect(mapStateToProps)(FileSelector)
+const ConnectedFileSelector = withRouter(connect(({files}: ReduxState) => ({files}))(FileSelector))
 
 export default ConnectedFileSelector
