@@ -54,7 +54,7 @@ class NaivePageTable extends React.Component<{page?: Page}> {
 export const PageTable = connect(({page}: ReduxState) => ({page}))(NaivePageTable)
 
 class ContainerTree extends React.Component<Container<LayoutElement>> {
-  render() {
+  render(): React.ReactNode {
     const {minX, minY, maxX, maxY, elements} = this.props
     return (
       <fieldset className="container">
@@ -118,7 +118,7 @@ class TextSpanBox extends React.Component<TextSpan> {
 }
 
 class ContainerBox extends React.Component<Container<LayoutElement>> {
-  render() {
+  render(): React.ReactNode {
     const {minX, minY, maxX, maxY, elements} = this.props
     return (
       <div className="container">

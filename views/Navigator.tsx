@@ -20,7 +20,7 @@ import Trailer from './Trailer'
 type NavigatorProps = {pdf?: PDF} & ConnectProps & RouteComponentProps<{name: string}>
 
 class Navigator extends React.Component<NavigatorProps> {
-  reloadState(filename) {
+  reloadState(filename: string) {
     remote.readFile(filename)
     .then(arrayBuffer => {
       const pdf = readArrayBufferSync(arrayBuffer, {type: 'pdf'})

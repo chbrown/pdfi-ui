@@ -1,5 +1,4 @@
 import * as React from 'react'
-import * as PropTypes from 'prop-types'
 import {NavLink} from 'react-router-dom'
 import {connect} from 'react-redux'
 import {simplify} from 'pdfi'
@@ -7,7 +6,7 @@ import {simplify} from 'pdfi'
 import {ReduxState, ConnectProps} from '../models'
 
 class ObjectView extends React.Component<{object: any, filename?: string} & ConnectProps> {
-  render() {
+  render(): React.ReactNode {
     const {filename} = this.props
     const object = simplify(this.props.object)
     if (object === undefined) {
@@ -53,10 +52,6 @@ class ObjectView extends React.Component<{object: any, filename?: string} & Conn
     }
     // catch-all
     return <span className="string">{object.toString()}</span>
-  }
-  static propTypes: React.ValidationMap<any> = {
-    // object shouldn't be required
-    object: PropTypes.any,
   }
 }
 

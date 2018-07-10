@@ -56,7 +56,8 @@ class NaiveObjectContentStreamLayout extends React.Component<{pdf: PDF, object: 
       </div>
     )
     const contentStream = new ContentStream(pdf, object)
-    const layout = renderLayoutFromContentStream(contentStream, true) // currently throws
+    // const layout =
+    renderLayoutFromContentStream(contentStream, true) // currently throws
     // layout has fields: outerBounds, textSpans, containers
   }
 }

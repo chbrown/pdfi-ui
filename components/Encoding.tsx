@@ -1,19 +1,16 @@
 import * as React from 'react'
 import * as PropTypes from 'prop-types'
+import {Encoding as pdfiEncoding} from 'pdfi/encoding'
 
-interface EncodingProps {
-  mapping: string[]
-  characterByteLength: number
-}
 
-const Encoding: React.StatelessComponent<EncodingProps> = ({mapping, characterByteLength}) => (
+const Encoding: React.StatelessComponent<pdfiEncoding> = ({mapping, characterByteLength}) => (
   <div>
     <p>characterByteLength: {characterByteLength}</p>
     <p>highest index: {mapping.length}</p>
-    {Object.keys(mapping).filter(key => mapping[key] !== null).map(key =>
-      <div key={key} className="key-row">
-        <span className="right">{key}</span>
-        <span>{mapping[key] || 'null'}</span>
+    {mapping.filter(value => value !== null).map((value, index) =>
+      <div key={index} className="key-row">
+        <span className="right">{index}</span>
+        <span>{value || 'null'}</span>
       </div>
     )}
   </div>

@@ -5,7 +5,7 @@ import {connect} from 'react-redux'
 import {ReduxState, ConnectProps} from '../models'
 import {bind} from '../util'
 
-function range(min, max, step, epsilon = 1e-9) {
+function range(min: number, max: number, step: number, epsilon = 1e-9) {
   const xs = []
   for (let x = min; x < (max - epsilon); x += step) {
     xs.push(x)
@@ -15,8 +15,9 @@ function range(min, max, step, epsilon = 1e-9) {
 
 class ViewConfigScale extends React.Component<{min?: number, max?: number, step?: number, scale?: number} & ConnectProps> {
   @bind
-  onChange(ev) {
-    const value = parseFloat(ev.target.value)
+  onChange(ev: React.FormEvent) {
+    const el = ev.target as HTMLInputElement
+    const value = parseFloat(el.value)
     this.props.dispatch({type: 'UPDATE_VIEW_CONFIG', key: 'scale', value})
   }
   render() {

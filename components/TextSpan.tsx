@@ -1,7 +1,12 @@
 import * as React from 'react'
 import {TextSpan} from 'pdfi/graphics'
 
-const BufferView = ({buffer, base}) => {
+interface BufferViewProps {
+  buffer: Buffer
+  base: number
+}
+
+const BufferView: React.StatelessComponent<BufferViewProps> = ({buffer, base}) => {
   const bytes = []
   for (let i = 0, l = buffer.length; i < l; i++) {
     bytes.push(buffer[i])

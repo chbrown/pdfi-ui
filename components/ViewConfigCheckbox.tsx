@@ -6,7 +6,7 @@ import {bind} from '../util'
 
 export interface ViewConfigCheckboxProps {
   viewConfig: ViewConfig
-  name: string
+  name: 'outlines' | 'labels' // keyof ViewConfig
   label: string
 }
 

@@ -3,9 +3,9 @@ import {Route, Switch, RouteComponentProps, withRouter} from 'react-router'
 import {connect} from 'react-redux'
 import {push} from 'connected-react-router'
 
-import {ViewConfig, ReduxState, ConnectProps, readArrayBufferSync} from '../models'
+import {ViewConfig, ReduxState, ConnectProps} from '../models'
 import * as remote from '../remote'
-import {bind, readArrayBuffer} from '../util'
+import {bind} from '../util'
 import FileSelector from './FileSelector'
 import Navigator from './Navigator'
 

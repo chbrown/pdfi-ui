@@ -21,7 +21,11 @@ function counter<T>(iterable: ArrayLike<T>) {
   return counts
 }
 
-const MapView = ({map}) => (
+interface MapViewProps<K, V> {
+  map: Map<K, V>
+}
+
+const MapView: React.StatelessComponent<MapViewProps<any, any>> = ({map}) => (
   <table className="fill padded striped lined">
     <thead>
       <tr>

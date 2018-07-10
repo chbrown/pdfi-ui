@@ -2,7 +2,7 @@ import * as React from 'react'
 import {render} from 'react-dom'
 
 import {createBrowserHistory} from 'history'
-import {applyMiddleware, combineReducers, compose, createStore} from 'redux'
+import {applyMiddleware, combineReducers, compose, createStore, Middleware} from 'redux'
 import {Provider} from 'react-redux'
 import {connectRouter, routerMiddleware, ConnectedRouter} from 'connected-react-router'
 
@@ -15,7 +15,7 @@ import './site.less'
 import {setLoggerLevel} from 'pdfi'
 setLoggerLevel(20)
 
-function loggerMiddleware({getState}) {
+const loggerMiddleware: Middleware = ({getState}) => {
   return next => action => {
     console.info('will dispatch', action)
     // Call the next dispatch method in the middleware chain.
