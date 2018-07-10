@@ -1,4 +1,4 @@
-export function bind<T extends Function>(target: Object,
+export function bind<T extends Function>(target: object,
                                          propertyKey: string | symbol,
                                          descriptor: TypedPropertyDescriptor<T>): TypedPropertyDescriptor<T> | void {
   return {
