@@ -20,7 +20,7 @@ const Font: React.StatelessComponent<FontProps> = ({font}) => {
   const details = {Name, Type, Subtype, BaseEncoding, BaseFont, bold, italic}
   const Widths = new Model(font._pdf, font.get('Widths')).object
 
-  const defaultGlyphmap = glyphmaps[BaseEncoding] || glyphmaps.StandardEncoding
+  const defaultGlyphmap = (glyphmaps as {[index: string]: string[]})[BaseEncoding] || glyphmaps.StandardEncoding
   const defaultStringmap = defaultGlyphmap.map(decodeGlyphname)
   // TODO: handle ToUnicode
 
