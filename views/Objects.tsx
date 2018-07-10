@@ -23,103 +23,85 @@ interface ObjectProps {
   object: PDFObject
 }
 
-class ObjectRaw extends React.Component<ObjectProps> {
-  render() {
-    const {object} = this.props
-    return <ObjectView object={object} />
-  }
-}
+const ObjectRaw: React.StatelessComponent<ObjectProps> = ({object}) => (
+  <ObjectView object={object} />
+)
 
 interface ObjectWithPDFProps extends ObjectProps {
   pdf: PDF
 }
 
-class ObjectStream extends React.Component<ObjectWithPDFProps> {
-  render() {
-    const {pdf, object} = this.props
-    const contentStream = new ContentStream(pdf, object)
-    return <ObjectView object={contentStream.buffer} />
-  }
+const ObjectStream: React.StatelessComponent<ObjectWithPDFProps> = ({pdf, object}) => (
+  <ObjectView object={new ContentStream(pdf, object).buffer} />
+)
+
+const ObjectContentStream: React.StatelessComponent<ObjectWithPDFProps> = ({pdf, object}) => {
+  const contentStream = new ContentStream(pdf, object)
+  const stream_buffer_iterable = new PDFBufferIterator(contentStream.buffer, 0, pdf)
+  const operations = new CONTENT_STREAM(stream_buffer_iterable, 'binary', 1024).read()
+  return <ContentStreamOperations operations={operations} />
 }
 
-class ObjectContentStream extends React.Component<ObjectWithPDFProps> {
-  render() {
-    const {pdf, object} = this.props
-    const contentStream = new ContentStream(pdf, object)
-    const stream_buffer_iterable = new PDFBufferIterator(contentStream.buffer, 0, pdf)
-    const operations = new CONTENT_STREAM(stream_buffer_iterable, 'binary', 1024).read()
-    return <ContentStreamOperations operations={operations} />
-  }
+const ObjectContentStreamLayout: React.StatelessComponent<ObjectWithPDFProps> = ({pdf, object}) => {
+  return (
+    <div>
+      <h3>Error</h3>
+      <p>ObjectContentStreamLayout is not yet implemented.</p>
+    </div>
+  )
+  const contentStream = new ContentStream(pdf, object)
+  // const layout =
+  renderLayoutFromContentStream(contentStream, true) // currently throws
+  // layout has fields: outerBounds, textSpans, containers
 }
 
-class ObjectContentStreamLayout extends React.Component<ObjectWithPDFProps> {
-  render() {
-    const {pdf, object} = this.props
-    return (
-      <div>
-        <h3>Error</h3>
-        <p>NaiveObjectContentStreamLayout is not yet implemented.</p>
-      </div>
-    )
-    const contentStream = new ContentStream(pdf, object)
-    // const layout =
-    renderLayoutFromContentStream(contentStream, true) // currently throws
-    // layout has fields: outerBounds, textSpans, containers
-  }
+const ObjectCMap: React.StatelessComponent<ObjectWithPDFProps> = ({pdf, object}) => {
+  const contentStream = new ContentStream(pdf, object)
+  const bufferIterable = new PDFBufferIterator(contentStream.buffer, 0, pdf)
+  const cMap = new CMAP(bufferIterable, 'binary', 1024).read()
+  const {codeSpaceRanges, mappings, byteLength} = cMap
+  return (
+    <div>
+      <h2>CMap byteLength={byteLength}</h2>
+
+      <h2>codeSpaceRanges</h2>
+      <Table objects={codeSpaceRanges} columns={['low', 'high']} />
+
+      <h2>mappings</h2>
+      <Table objects={mappings} columns={['src', 'dst', 'byteLength']} />
+    </div>
+  )
 }
 
-class ObjectCMap extends React.Component<ObjectWithPDFProps> {
-  render() {
-    const {pdf, object} = this.props
-    const contentStream = new ContentStream(pdf, object)
-    const bufferIterable = new PDFBufferIterator(contentStream.buffer, 0, pdf)
-    const cMap = new CMAP(bufferIterable, 'binary', 1024).read()
-    const {codeSpaceRanges, mappings, byteLength} = cMap
-    return (
-      <div>
-        <h2>CMap byteLength={byteLength}</h2>
-
-        <h2>codeSpaceRanges</h2>
-        <Table objects={codeSpaceRanges} columns={['low', 'high']} />
-
-        <h2>mappings</h2>
-        <Table objects={mappings} columns={['src', 'dst', 'byteLength']} />
-      </div>
-    )
-  }
+const ObjectContentStreamText: React.StatelessComponent<ObjectWithPDFProps> = ({pdf, object}) => {
+  const contentStream = new ContentStream(pdf, object)
+  // const spans = renderContentStreamText(contentStream)
+  // return <ContentStreamText spans={spans} />
+  return (
+    <div>
+      <h3>Error</h3>
+      <p>ObjectContentStreamText is not yet implemented.</p>
+      <ObjectView object={contentStream.buffer} />
+    </div>
+  )
 }
 
-class ObjectContentStreamText extends React.Component<ObjectWithPDFProps> {
-  render() {
-    // const {pdf, object} = this.props
-    // const contentStream = new ContentStream(pdf, object)
-    // const spans = renderContentStreamText(contentStream)
-    // return <ContentStreamText spans={spans} />
-    return (
-      <div>
-        <h3>Error</h3>
-        <p>NaiveObjectContentStreamText is not yet implemented.</p>
-      </div>
-    )
+const ObjectFont: React.StatelessComponent<ObjectWithPDFProps> = ({pdf, object}) => {
+  if (!pdfiFont.isFont(object)) {
+    throw new Error('Cannot load object as Font')
   }
+  const FontCtor = pdfiFont.getConstructor(object.Subtype)
+  const font = new FontCtor(pdf, object)
+  return <Font font={font} />
 }
 
-class ObjectFont extends React.Component<ObjectWithPDFProps> {
-  render() {
-    const {pdf, object} = this.props
-    const FontCtor = pdfiFont.getConstructor(object.Subtype)
-    const font = new FontCtor(pdf, object)
-    return <Font font={font} />
+const ObjectEncoding: React.StatelessComponent<ObjectWithPDFProps> = ({pdf, object}) => {
+  if (!pdfiFont.isFont(object)) {
+    throw new Error('Cannot load object as Font')
   }
-}
-
-class ObjectEncoding extends React.Component<ObjectWithPDFProps> {
-  render() {
-    const {pdf, object} = this.props
-    const FontCtor = pdfiFont.getConstructor(object.Subtype)
-    const font = new FontCtor(pdf, object)
-    return <Encoding mapping={font.encoding.mapping} characterByteLength={font.encoding.characterByteLength} />
-  }
+  const FontCtor = pdfiFont.getConstructor(object.Subtype)
+  const font = new FontCtor(pdf, object)
+  return <Encoding {...font.encoding} />
 }
 
 const modes = [
@@ -141,7 +123,10 @@ interface PDFObjectsRouteParams {
 
 type PDFObjectsProps = {pdf: PDF} & ConnectProps & RouteComponentProps<PDFObjectsRouteParams>
 
-type PDFObjectsState = {object?: PDFObject}
+interface PDFObjectsState {
+  object?: PDFObject
+  error?: Error
+}
 
 class PDFObjects extends React.Component<PDFObjectsProps, PDFObjectsState> {
   state: PDFObjectsState = {}
@@ -152,10 +137,14 @@ class PDFObjects extends React.Component<PDFObjectsProps, PDFObjectsState> {
     const object = pdf.getObject(object_number, generation_number)
     return {object}
   }
+  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+    console.error('PDFObjects#componentDidCatch', error, errorInfo)
+    this.setState({error});
+  }
   render() {
     const {match, pdf} = this.props
     const {params} = match
-    const {object} = this.state
+    const {object, error} = this.state
     return (
       <section className="hpad">
         <h2>Object {params.object_number}:{params.generation_number || 0}</h2>
@@ -164,30 +153,38 @@ class PDFObjects extends React.Component<PDFObjectsProps, PDFObjectsState> {
             <NavLink key={i} to={`/${params.name}/objects/${params.object_number}/${mode}`}>{mode}</NavLink>
           )}
         </div>
-        <Switch>
-          <Route path={`${match.path}/raw`}>
-            <ObjectRaw object={object} />
-          </Route>
-          <Route path={`${match.path}/stream`}>
-            <ObjectStream object={object} pdf={pdf} />
-          </Route>
-          <Route path={`${match.path}/content-stream`}>
-            <ObjectContentStream object={object} pdf={pdf} />
-          </Route>
-          <Route path={`${match.path}/content-stream-layout`}>
-            <ObjectContentStreamLayout object={object} pdf={pdf} />
-          </Route>
-          <Route path={`${match.path}/font`}>
-            <ObjectFont object={object} pdf={pdf} />
-          </Route>
-          <Route path={`${match.path}/encoding`}>
-            <ObjectEncoding object={object} pdf={pdf} />
-          </Route>
-          <Route path={`${match.path}/cmap`}>
-            <ObjectCMap object={object} pdf={pdf} />
-          </Route>
-          <Redirect to={`${match.url}/raw`} />
-        </Switch>
+        {error ?
+          <div>
+            <h4>Error:</h4>
+            <p>{error.toString()}</p>
+          </div> :
+          <Switch>
+            <Route path={`${match.path}/raw`}>
+              <ObjectRaw object={object} />
+            </Route>
+            <Route path={`${match.path}/stream`}>
+              <ObjectStream object={object} pdf={pdf} />
+            </Route>
+            <Route path={`${match.path}/content-stream`}>
+              <ObjectContentStream object={object} pdf={pdf} />
+            </Route>
+            <Route path={`${match.path}/content-stream-layout`}>
+              <ObjectContentStreamLayout object={object} pdf={pdf} />
+            </Route>
+            <Route path={`${match.path}/content-stream-text`}>
+              <ObjectContentStreamText object={object} pdf={pdf} />
+            </Route>
+            <Route path={`${match.path}/font`}>
+              <ObjectFont object={object} pdf={pdf} />
+            </Route>
+            <Route path={`${match.path}/encoding`}>
+              <ObjectEncoding object={object} pdf={pdf} />
+            </Route>
+            <Route path={`${match.path}/cmap`}>
+              <ObjectCMap object={object} pdf={pdf} />
+            </Route>
+            <Redirect to={`${match.url}/raw`} />
+          </Switch>}
       </section>
     )
   }
