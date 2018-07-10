@@ -2,7 +2,24 @@ import {PDF} from 'pdfi'
 import {PDFObject} from 'pdfi/pdfdom'
 import {Page} from 'pdfi/models'
 
-import {ViewConfig, SetPDFAction, SetObjectAction, SetPageAction, UpdateViewConfigAction} from './models'
+import {LogLevel, LogEntry, ViewConfig, LogAction, SetPDFAction, SetObjectAction, SetPageAction, UpdateViewConfigAction} from './models'
+
+export function log(log: LogEntry[] = [], action: LogAction) {
+  switch (action.type) {
+  case 'LOG':
+    if ('error' in action) {
+      const {message} = action.error
+      const newEntry = {message, ...action.error, level: LogLevel.error, created: new Date()}
+      return log.concat(newEntry)
+    }
+    else {
+      const newEntry = {level: LogLevel.info, ...action, created: new Date()}
+      return log.concat(newEntry)
+    }
+  default:
+    return log
+  }
+}
 
 export function pdf(pdf: PDF = null, action: SetPDFAction) {
   switch (action.type) {

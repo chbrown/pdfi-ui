@@ -12,6 +12,7 @@ import * as reducers from './reducers'
 import BrowserFile from './views/BrowserFile'
 import RemoteFiles from './views/RemoteFiles'
 import Navigator from './views/Navigator'
+import Log from './views/Log'
 
 import './site.less'
 
@@ -64,6 +65,7 @@ render((
           <Route path="/:name" component={Navigator} />
           <Route component={NotFound} />
         </Switch>
+        <Log />
       </div>
     </ConnectedRouter>
   </Provider>

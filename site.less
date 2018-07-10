@@ -77,25 +77,51 @@ form {
   display: inline;
 }
 
-// .flash {
-//   position: fixed;
-//   left: 0;
-//   right: 0;
-//   text-align: center;
-//   pointer-events: none; // "none" allows click through to elements underneath
-//   z-index: 10000;
-//   span {
-//     display: inline-block;
-//     background-color: rgba(0, 0, 0, 75%);
-//     color: white;
-//     padding: 5px 8px;
-//     margin: 3px 6px;
-//     border-radius: 3px;
-//     white-space: pre-wrap;
-//     text-align: left;
-//     pointer-events: auto; // allow selecting the text of the flash message
-//   }
-// }
+.log {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 25%;
+  pointer-events: none; // "none" allows click through to elements underneath
+  z-index: 10000;
+  & > article {
+    position: relative;
+    padding: 5px 8px;
+    margin: 3px 6px;
+    border-radius: 3px;
+    white-space: pre-wrap;
+    text-align: left;
+    pointer-events: auto; // allow selecting the text of the log message
+
+    & > h4 {
+      text-transform: capitalize;
+    }
+    & > time {
+      font-size: 80%;
+    }
+
+    background-color: none;
+    color: black;
+    &.debug {
+      // defaults
+      border: 1px solid rgba(127, 127, 127, 50%);
+    }
+    &.info {
+      background-color: rgba(127, 127, 127, 75%);
+    }
+    &.warning {
+      background-color: rgba(127, 127, 0, 75%);
+    }
+    &.error {
+      background-color: rgba(127, 0, 0, 90%);
+      color: white;
+    }
+    &.critical {
+      background-color: rgba(63, 0, 0, 90%);
+      color: white;
+    }
+  }
+}
 
 header {
   // the position:fixed styling must apply to a child element

@@ -12,19 +12,36 @@ export interface ViewConfig {
   labels: boolean
 }
 
+export enum LogLevel {
+  debug = 10,
+  info = 20,
+  warning = 30,
+  error = 40,
+  critical = 50,
+}
+
+export interface LogEntry {
+  message: string
+  level: LogLevel
+  created: Date
+}
+
 export interface ReduxState {
+  log: LogEntry[]
   pdf: PDF
   object: PDFObject
   page: Page
   viewConfig: ViewConfig
 }
 
+export type LogAction = Action<'LOG'> & ({ message: string, level?: LogLevel } | { error: Error })
 export type SetPDFAction = Action<'SET_PDF'> & { pdf: PDF }
 export type SetObjectAction = Action<'SET_OBJECT'> & { object: PDFObject }
 export type SetPageAction = Action<'SET_PAGE'> & { page: Page }
 export type UpdateViewConfigAction = Action<'UPDATE_VIEW_CONFIG'> & { key: string, value: number | boolean }
 
-export type ActionUnion = SetPDFAction |
+export type ActionUnion = LogAction  |
+                          SetPDFAction |
                           SetObjectAction |
                           SetPageAction |
                           UpdateViewConfigAction
