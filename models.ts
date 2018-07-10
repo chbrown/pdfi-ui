@@ -3,7 +3,6 @@ import {Action} from 'redux'
 import {DispatchProp} from 'react-redux'
 
 import {PDF, readSourceSync} from 'pdfi'
-import {PDFObject} from 'pdfi/pdfdom'
 import {Page} from 'pdfi/models'
 
 export interface ViewConfig {
@@ -29,20 +28,17 @@ export interface LogEntry {
 export interface ReduxState {
   log: LogEntry[]
   pdf: PDF
-  object: PDFObject
   page: Page
   viewConfig: ViewConfig
 }
 
 export type LogAction = Action<'LOG'> & ({ message: string, level?: LogLevel } | { error: Error })
 export type SetPDFAction = Action<'SET_PDF'> & { pdf: PDF }
-export type SetObjectAction = Action<'SET_OBJECT'> & { object: PDFObject }
 export type SetPageAction = Action<'SET_PAGE'> & { page: Page }
 export type UpdateViewConfigAction = Action<'UPDATE_VIEW_CONFIG'> & { key: string, value: number | boolean }
 
 export type ActionUnion = LogAction  |
                           SetPDFAction |
-                          SetObjectAction |
                           SetPageAction |
                           UpdateViewConfigAction
 

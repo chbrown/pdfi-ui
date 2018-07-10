@@ -1,8 +1,7 @@
 import {PDF} from 'pdfi'
-import {PDFObject} from 'pdfi/pdfdom'
 import {Page} from 'pdfi/models'
 
-import {LogLevel, LogEntry, ViewConfig, LogAction, SetPDFAction, SetObjectAction, SetPageAction, UpdateViewConfigAction} from './models'
+import {LogLevel, LogEntry, ViewConfig, LogAction, SetPDFAction, SetPageAction, UpdateViewConfigAction} from './models'
 
 export function log(log: LogEntry[] = [], action: LogAction) {
   switch (action.type) {
@@ -27,15 +26,6 @@ export function pdf(pdf: PDF = null, action: SetPDFAction) {
     return action.pdf
   default:
     return pdf
-  }
-}
-
-export function object(object: PDFObject = null, action: SetObjectAction) {
-  switch (action.type) {
-  case 'SET_OBJECT':
-    return action.object
-  default:
-    return object
   }
 }
 

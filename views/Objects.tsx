@@ -4,6 +4,7 @@ import {NavLink} from 'react-router-dom'
 import {connect} from 'react-redux'
 
 import {PDF} from 'pdfi'
+import {PDFObject} from 'pdfi/pdfdom'
 import {ContentStream} from 'pdfi/models'
 import {Font as pdfiFont} from 'pdfi/font'
 import {renderLayoutFromContentStream} from 'pdfi/graphics'
@@ -18,24 +19,30 @@ import Font from '../components/Font'
 import ObjectView from '../components/ObjectView'
 import Table from '../components/Table'
 
-class NaiveObjectRaw extends React.Component<{object: any}> {
+interface ObjectProps {
+  object: PDFObject
+}
+
+class ObjectRaw extends React.Component<ObjectProps> {
   render() {
     const {object} = this.props
     return <ObjectView object={object} />
   }
 }
-export const ObjectRaw = connect(({object}: ReduxState) => ({object}))(NaiveObjectRaw)
 
-class NaiveObjectStream extends React.Component<{pdf: PDF, object: any}> {
+interface ObjectWithPDFProps extends ObjectProps {
+  pdf: PDF
+}
+
+class ObjectStream extends React.Component<ObjectWithPDFProps> {
   render() {
     const {pdf, object} = this.props
     const contentStream = new ContentStream(pdf, object)
     return <ObjectView object={contentStream.buffer} />
   }
 }
-export const ObjectStream = connect(({pdf, object}: ReduxState) => ({pdf, object}))(NaiveObjectStream)
 
-class NaiveObjectContentStream extends React.Component<{pdf: PDF, object: any}> {
+class ObjectContentStream extends React.Component<ObjectWithPDFProps> {
   render() {
     const {pdf, object} = this.props
     const contentStream = new ContentStream(pdf, object)
@@ -44,9 +51,8 @@ class NaiveObjectContentStream extends React.Component<{pdf: PDF, object: any}> 
     return <ContentStreamOperations operations={operations} />
   }
 }
-export const ObjectContentStream = connect(({pdf, object}: ReduxState) => ({pdf, object}))(NaiveObjectContentStream)
 
-class NaiveObjectContentStreamLayout extends React.Component<{pdf: PDF, object: any}> {
+class ObjectContentStreamLayout extends React.Component<ObjectWithPDFProps> {
   render() {
     const {pdf, object} = this.props
     return (
@@ -61,9 +67,8 @@ class NaiveObjectContentStreamLayout extends React.Component<{pdf: PDF, object: 
     // layout has fields: outerBounds, textSpans, containers
   }
 }
-export const ObjectContentStreamLayout = connect(({pdf, object}: ReduxState) => ({pdf, object}))(NaiveObjectContentStreamLayout)
 
-class NaiveObjectCMap extends React.Component<{pdf: PDF, object: any}> {
+class ObjectCMap extends React.Component<ObjectWithPDFProps> {
   render() {
     const {pdf, object} = this.props
     const contentStream = new ContentStream(pdf, object)
@@ -83,9 +88,8 @@ class NaiveObjectCMap extends React.Component<{pdf: PDF, object: any}> {
     )
   }
 }
-export const ObjectCMap = connect(({pdf, object}: ReduxState) => ({pdf, object}))(NaiveObjectCMap)
 
-class NaiveObjectContentStreamText extends React.Component<{pdf: PDF, object: any}> {
+class ObjectContentStreamText extends React.Component<ObjectWithPDFProps> {
   render() {
     // const {pdf, object} = this.props
     // const contentStream = new ContentStream(pdf, object)
@@ -99,9 +103,8 @@ class NaiveObjectContentStreamText extends React.Component<{pdf: PDF, object: an
     )
   }
 }
-export const ObjectContentStreamText = connect(({pdf, object}: ReduxState) => ({pdf, object}))(NaiveObjectContentStreamText)
 
-class NaiveObjectFont extends React.Component<{pdf: PDF, object: any}> {
+class ObjectFont extends React.Component<ObjectWithPDFProps> {
   render() {
     const {pdf, object} = this.props
     const FontCtor = pdfiFont.getConstructor(object.Subtype)
@@ -109,9 +112,8 @@ class NaiveObjectFont extends React.Component<{pdf: PDF, object: any}> {
     return <Font font={font} />
   }
 }
-export const ObjectFont = connect(({pdf, object}: ReduxState) => ({pdf, object}))(NaiveObjectFont)
 
-class NaiveObjectEncoding extends React.Component<{pdf: PDF, object: any}> {
+class ObjectEncoding extends React.Component<ObjectWithPDFProps> {
   render() {
     const {pdf, object} = this.props
     const FontCtor = pdfiFont.getConstructor(object.Subtype)
@@ -119,7 +121,6 @@ class NaiveObjectEncoding extends React.Component<{pdf: PDF, object: any}> {
     return <Encoding mapping={font.encoding.mapping} characterByteLength={font.encoding.characterByteLength} />
   }
 }
-export const ObjectEncoding = connect(({pdf, object}: ReduxState) => ({pdf, object}))(NaiveObjectEncoding)
 
 const modes = [
   'raw',
@@ -140,21 +141,21 @@ interface PDFObjectsRouteParams {
 
 type PDFObjectsProps = {pdf: PDF} & ConnectProps & RouteComponentProps<PDFObjectsRouteParams>
 
-class PDFObjects extends React.Component<PDFObjectsProps> {
-  reloadState(props: PDFObjectsProps) {
-    // this just makes it easier for child components to access the current object
+type PDFObjectsState = {object?: PDFObject}
+
+class PDFObjects extends React.Component<PDFObjectsProps, PDFObjectsState> {
+  state: PDFObjectsState = {}
+  static getDerivedStateFromProps(props: PDFObjectsProps) {
     const {match: {params}, pdf} = props
     const object_number = parseInt(params.object_number, 10)
     const generation_number = parseInt(params.generation_number || '0', 10)
     const object = pdf.getObject(object_number, generation_number)
-    this.props.dispatch({type: 'SET_OBJECT', object})
-  }
-  componentWillMount() {
-    this.reloadState(this.props)
+    return {object}
   }
   render() {
-    const {match} = this.props
+    const {match, pdf} = this.props
     const {params} = match
+    const {object} = this.state
     return (
       <section className="hpad">
         <h2>Object {params.object_number}:{params.generation_number || 0}</h2>
@@ -164,13 +165,27 @@ class PDFObjects extends React.Component<PDFObjectsProps> {
           )}
         </div>
         <Switch>
-          <Route path={`${match.path}/raw`} component={ObjectRaw} />
-          <Route path={`${match.path}/stream`} component={ObjectStream} />
-          <Route path={`${match.path}/content-stream`} component={ObjectContentStream} />
-          <Route path={`${match.path}/content-stream-layout`} component={ObjectContentStreamLayout} />
-          <Route path={`${match.path}/font`} component={ObjectFont} />
-          <Route path={`${match.path}/encoding`} component={ObjectEncoding} />
-          <Route path={`${match.path}/cmap`} component={ObjectCMap} />
+          <Route path={`${match.path}/raw`}>
+            <ObjectRaw object={object} />
+          </Route>
+          <Route path={`${match.path}/stream`}>
+            <ObjectStream object={object} pdf={pdf} />
+          </Route>
+          <Route path={`${match.path}/content-stream`}>
+            <ObjectContentStream object={object} pdf={pdf} />
+          </Route>
+          <Route path={`${match.path}/content-stream-layout`}>
+            <ObjectContentStreamLayout object={object} pdf={pdf} />
+          </Route>
+          <Route path={`${match.path}/font`}>
+            <ObjectFont object={object} pdf={pdf} />
+          </Route>
+          <Route path={`${match.path}/encoding`}>
+            <ObjectEncoding object={object} pdf={pdf} />
+          </Route>
+          <Route path={`${match.path}/cmap`}>
+            <ObjectCMap object={object} pdf={pdf} />
+          </Route>
           <Redirect to={`${match.url}/raw`} />
         </Switch>
       </section>
