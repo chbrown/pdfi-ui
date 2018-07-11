@@ -3,11 +3,17 @@
 User interface for visualizing PDF structure via [`pdfi`](https://github.com/chbrown/pdfi) (`npm install pdfi`).
 
 
+## Demo
+
+A live, entirely in-your-browser demo is hosted at:
+
+* <https://chbrown.github.io/pdfi-ui/>
+
+
 ## Development
 
-To start the `webpack-dev-server` listening on [`http://localhost:7334`](http://localhost:7334), serving PDFs out of `~/pdfs`:
+To start both the TypeScript compiler and webpack builder in watch mode:
 
-    npm install
     npm start
 
 
