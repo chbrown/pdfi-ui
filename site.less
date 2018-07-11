@@ -29,6 +29,13 @@ div, section, header, nav, main, textarea, input, span {
 a {
   cursor: pointer;
   text-decoration: underline;
+  &.active {
+    color: #000;
+    text-decoration: none;
+    &:hover {
+      text-decoration: underline;
+    }
+  }
 }
 // -----------------------
 // --- generic tables ----
