@@ -55,6 +55,7 @@
   "scripts": {
     "prepare": "tsc",
     "prepack": "NODE_ENV=production webpack --config webpack.config.js",
+    "build": "npm run prepare; npm run prepack",
     "start": "tsc --watch & webpack --config webpack.config.js --watch",
     "clean": "tsc --listEmittedFiles | grep '^TSFILE: ' | sed 's/^TSFILE: //' | xargs rm -v build/bundle.js"
   }
