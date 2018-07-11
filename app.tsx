@@ -45,8 +45,30 @@ const store = createStore(
 )
 
 const NotFound = () => (
-  <section className="hpad">
-    <h2>Route not found!</h2>
+  <section className="hpad" style={{maxWidth: '40em'}}>
+    <h2><code>pdfi-ui</code></h2>
+    <p>
+      <code>pdfi-ui</code> is a web demo of the PDF parsing capabilities of <a href="https://github.com/chbrown/pdfi"><code>pdfi</code></a>.
+    </p>
+    <p>
+      To get started, use the "Open PDF" file input above to read in a PDF.
+    </p>
+    <p>
+      This file is temporarily loaded into your browser — it is not sent off to a server.
+      <br />
+      All PDF processing happens in your browser.
+    </p>
+    <p>
+      When developing <code>pdfi</code> or <code>pdfi-ui</code> locally,
+      there is support for listing and reading files from a local directory,
+      via nginx's <code>autoindex</code> module.
+      When this fails, the navbar will read "Remote files unavailable."
+    </p>
+    <h4>Source code</h4>
+    <ul>
+      <li><code>pdfi</code>: <a href="https://github.com/chbrown/pdfi"><code>https://github.com/chbrown/pdfi</code></a></li>
+      <li><code>pdfi-ui</code>: <a href="https://github.com/chbrown/pdfi-ui"><code>https://github.com/chbrown/pdfi-ui</code></a></li>
+    </ul>
   </section>
 )
 
