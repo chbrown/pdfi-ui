@@ -69,11 +69,18 @@ class RemoteFiles extends React.Component<FileSelectorProps, FileSelectorState> 
   render() {
     const {files, error} = this.state
     const {name} = this.props.match.params
+    if (error !== undefined) {
+      return (
+        <section style={{opacity: 0.5}}>
+          <i>Remote files unavailable.</i>
+        </section>
+      )
+    }
     return (
       <section>
         <span>
           <b>Load PDF: </b>
-          <select onChange={this.onSelect} value={name} disabled={error !== undefined}>
+          <select onChange={this.onSelect} value={name}>
             <option value="">-- none selected --</option>
             {(files || []).map(file => <option key={file.name} value={file.name}>{file.name}</option>)}
           </select>
@@ -81,7 +88,7 @@ class RemoteFiles extends React.Component<FileSelectorProps, FileSelectorState> 
         <span>
           <b>Add PDF: </b>
           <form>
-            <input type="file" onChange={this.onUpload} disabled={error !== undefined} />
+            <input type="file" onChange={this.onUpload} />
           </form>
         </span>
       </section>
