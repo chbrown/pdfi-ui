@@ -26,7 +26,7 @@ function isTextSpan(element: LayoutElement): element is TextSpan {
   return !isContainer(element)
 }
 
-class NaivePageTable extends React.Component<{page?: Page}> {
+class PageTable extends React.Component<{page: Page}> {
   render() {
     const {page} = this.props
     // `containers` represents the paragraphs on the page
@@ -51,8 +51,6 @@ class NaivePageTable extends React.Component<{page?: Page}> {
   }
 }
 
-export const PageTable = connect(({page}: ReduxState) => ({page}))(NaivePageTable)
-
 class ContainerTree extends React.Component<Container<LayoutElement>> {
   render(): React.ReactNode {
     const {minX, minY, maxX, maxY, elements} = this.props
@@ -72,7 +70,7 @@ class ContainerTree extends React.Component<Container<LayoutElement>> {
   static propTypes = ContainerPropTypes
 }
 
-class NaivePageTree extends React.Component<{page?: Page}> {
+class PageTree extends React.Component<{page: Page}> {
   render() {
     const {page} = this.props
     // `containers` represents the paragraphs on the page
@@ -87,8 +85,6 @@ class NaivePageTree extends React.Component<{page?: Page}> {
     )
   }
 }
-
-export const PageTree = connect(({page}: ReduxState) => ({page}))(NaivePageTree)
 
 class BoxLabel extends React.Component<Rectangle> {
   render() {
@@ -134,7 +130,7 @@ class ContainerBox extends React.Component<Container<LayoutElement>> {
   static propTypes = ContainerPropTypes
 }
 
-class NaivePageLayout extends React.Component<{page?: Page, scale?: number}> {
+class PageLayout extends React.Component<{page: Page, scale: number}> {
   render() {
     const {page, scale} = this.props
     const outerBounds = makeRectangle(page.MediaBox[0], page.MediaBox[1], page.MediaBox[2], page.MediaBox[3])
@@ -173,32 +169,24 @@ class NaivePageLayout extends React.Component<{page?: Page, scale?: number}> {
   }
 }
 
-export const PageLayout = connect(({page, viewConfig: {scale}}: ReduxState) => ({page, scale}))(NaivePageLayout)
-
 interface PDFPageRouteParams {
   name: string
   page: string
 }
 
-type PDFPageProps = {pdf: PDF} & ConnectProps & RouteComponentProps<PDFPageRouteParams>
+type PDFPageProps = {pdf: PDF, scale: number} & ConnectProps & RouteComponentProps<PDFPageRouteParams>
 
 /**
 PDFPageLayout just reads the pdf out of the store, renders it to a Layout,
 and sends that layout over the Layout component.
 */
 class PDFPage extends React.Component<PDFPageProps> {
-  reloadState(props: PDFPageProps) {
-    const {match: {params}, pdf} = props
+  render() {
+    const {match, pdf, scale} = this.props
+    const {params} = match
     const page_index = parseInt(params.page, 10) - 1
     const page = pdf.pages[page_index]
     this.props.dispatch({type: 'SET_PAGE', page})
-  }
-  componentWillMount() {
-    this.reloadState(this.props)
-  }
-  render() {
-    const {match} = this.props
-    const {params} = match
     return (
       <section className="hpad">
         <h2>Page {params.page}</h2>
@@ -208,9 +196,15 @@ class PDFPage extends React.Component<PDFPageProps> {
           <NavLink to={`${match.url}/table`}>table</NavLink>
         </div>
         <Switch>
-          <Route path={`${match.path}/layout`} component={PageLayout} />
-          <Route path={`${match.path}/tree`} component={PageTree} />
-          <Route path={`${match.path}/table`} component={PageTable} />
+          <Route path={`${match.path}/layout`}>
+            <PageLayout page={page} scale={scale} />
+          </Route>
+          <Route path={`${match.path}/tree`}>
+            <PageTree page={page} />
+          </Route>
+          <Route path={`${match.path}/table`}>
+            <PageTable page={page} />
+          </Route>
           <Redirect to={`${match.url}/layout`} />
         </Switch>
       </section>
@@ -218,6 +212,6 @@ class PDFPage extends React.Component<PDFPageProps> {
   }
 }
 
-const ConnectedPDFPage = withRouter(connect(({pdf}: ReduxState) => ({pdf}))(PDFPage))
+const ConnectedPDFPage = withRouter(connect(({pdf, viewConfig: {scale}}: ReduxState) => ({pdf, scale}))(PDFPage))
 
 export default ConnectedPDFPage
