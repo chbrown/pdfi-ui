@@ -18,7 +18,7 @@ const Font: React.StatelessComponent<FontProps> = ({font}) => {
   const {Type, Subtype} = font.toJSON()
   const {BaseEncoding, BaseFont, bold, italic} = font
   const details = {Name, Type, Subtype, BaseEncoding, BaseFont, bold, italic}
-  const Widths = new Model(font._pdf, font.get('Widths')).object
+  const Widths = new Model(font['_pdf'], font.get('Widths')).object as number[]
 
   const defaultGlyphmap = (glyphmaps as {[index: string]: string[]})[BaseEncoding] || glyphmaps.StandardEncoding
   const defaultStringmap = defaultGlyphmap.map(decodeGlyphname)
