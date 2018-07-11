@@ -1,6 +1,6 @@
 import * as React from 'react'
 import {Redirect, Route, Switch, RouteComponentProps, withRouter} from 'react-router'
-import {NavLink} from 'react-router-dom'
+import {Link, NavLink} from 'react-router-dom'
 import {connect} from 'react-redux'
 
 import {PDF} from 'pdfi'
@@ -59,7 +59,10 @@ class Navigator extends React.Component<NavigatorProps> {
             </Switch>
           </article> :
           <article>
-            <h4 className="hpad">Loading...</h4>
+            <h4 className="hpad">PDF not (yet) loaded</h4>
+            <p className="hpad">
+              <Link to="/">Reset</Link>
+            </p>
           </article>}
       </div>
     )
