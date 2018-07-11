@@ -8,7 +8,10 @@ import {RemoteFile, uploadFiles, listFiles, readFile} from '../remote'
 import {bind, readArrayBuffer} from '../util'
 
 type FileSelectorProps = ConnectProps & RouteComponentProps<{name: string}>
-interface FileSelectorState {files?: RemoteFile[]}
+interface FileSelectorState {
+  files?: RemoteFile[]
+  error?: Error
+}
 
 class RemoteFiles extends React.Component<FileSelectorProps, FileSelectorState> {
   state: FileSelectorState = {}
@@ -16,17 +19,19 @@ class RemoteFiles extends React.Component<FileSelectorProps, FileSelectorState> 
     listFiles().then(files => {
       this.setState({files})
     }, error => {
-      this.props.dispatch({type: 'LOG', error})
+      this.setState({error})
     })
     // take responsibility for loading the desired PDF,
     // though this is a sort of roundabout hack
     const {name} = this.props.match.params
-    readFile(name).then(arrayBuffer => {
-      const pdf = readArrayBufferSync(arrayBuffer, {type: 'pdf'})
-      this.props.dispatch({type: 'SET_PDF', pdf})
-    }, error => {
-      this.props.dispatch({type: 'LOG', error})
-    })
+    if (name) {
+      readFile(name).then(arrayBuffer => {
+        const pdf = readArrayBufferSync(arrayBuffer, {type: 'pdf'})
+        this.props.dispatch({type: 'SET_PDF', pdf})
+      }, error => {
+        this.setState({error})
+      })
+    }
   }
   @bind
   onSelect({currentTarget: {value}}: React.FormEvent<HTMLSelectElement>) {
@@ -36,7 +41,7 @@ class RemoteFiles extends React.Component<FileSelectorProps, FileSelectorState> 
       // push creates an action that the connected-react-router reducer handles
       this.props.dispatch(push(`/${value}`))
     }, error => {
-      this.props.dispatch({type: 'LOG', error})
+      this.setState({error})
     })
   }
   @bind
@@ -62,23 +67,21 @@ class RemoteFiles extends React.Component<FileSelectorProps, FileSelectorState> 
     })
   }
   render() {
-    const {files} = this.state
+    const {files, error} = this.state
     const {name} = this.props.match.params
     return (
       <section>
         <span>
           <b>Load PDF: </b>
-          {files ?
-            <select onChange={this.onSelect} value={name}>
-              <option value="">-- none selected --</option>
-              {files.map(file => <option key={file.name} value={file.name}>{file.name}</option>)}
-            </select> :
-            <i>Loading...</i>}
+          <select onChange={this.onSelect} value={name} disabled={error !== undefined}>
+            <option value="">-- none selected --</option>
+            {(files || []).map(file => <option key={file.name} value={file.name}>{file.name}</option>)}
+          </select>
         </span>
         <span>
           <b>Add PDF: </b>
           <form>
-            <input type="file" onChange={this.onUpload} />
+            <input type="file" onChange={this.onUpload} disabled={error !== undefined} />
           </form>
         </span>
       </section>
