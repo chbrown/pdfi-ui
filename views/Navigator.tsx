@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {Route, RouteComponentProps, withRouter} from 'react-router'
+import {Redirect, Route, Switch, RouteComponentProps, withRouter} from 'react-router'
 import {NavLink} from 'react-router-dom'
 import {connect} from 'react-redux'
 
@@ -48,12 +48,15 @@ class Navigator extends React.Component<NavigatorProps> {
         </nav>
         {pdf ?
           <article className={viewConfigClassNames}>
-            <Route path={`${match.path}/document`} component={Document} />
-            <Route path={`${match.path}/cross-references`} component={CrossReferences} />
-            <Route path={`${match.path}/citations`} component={Citations} />
-            <Route path={`${match.path}/trailer`} component={Trailer} />
-            <Route path={`${match.path}/pages/:page`} component={Page} />
-            <Route path={`${match.path}/objects/:object_number`} component={Objects} />
+            <Switch>
+              <Route path={`${match.path}/document`} component={Document} />
+              <Route path={`${match.path}/cross-references`} component={CrossReferences} />
+              <Route path={`${match.path}/citations`} component={Citations} />
+              <Route path={`${match.path}/trailer`} component={Trailer} />
+              <Route path={`${match.path}/pages/:page`} component={Page} />
+              <Route path={`${match.path}/objects/:object_number`} component={Objects} />
+              <Redirect to={`${match.url}/pages/1`} />
+            </Switch>
           </article> :
           <article>
             <h4 className="hpad">Loading...</h4>
