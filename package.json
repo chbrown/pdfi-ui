@@ -1,0 +1,62 @@
+{
+  "name": "pdfi-ui",
+  "description": "User interface for visualizing PDF structure",
+  "keywords": [
+    "pdf",
+    "pdfi",
+    "user",
+    "interface"
+  ],
+  "version": "0.1.2",
+  "homepage": "https://github.com/chbrown/pdfi-ui",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/chbrown/pdfi-ui.git"
+  },
+  "author": "Christopher Brown <io@henrian.com> (http://henrian.com)",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "academia": "0.4.3",
+    "babel-polyfill": "6.26.0",
+    "connected-react-router": "4.3.0",
+    "history": "4.7.2",
+    "lexing": "0.8.2",
+    "pdfi": "0.9.8",
+    "prop-types": "15.6.2",
+    "react": "16.4.1",
+    "react-dom": "16.4.1",
+    "react-redux": "5.0.7",
+    "react-router": "4.3.1",
+    "react-router-dom": "4.3.1",
+    "redux": "4.0.0",
+    "tarry": "0.3.4"
+  },
+  "devDependencies": {
+    "@types/node": "10.5.2",
+    "@types/prop-types": "15.5.3",
+    "@types/react": "16.4.6",
+    "@types/react-dom": "16.0.6",
+    "@types/react-redux": "6.0.4",
+    "@types/react-router": "4.0.28",
+    "@types/react-router-dom": "4.2.7",
+    "ajv": "6.5.2",
+    "babel-core": "6.26.3",
+    "babel-loader": "7.1.5",
+    "babel-preset-env": "1.7.0",
+    "css-loader": "1.0.0",
+    "less": "3.6.0",
+    "less-loader": "4.1.0",
+    "style-loader": "0.21.0",
+    "typescript": "2.9.2",
+    "webpack": "4.15.1",
+    "webpack-cli": "3.0.8"
+  },
+  "scripts": {
+    "prepare": "tsc",
+    "prepack": "NODE_ENV=production webpack --config webpack.config.js",
+    "build": "npm run prepare; npm run prepack",
+    "start": "tsc --watch & webpack --config webpack.config.js --watch",
+    "clean": "tsc --listEmittedFiles | grep '^TSFILE: ' | sed 's/^TSFILE: //' | xargs rm -v build/bundle.js"
+  }
+}

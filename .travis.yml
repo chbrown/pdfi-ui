@@ -1,0 +1,13 @@
+language: node_js
+node_js:
+  - 10
+script: npm run build
+before_deploy:
+  - rm -rf node_modules
+deploy:
+  provider: pages
+  skip-cleanup: true
+  github-token: $GITHUB_TOKEN
+  keep-history: true
+  on:
+    branch: master

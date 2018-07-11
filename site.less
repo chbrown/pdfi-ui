@@ -1,0 +1,358 @@
+// --- general resets ---
+body {
+  margin: 0;
+}
+table {
+  border-spacing: 0;
+  border-collapse: collapse;
+  th, td {
+    font-size: 100%;
+    text-align: left;
+  }
+}
+// ----------------------
+// --- generic compact ---
+h1, h2, h3, h4, h5, h6 {
+  margin: 1ex 0;
+}
+div, section, header, nav, main, textarea, input, span {
+  box-sizing: border-box;
+}
+.vpad {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+.hpad {
+  padding-left: 10px;
+  padding-right: 10px;
+}
+a {
+  cursor: pointer;
+  text-decoration: underline;
+  &.active {
+    color: #000;
+    text-decoration: none;
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+// -----------------------
+// --- generic tables ----
+table {
+  td {
+    vertical-align: top;
+  }
+  &.fill {
+    width: 100%;
+  }
+  &.padded tr {
+    td, th {
+      &:first-child { padding-left: 10px; }
+      &:last-child { padding-right: 10px; }
+    }
+  }
+  &.lined tbody {
+    td {
+      border-top: 1px solid #EEE;
+    }
+  }
+  &.striped tbody {
+    tr:nth-child(odd) {
+      background-color: #FCFCFC;
+    }
+    tr:nth-child(even) {
+      background-color: #FEFEFE;
+    }
+  }
+}
+// -----------------------
+
+body {
+  background-color: #FDFDFD;
+}
+.left {
+  text-align: left;
+}
+.center {
+  text-align: center;
+}
+.right {
+  text-align: right;
+}
+form {
+  display: inline;
+}
+
+.log {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 25%;
+  pointer-events: none; // "none" allows click through to elements underneath
+  z-index: 10000;
+  & > article {
+    position: relative;
+    padding: 5px 8px;
+    margin: 3px 6px;
+    border-radius: 3px;
+    white-space: pre-wrap;
+    text-align: left;
+    pointer-events: auto; // allow selecting the text of the log message
+
+    & > h4 {
+      text-transform: capitalize;
+    }
+    & > time {
+      font-size: 80%;
+    }
+
+    background-color: none;
+    color: black;
+    &.debug {
+      // defaults
+      border: 1px solid rgba(127, 127, 127, 50%);
+    }
+    &.info {
+      background-color: rgba(127, 127, 127, 75%);
+    }
+    &.warning {
+      background-color: rgba(127, 127, 0, 75%);
+    }
+    &.error {
+      background-color: rgba(127, 0, 0, 90%);
+      color: white;
+    }
+    &.critical {
+      background-color: rgba(63, 0, 0, 90%);
+      color: white;
+    }
+  }
+}
+
+header {
+  // the position:fixed styling must apply to a child element
+  // since the :after placeholder is effectively within the header element's formatting box
+  & > nav {
+    position: fixed;
+    z-index: 1000;
+
+    left: 0;
+    right: 0;
+    padding: 2px 5px;
+
+    background: linear-gradient(to bottom, #EEE, #CCC);
+    border-bottom: 1px solid #AAA;
+
+    font-size: 80%;
+
+    display: flex;
+    align-items: center;
+    & > section {
+      &.last {
+        flex-grow: 1;
+      }
+      & > span {
+        margin: 0 20px 0 2px;
+      }
+    }
+  }
+  &:after {
+    display: block;
+    padding: 2px;
+    content: '\a0'; // U+00A0 NO-BREAK SPACE
+    line-height: 18px;
+    border-bottom: 1px solid transparent;
+  }
+}
+
+.pdf-container {
+  nav.thumbnails {
+    // the thumbnails panel must be fixed that that it can scroll independent of the content to the right
+    position: fixed;
+    top: 23px; // should equal the height of header; there's not really a better way to do this
+    bottom: 0;
+    width: 240px;
+    padding: 0 5px;
+    z-index: 100;
+
+    background-color: #FAFAFA;
+    height: auto;
+    overflow-y: scroll;
+    font-size: 90%;
+
+    .selected {
+      background-color: #DDD;
+    }
+    .page {
+      border-top: 1px solid #B86;
+    }
+  }
+  article {
+    margin-left: 240px;
+  }
+  section {
+    margin-top: 5px;
+    margin-bottom: 5px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+  }
+}
+
+// complex pdf-objects
+.object, .array, .name, .reference, .number, .string {
+  vertical-align: top;
+}
+.object {
+  margin: .2ex .1em;
+}
+// atomic pdf-objects
+.name, .number, .reference, .string {
+  display: inline-block;
+  margin: .2ex .1em;
+  padding: .3ex .2em 0 .2em;
+}
+.name {
+  font-weight: bold;
+}
+.reference {
+  outline: 1px solid #88F;
+}
+.number {
+  font-family: monospace;
+}
+.string {
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+.boolean {
+  &[title="true"] {
+    color: green;
+  }
+  &[title="false"] {
+    color: darkred;
+  }
+}
+.buffer {
+  font-family: monospace;
+  font-size: 90%;
+  word-break: break-all;
+  span {
+    padding: 0 2px 0 1px;
+    border-right: 1px solid #888;
+    &:last-child {
+      border-right: none;
+    }
+  }
+}
+
+.layout {
+  margin: 10px;
+}
+.textSpan {
+  white-space: pre;
+}
+.label {
+  visibility: hidden;
+  background-color: rgba(0, 0, 0, 0.75);
+  color: white;
+}
+.hlinks {
+  a {
+    margin: 2px;
+    padding: 2px;
+  }
+}
+
+// global viewConfig flags
+.viewConfig-outlines {
+  .textSpan {
+    outline: 1px solid rgba(200, 100, 100, 0.3); // pink
+    background-color: rgba(100, 0, 0, 0.1);
+  }
+  .box {
+    outline: 1px solid rgba(50, 50, 50, 0.9); // gray
+  }
+  .container {
+    .box {
+      outline: 3px solid rgba(50, 150, 50, 0.9); // green
+    }
+    & .container {
+      .box {
+        outline: 2px solid rgba(150, 150, 50, 0.9); // orange
+      }
+      & .container {
+        .box {
+          outline: 1px solid rgba(50, 50, 150, 0.9); // purple
+        }
+        & .container {
+          .box {
+            outline: .3px solid rgba(150, 50, 150, 0.9); // electric pink
+          }
+        }
+      }
+    }
+  }
+}
+.viewConfig-labels {
+  .label {
+    visibility: visible;
+  }
+}
+
+input[type="range"] {
+  width: 400px;
+}
+
+.paper-section {
+  border-top: 1px solid gray;
+  .paragraph {
+    margin: 1ex 0;
+    text-indent: 2em;
+  }
+  .line {
+    font-family: monospace;
+    white-space: pre-wrap;
+    word-break: break-all;
+  }
+}
+
+// white-space: pre-wrap;
+.citation {
+  font-weight: bold;
+  color: #00F;
+}
+// }
+.list {
+  & > :after {
+    content: ', ';
+  }
+  & > :last-child:after {
+    content: '';
+  }
+}
+[authors] > span {
+  outline: 1px solid gray;
+  padding: 0 2px;
+  [title="first"] {
+    color: red;
+  }
+  [title="middle"] {
+    color: pink;
+  }
+  [title="last"] {
+    color: darkred;
+  }
+}
+
+.key-row {
+  border-top: 1px solid #AAA;
+  & > span {
+    padding: 0 5px;
+    &:first-child {
+      display: inline-block;
+      font-weight: bold;
+      width: 50px;
+    }
+  }
+}
