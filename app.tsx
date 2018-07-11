@@ -1,7 +1,7 @@
 import * as React from 'react'
 import {render} from 'react-dom'
 
-import {createBrowserHistory} from 'history'
+import {createHashHistory} from 'history'
 import {applyMiddleware, combineReducers, compose, createStore, Middleware} from 'redux'
 import {Provider} from 'react-redux'
 import {Route, Switch} from 'react-router'
@@ -31,13 +31,13 @@ const loggerMiddleware: Middleware = ({getState}) => {
   }
 }
 
-const browserHistory = createBrowserHistory()
+const history = createHashHistory()
 const reducer = combineReducers(reducers)
 const store = createStore(
-  connectRouter(browserHistory)(reducer),
+  connectRouter(history)(reducer),
   compose(
     applyMiddleware(
-      routerMiddleware(browserHistory),
+      routerMiddleware(history),
       loggerMiddleware
     )
   )
@@ -51,7 +51,7 @@ const NotFound = () => (
 
 render((
   <Provider store={store}>
-    <ConnectedRouter history={browserHistory}>
+    <ConnectedRouter history={history}>
       <div>
         <header>
           <nav>
