@@ -40,8 +40,8 @@ export function page(page: Page = null, action: SetPageAction) {
 
 const initialViewConfig: ViewConfig = {
   scale: 1,
-  outlines: true,
-  labels: true,
+  outlines: false,
+  labels: false,
 }
 
 try {
