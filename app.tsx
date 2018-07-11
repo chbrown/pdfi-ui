@@ -5,6 +5,7 @@ import {createHashHistory} from 'history'
 import {applyMiddleware, combineReducers, compose, createStore, Middleware} from 'redux'
 import {Provider} from 'react-redux'
 import {Route, Switch} from 'react-router'
+import {NavLink} from 'react-router-dom'
 import {connectRouter, routerMiddleware, ConnectedRouter} from 'connected-react-router'
 
 import * as reducers from './reducers'
@@ -59,6 +60,9 @@ render((
                 for setting current value of select dropdown */}
             <Route path="/:name?" component={RemoteFiles} />
             <BrowserFile />
+            <section className="right last">
+              <NavLink exact to="/">Reset</NavLink>
+            </section>
           </nav>
         </header>
         <Switch>
